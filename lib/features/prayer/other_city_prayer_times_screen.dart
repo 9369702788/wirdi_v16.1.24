@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/services/prayer_service.dart';
+import '../../core/models/prayer_models.dart';
 import '../../core/theme/app_theme.dart';
 
 class OtherCityPrayerTimesScreen extends StatefulWidget {

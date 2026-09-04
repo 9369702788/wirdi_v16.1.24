@@ -80,7 +80,6 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
   }
 
   Future<void> _showContext(BookmarkEntry bookmark) async {
-    final l10n = AppLocalizations.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     showDialog<void>(
       context: context,

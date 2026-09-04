@@ -5,7 +5,6 @@ import 'dart:convert';
 
 import '../../core/data/app_sources.dart';
 import '../../core/services/settings_service.dart';
-import '../../core/theme/app_theme.dart';
 
 class MonthlyPrayerCalendarScreen extends StatefulWidget {
   const MonthlyPrayerCalendarScreen({super.key});

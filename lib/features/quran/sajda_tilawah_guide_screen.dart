@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_theme.dart';
 
 class SajdaTilawahGuideScreen extends StatelessWidget {
   const SajdaTilawahGuideScreen({super.key});

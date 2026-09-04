@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_theme.dart';
 
 class TravelPrayerGuideScreen extends StatelessWidget {
   const TravelPrayerGuideScreen({super.key});

@@ -15,6 +15,7 @@ import '../../core/services/hijri_date.dart';
 import '../../core/services/prayer_display.dart';
 import '../../core/services/prayer_notification_scheduler.dart';
 import '../../core/services/prayer_service.dart';
+import '../../core/services/settings_service.dart';
 import '../../core/services/widget_service.dart';
 import '../../core/services/user_progress_service.dart';
 import '../../core/theme/app_theme.dart';

@@ -274,7 +274,6 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
         PrayerAvailability.ok => '',
       };
 
-  @override
   String _calibratedTimeText(PrayerItem prayer) {
     final offset = appSettings.prayerOffsets[prayer.name] ?? 0;
     if (offset == 0) return prayer.timeText;
@@ -284,6 +283,7 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
     return '$hour:$minute';
   }
 
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
