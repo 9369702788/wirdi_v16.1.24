@@ -59,7 +59,7 @@ class _SurahComparisonScreenState extends State<SurahComparisonScreen> {
             items: _surahs
                 .map((s) => DropdownMenuItem(value: s.number, child: Text('${s.number}. ${s.name}', textDirection: TextDirection.rtl, overflow: TextOverflow.ellipsis)))
                 .toList(),
-            onChanged: (num) => onChanged(_surahs.firstWhere((s) => s.number == num)),
+            onChanged: (value) => onChanged(_surahs.firstWhere((s) => s.number == value)),
           ),
           const SizedBox(height: 12),
           if (selected != null)

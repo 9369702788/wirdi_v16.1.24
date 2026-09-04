@@ -75,7 +75,7 @@ class _StudyPlanScreenState extends State<StudyPlanScreen> {
                   items: _surahs
                       .map((s) => DropdownMenuItem(value: s.number, child: Text('${s.number}. ${s.name} (${s.ayahs.length})', textDirection: TextDirection.rtl)))
                       .toList(),
-                  onChanged: (num) => setState(() => _selected = _surahs.firstWhere((s) => s.number == num)),
+                  onChanged: (value) => setState(() => _selected = _surahs.firstWhere((s) => s.number == value)),
                 ),
                 const SizedBox(height: 20),
                 Text(isAr ? 'عدد الأيام: $_days' : 'Number of days: $_days', style: const TextStyle(fontWeight: FontWeight.w600)),

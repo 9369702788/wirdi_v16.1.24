@@ -124,8 +124,8 @@ class _MemorizationGameScreenState extends State<MemorizationGameScreen> {
                     items: _surahs
                         .map((s) => DropdownMenuItem(value: s.number, child: Text('${s.number}. ${s.name}', textDirection: TextDirection.rtl)))
                         .toList(),
-                    onChanged: (num) {
-                      setState(() => _selected = _surahs.firstWhere((s) => s.number == num));
+                    onChanged: (value) {
+                      setState(() => _selected = _surahs.firstWhere((s) => s.number == value));
                       _newRound();
                     },
                   ),

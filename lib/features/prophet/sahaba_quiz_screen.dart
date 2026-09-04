@@ -60,8 +60,11 @@ class _SahabaQuizScreenState extends State<SahabaQuizScreen> {
             final isPicked = i == _selected;
             Color? bg;
             if (_selected != null) {
-              if (isCorrect) bg = AppColors.primaryEmerald.withValues(alpha: 0.15);
-              else if (isPicked) bg = Colors.red.withValues(alpha: 0.1);
+              if (isCorrect) {
+                bg = AppColors.primaryEmerald.withValues(alpha: 0.15);
+              } else if (isPicked) {
+                bg = Colors.red.withValues(alpha: 0.1);
+              }
             }
             return Padding(
               padding: const EdgeInsets.only(bottom: 10),

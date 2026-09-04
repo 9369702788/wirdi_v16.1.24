@@ -112,8 +112,8 @@ class _HadithMemorizationScreenState extends State<HadithMemorizationScreen> {
                     items: _hadiths
                         .map((h) => DropdownMenuItem(value: h.number, child: Text(isAr ? 'حديث ${h.number}' : 'Hadith ${h.number}')))
                         .toList(),
-                    onChanged: (num) {
-                      setState(() => _selected = _hadiths.firstWhere((h) => h.number == num));
+                    onChanged: (value) {
+                      setState(() => _selected = _hadiths.firstWhere((h) => h.number == value));
                       _newRound();
                     },
                   ),
