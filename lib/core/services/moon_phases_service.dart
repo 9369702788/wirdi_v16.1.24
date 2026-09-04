@@ -1,0 +1,25 @@
+import 'moon_calculator.dart';
+
+class MoonPhase {
+  final String phase;
+  final String date;
+  final double illumination;
+  const MoonPhase({required this.phase, required this.date, required this.illumination});
+}
+
+class MoonPhasesService {
+  static Future<List<MoonPhase>> getMoonPhasesForMonth(int month, int year) async {
+    final daysInMonth = DateTime(year, month + 1, 0).day;
+    final result = <MoonPhase>[];
+    for (var d = 1; d <= daysInMonth; d++) {
+      final date = DateTime.utc(year, month, d, 12);
+      final age = MoonCalculator.moonAgeDays(date);
+      result.add(MoonPhase(
+        phase: MoonCalculator.phaseName(age),
+        date: '$year-${month.toString().padLeft(2, '0')}-${d.toString().padLeft(2, '0')}',
+        illumination: MoonCalculator.illuminationFraction(age),
+      ));
+    }
+    return result;
+  }
+}
