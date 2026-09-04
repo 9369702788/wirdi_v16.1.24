@@ -56,7 +56,7 @@ class SunnahFastingCalendarScreen extends StatelessWidget {
           return Card(
             margin: const EdgeInsets.only(bottom: 10),
             child: ListTile(
-              leading: const Icon(Icons.nightlight_round, color: AppColors.primaryEmerald),
+              leading: Icon(Icons.nightlight_round, color: AppColors.primaryEmerald),
               title: Text('${date.day}/${date.month}/${date.year}'),
               subtitle: Text(
                 '${hijri.toStringLocalized(Localizations.localeOf(context).languageCode)} \u2022 ${reasons.join('، ')}',

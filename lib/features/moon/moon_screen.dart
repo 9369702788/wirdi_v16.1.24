@@ -62,7 +62,7 @@ class _MoonScreenState extends State<MoonScreen> {
                   if (p.date.endsWith('-01') || p.date.endsWith('-08') || p.date.endsWith('-15') || p.date.endsWith('-22') || p.date.endsWith('-29'))
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      leading: const Icon(Icons.brightness_2_outlined, color: AppColors.primaryEmerald),
+                      leading: Icon(Icons.brightness_2_outlined, color: AppColors.primaryEmerald),
                       title: Text(p.date),
                       subtitle: Text('${p.phase} -- ${(p.illumination * 100).round()}%'),
                     ),

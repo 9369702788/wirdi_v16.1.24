@@ -17,7 +17,7 @@ class IslamicEventsScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final e = events[index];
           return ListTile(
-            leading: const Icon(Icons.event_outlined, color: AppColors.primaryEmerald),
+            leading: Icon(Icons.event_outlined, color: AppColors.primaryEmerald),
             title: Text(isAr ? e.nameAr : e.name, style: const TextStyle(fontWeight: FontWeight.w700)),
             subtitle: Text('${e.hijriDate}\n${e.description}'),
             isThreeLine: true,

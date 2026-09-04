@@ -74,7 +74,7 @@ class _ReciterComparisonScreenState extends State<ReciterComparisonScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(option.displayNameFor(languageCode), textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
+                  Text(option.displayNameFor(languageCode), textAlign: TextAlign.center, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
                   const Divider(height: 20),
                   Text(
                     info?[isAr ? 'ar' : 'en'] ?? '',

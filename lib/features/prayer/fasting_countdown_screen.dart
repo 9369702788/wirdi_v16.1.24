@@ -89,7 +89,7 @@ class _FastingCountdownScreenState extends State<FastingCountdownScreen> {
             else
               Text(
                 '${diff.inHours.toString().padLeft(2, '0')}:${(diff.inMinutes % 60).toString().padLeft(2, '0')}:${(diff.inSeconds % 60).toString().padLeft(2, '0')}',
-                style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald),
+                style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald),
               ),
           ],
         ),

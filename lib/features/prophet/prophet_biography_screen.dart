@@ -47,7 +47,7 @@ class ProphetBiographyScreen extends StatelessWidget {
           return ListTile(
             leading: CircleAvatar(
               backgroundColor: AppColors.primaryEmerald.withValues(alpha: 0.1),
-              child: Text('$year', style: const TextStyle(fontSize: 11, color: AppColors.primaryEmerald)),
+              child: Text('$year', style: TextStyle(fontSize: 11, color: AppColors.primaryEmerald)),
             ),
             title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
             subtitle: extra.isEmpty ? null : Text(extra, style: const TextStyle(fontSize: 12, color: AppColors.mutedText)),

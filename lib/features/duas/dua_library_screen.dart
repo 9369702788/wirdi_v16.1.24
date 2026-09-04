@@ -347,7 +347,7 @@ class _DuaLibraryScreenState extends State<DuaLibraryScreen> {
                           ),
                           subtitle: Text(
                             isAr ? dua.categoryAr : dua.categoryEn,
-                            style: const TextStyle(fontSize: 12, color: AppColors.primaryEmerald),
+                            style: TextStyle(fontSize: 12, color: AppColors.primaryEmerald),
                           ),
                           childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                           children: [

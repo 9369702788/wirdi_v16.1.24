@@ -94,11 +94,11 @@ class _MuhasabahJournalScreenState extends State<MuhasabahJournalScreen> {
                             Text('${e.date.year}-${e.date.month.toString().padLeft(2, '0')}-${e.date.day.toString().padLeft(2, '0')}', style: const TextStyle(fontSize: 11, color: AppColors.mutedText)),
                             const SizedBox(height: 8),
                             if (e.good.isNotEmpty) ...[
-                              Row(children: [const Icon(Icons.check_circle_outline, size: 16, color: AppColors.primaryEmerald), const SizedBox(width: 6), Expanded(child: Text(e.good))]),
+                              Row(children: [Icon(Icons.check_circle_outline, size: 16, color: AppColors.primaryEmerald), const SizedBox(width: 6), Expanded(child: Text(e.good))]),
                               const SizedBox(height: 6),
                             ],
                             if (e.improve.isNotEmpty)
-                              Row(children: [const Icon(Icons.trending_up, size: 16, color: AppColors.goldAccent), const SizedBox(width: 6), Expanded(child: Text(e.improve))]),
+                              Row(children: [Icon(Icons.trending_up, size: 16, color: AppColors.goldAccent), const SizedBox(width: 6), Expanded(child: Text(e.improve))]),
                           ]),
                         ),
                       ),

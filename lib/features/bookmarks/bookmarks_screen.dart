@@ -279,7 +279,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
                                   children: [
                                     IconButton(
                                       tooltip: 'Context',
-                                      icon: const Icon(Icons.menu_book_outlined, color: AppColors.primaryEmerald),
+                                      icon: Icon(Icons.menu_book_outlined, color: AppColors.primaryEmerald),
                                       onPressed: () => _showContext(bookmark),
                                     ),
                                     IconButton(

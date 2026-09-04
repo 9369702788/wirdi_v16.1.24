@@ -82,12 +82,12 @@ class _OtherCityPrayerTimesScreenState extends State<OtherCityPrayerTimesScreen>
                     if (_result!.locationLabel != null)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 12),
-                        child: Text(_result!.locationLabel!, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
+                        child: Text(_result!.locationLabel!, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
                       ),
                     ..._result!.prayers.map((p) => Card(
                           margin: const EdgeInsets.only(bottom: 8),
                           child: ListTile(
-                            leading: const Icon(Icons.mosque_outlined, color: AppColors.primaryEmerald),
+                            leading: Icon(Icons.mosque_outlined, color: AppColors.primaryEmerald),
                             title: Text(p.name),
                             trailing: Text(p.timeText, style: const TextStyle(fontWeight: FontWeight.bold)),
                           ),

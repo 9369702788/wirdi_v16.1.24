@@ -236,7 +236,7 @@ class _RamadanCompanionScreenState extends State<RamadanCompanionScreen> {
                       const SizedBox(height: 12),
                       Card(
                         child: ListTile(
-                          leading: const Icon(Icons.mosque, color: AppColors.primaryEmerald),
+                          leading: Icon(Icons.mosque, color: AppColors.primaryEmerald),
                           title: Text(Localizations.localeOf(context).languageCode == 'ar' ? 'ليالي التراويح المسجّلة هذا الشهر' : 'Taraweeh nights logged this month'),
                           trailing: Text('$_taraweehDaysLogged', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                         ),

@@ -21,7 +21,7 @@ class IslamicHistoryScreen extends StatelessWidget {
           return ListTile(
             leading: CircleAvatar(
               backgroundColor: AppColors.primaryEmerald.withValues(alpha: 0.1),
-              child: Text('${e.year}', style: const TextStyle(fontSize: 10, color: AppColors.primaryEmerald)),
+              child: Text('${e.year}', style: TextStyle(fontSize: 10, color: AppColors.primaryEmerald)),
             ),
             title: Text(e.event, style: const TextStyle(fontWeight: FontWeight.w700)),
             subtitle: Text('${e.description}\n${e.yearAH}', style: const TextStyle(fontSize: 12, color: AppColors.mutedText)),

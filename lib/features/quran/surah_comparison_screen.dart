@@ -69,7 +69,7 @@ class _SurahComparisonScreenState extends State<SurahComparisonScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(selected.name, textAlign: TextAlign.center, textDirection: TextDirection.rtl, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
+                    Text(selected.name, textAlign: TextAlign.center, textDirection: TextDirection.rtl, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
                     Text(selected.englishName, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, color: AppColors.mutedText)),
                     const Divider(height: 20),
                     ..._stats(selected, isAr).entries.map((e) => Padding(

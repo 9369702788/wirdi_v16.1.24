@@ -71,7 +71,7 @@ class _ShareableTextCardScreenState extends State<ShareableTextCardScreen> {
                     width: 340,
                     padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 40),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
+                      gradient: LinearGradient(
                         colors: [AppColors.primaryEmerald, Color(0xFF0B3D36)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -81,7 +81,7 @@ class _ShareableTextCardScreenState extends State<ShareableTextCardScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.format_quote, color: AppColors.goldAccent, size: 28),
+                        Icon(Icons.format_quote, color: AppColors.goldAccent, size: 28),
                         const SizedBox(height: 16),
                         Text(
                           widget.mainText,
@@ -114,7 +114,7 @@ class _ShareableTextCardScreenState extends State<ShareableTextCardScreen> {
                         Text(
                           widget.referenceLabel,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 13, color: AppColors.goldAccent, fontWeight: FontWeight.w700),
+                          style: TextStyle(fontSize: 13, color: AppColors.goldAccent, fontWeight: FontWeight.w700),
                         ),
                         const SizedBox(height: 28),
                         const Row(

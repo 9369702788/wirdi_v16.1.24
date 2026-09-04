@@ -85,7 +85,7 @@ class AsmaUlHusnaScreen extends StatelessWidget {
                   Localizations.localeOf(context).languageCode == 'ar'
                       ? 'القيمة العددية (حساب الجُمَّل): ${AbjadCalculator.value(name.arabic)}'
                       : 'Abjad numeral value: ${AbjadCalculator.value(name.arabic)}',
-                  style: const TextStyle(fontSize: 13, color: AppColors.goldAccent, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 13, color: AppColors.goldAccent, fontWeight: FontWeight.w600),
                 ),
               ),
               const SizedBox(height: 16),

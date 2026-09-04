@@ -39,7 +39,7 @@ class HajjUmrahGuideScreen extends StatelessWidget {
                     backgroundColor: AppColors.primaryEmerald.withValues(alpha: 0.1),
                     child: Text(
                       '${data['step']}',
-                      style: const TextStyle(color: AppColors.primaryEmerald, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: AppColors.primaryEmerald, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(width: 12),

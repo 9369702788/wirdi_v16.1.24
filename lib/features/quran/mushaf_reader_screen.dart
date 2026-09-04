@@ -574,7 +574,7 @@ class _MushafReaderScreenState extends State<MushafReaderScreen> {
     return Card(
       color: AppColors.primaryEmerald.withValues(alpha: 0.08),
       child: ListTile(
-        leading: const Icon(Icons.play_circle_outline, color: AppColors.primaryEmerald),
+        leading: Icon(Icons.play_circle_outline, color: AppColors.primaryEmerald),
         title: Text(_t(context, 'متابعة القراءة', 'Continue reading')),
         subtitle: Text(lastSurah.name, textDirection: TextDirection.rtl),
         onTap: () {

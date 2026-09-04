@@ -146,7 +146,7 @@ class _RecitationMistakeLogScreenState extends State<RecitationMistakeLogScreen>
                       child: Card(
                         margin: const EdgeInsets.only(bottom: 10),
                         child: ListTile(
-                          leading: const Icon(Icons.priority_high, color: AppColors.goldAccent),
+                          leading: Icon(Icons.priority_high, color: AppColors.goldAccent),
                           title: Text(m.surahAndAyah, textDirection: isAr ? TextDirection.rtl : TextDirection.ltr),
                           subtitle: m.note.isEmpty ? null : Text(m.note),
                         ),

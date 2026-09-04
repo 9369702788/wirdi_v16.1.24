@@ -114,10 +114,10 @@ class _QurbaniCalculatorScreenState extends State<QurbaniCalculatorScreen> {
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    Text('$_animalsNeeded', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
+                    Text('$_animalsNeeded', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
                     Text(isAr ? 'عدد الحيوانات المطلوبة' : 'Animals needed', style: const TextStyle(fontSize: 12, color: AppColors.mutedText)),
                     const SizedBox(height: 10),
-                    Text(_result!.toStringAsFixed(2), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
+                    Text(_result!.toStringAsFixed(2), style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
                     Text(isAr ? 'التكلفة التقريبية الإجمالية' : 'Approximate total cost', style: const TextStyle(fontSize: 12, color: AppColors.mutedText)),
                   ],
                 ),

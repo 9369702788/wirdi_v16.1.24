@@ -71,7 +71,7 @@ class _ZakatFitrCalculatorScreenState extends State<ZakatFitrCalculatorScreen> {
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    Text(_total!.toStringAsFixed(2), style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
+                    Text(_total!.toStringAsFixed(2), style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
                     Text(isAr ? 'إجمالي زكاة الفطر المطلوبة' : 'Total Zakat al-Fitr due', style: const TextStyle(fontSize: 12, color: AppColors.mutedText)),
                   ],
                 ),

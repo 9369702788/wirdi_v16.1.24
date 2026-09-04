@@ -83,7 +83,7 @@ class _QadaTrackerScreenState extends State<QadaTrackerScreen> {
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
-                        Text('$total', style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
+                        Text('$total', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
                         Text(isAr ? 'إجمالي الصلوات المتبقية' : 'Total prayers still owed', style: const TextStyle(fontSize: 12, color: AppColors.mutedText)),
                       ],
                     ),
@@ -99,7 +99,7 @@ class _QadaTrackerScreenState extends State<QadaTrackerScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(icon: const Icon(Icons.remove_circle_outline), onPressed: () => _adjust(name, -1)),
-                            IconButton(icon: const Icon(Icons.add_circle_outline, color: AppColors.primaryEmerald), onPressed: () => _adjust(name, 1)),
+                            IconButton(icon: Icon(Icons.add_circle_outline, color: AppColors.primaryEmerald), onPressed: () => _adjust(name, 1)),
                           ],
                         ),
                       ),

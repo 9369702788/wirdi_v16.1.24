@@ -53,7 +53,7 @@ class SajdahVersesScreen extends StatelessWidget {
           return Card(
             margin: const EdgeInsets.only(bottom: 10),
             child: ListTile(
-              leading: CircleAvatar(radius: 16, backgroundColor: AppColors.goldAccent.withValues(alpha: 0.15), child: Text('$index', style: const TextStyle(color: AppColors.goldAccent, fontWeight: FontWeight.bold))),
+              leading: CircleAvatar(radius: 16, backgroundColor: AppColors.goldAccent.withValues(alpha: 0.15), child: Text('$index', style: TextStyle(color: AppColors.goldAccent, fontWeight: FontWeight.bold))),
               title: Text(isAr ? '${v.surahAr} - آية ${v.ayah}' : '${v.surahEn} - Verse ${v.ayah}', textDirection: isAr ? TextDirection.rtl : TextDirection.ltr),
               subtitle: Text(isAr ? v.noteAr : v.noteEn, textDirection: isAr ? TextDirection.rtl : TextDirection.ltr),
             ),

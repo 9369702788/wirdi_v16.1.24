@@ -92,7 +92,7 @@ class _PrayerCalendarExportScreenState extends State<PrayerCalendarExportScreen>
                     if (_result != null)
                       ..._result!.prayers.map((p) => Card(
                             margin: const EdgeInsets.only(bottom: 8),
-                            child: ListTile(leading: const Icon(Icons.event_outlined, color: AppColors.primaryEmerald), title: Text(p.name), trailing: Text(p.timeText, style: const TextStyle(fontWeight: FontWeight.bold))),
+                            child: ListTile(leading: Icon(Icons.event_outlined, color: AppColors.primaryEmerald), title: Text(p.name), trailing: Text(p.timeText, style: const TextStyle(fontWeight: FontWeight.bold))),
                           )),
                     const SizedBox(height: 16),
                     FilledButton.icon(

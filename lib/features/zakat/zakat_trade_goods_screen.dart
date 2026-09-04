@@ -71,7 +71,7 @@ class _ZakatTradeGoodsScreenState extends State<ZakatTradeGoodsScreen> {
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(children: [
-                Text(_zakatDue!.toStringAsFixed(2), style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
+                Text(_zakatDue!.toStringAsFixed(2), style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
                 Text(isAr ? 'زكاة عروض التجارة المستحقة' : 'Zakat on trade goods due', style: const TextStyle(fontSize: 12, color: AppColors.mutedText)),
               ]),
             ),

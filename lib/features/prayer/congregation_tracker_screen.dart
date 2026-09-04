@@ -92,13 +92,13 @@ class _CongregationTrackerScreenState extends State<CongregationTrackerScreen> {
                       children: [
                         Column(
                           children: [
-                            Text('$todayCount/5', style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
+                            Text('$todayCount/5', style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
                             Text(isAr ? 'اليوم' : 'Today', style: const TextStyle(fontSize: 12, color: AppColors.mutedText)),
                           ],
                         ),
                         Column(
                           children: [
-                            Text('$_lifetimeTotal', style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
+                            Text('$_lifetimeTotal', style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: AppColors.primaryEmerald)),
                             Text(isAr ? 'الإجمالي مدى الحياة' : 'Lifetime total', style: const TextStyle(fontSize: 12, color: AppColors.mutedText)),
                           ],
                         ),
