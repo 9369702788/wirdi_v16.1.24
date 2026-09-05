@@ -100,7 +100,7 @@ class _ActivityHeatmapScreenState extends State<ActivityHeatmapScreen> {
                         padding: const EdgeInsets.only(top: 8, bottom: 4),
                         child: Text(
                           _monthYearLabel(_weeks[w].first.date, isAr),
-                          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: AppColors.primaryEmerald),
+                          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: AppColors.primaryEmerald),
                         ),
                       ),
                     Row(

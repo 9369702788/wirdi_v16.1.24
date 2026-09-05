@@ -165,32 +165,13 @@ class _MushafReaderScreenState extends State<MushafReaderScreen> {
             '\u062d\u062c\u0645 \u0627\u0644\u062a\u062d\u0645\u064a\u0644 \u0627\u0644\u062a\u0642\u0631\u064a\u0628\u064a: \u0644 $estimatedMb \u0645\u064a\u062c\u0627\u0628\u0627\u064a\u062a. \u0647\u0644 \u062a\u0631\u064a\u062f \u0627\u0644\u0645\u062a\u0627\u0628\u0639\u0629\u061f',
             'Estimated download size: $estimatedMb MB. Continue?')),
         actions: [
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              if (value == 'expand') _expandText();
-              else if (value == 'collapse') _collapseText();
-              else if (value == 'darkMode') _toggleDarkMode();
-              else if (value == 'focus') _toggleFocusMode();
-              else if (value == 'notes') _toggleNotesPanel();
-              else if (value == 'info') _showInfo();
-              else if (value == 'tajweed') _toggleTajweed();
-              else if (value == 'mute') _toggleMute();
-              else if (value == 'download') _downloadSurah();
-              else if (value == 'range') _toggleRangeMode();
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(value: 'expand', child: Text(isAr ? 'توسيع' : 'Expand')),
-              PopupMenuItem(value: 'collapse', child: Text(isAr ? 'تضييق' : 'Collapse')),
-              PopupMenuItem(value: 'darkMode', child: Text(isAr ? 'وضع ليلي' : 'Dark mode')),
-              PopupMenuItem(value: 'focus', child: Text(isAr ? 'وضع تركيز' : 'Focus')),
-              PopupMenuItem(value: 'notes', child: Text(isAr ? 'الملاحظات' : 'Notes')),
-              PopupMenuItem(value: 'info', child: Text(isAr ? 'معلومات' : 'Info')),
-              PopupMenuItem(value: 'tajweed', child: Text(isAr ? 'تجويد' : 'Tajweed')),
-              PopupMenuItem(value: 'mute', child: Text(isAr ? 'كتم الصوت' : 'Mute')),
-              PopupMenuItem(value: 'download', child: Text(isAr ? 'تحميل' : 'Download')),
-              PopupMenuItem(value: 'range', child: Text(isAr ? 'نطاق' : 'Range')),
-            ],
-            icon: const Icon(Icons.more_vert),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(_t(context, 'إلغاء', 'Cancel')),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(_t(context, 'تحميل', 'Download')),
           ),
         ],
       ),
@@ -318,7 +299,6 @@ class _MushafReaderScreenState extends State<MushafReaderScreen> {
     }
   }
 
-  @override
   void _showReaderOptionsSheet(BuildContext context, SurahModel? surah) {
     showModalBottomSheet<void>(
       context: context,
@@ -528,6 +508,7 @@ class _MushafReaderScreenState extends State<MushafReaderScreen> {
     );
   }
 
+  @override
   Widget build(BuildContext context) {
     final surah = _selectedSurah;
     return Scaffold(

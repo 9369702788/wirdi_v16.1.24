@@ -119,9 +119,10 @@ class _QiblaCameraScreenState extends State<QiblaCameraScreen> {
       case _CameraQiblaStatus.cameraUnavailable:
         return _errorView(
           icon: Icons.videocam_off_outlined,
-          message: isAr
-              ? 'تعذّر تشغيل الكاميرا. إذا ظهرت هذه الرسالة رغم منح إذن الكاميرا، فقد يحتاج التطبيق إلى إضافة صلاحية الكاميرا في إعدادات النظام (AndroidManifest.xml) من قِبل المطوّر.'
-              : 'Could not start the camera. If this appears even after granting camera permission, the app may be missing the CAMERA permission declaration (AndroidManifest.xml) and needs a developer fix.',
+          message: (isAr
+                  ? 'تعذّر تشغيل الكاميرا. إذا ظهرت هذه الرسالة رغم منح إذن الكاميرا، فقد يحتاج التطبيق إلى إضافة صلاحية الكاميرا في إعدادات النظام (AndroidManifest.xml) من قِبل المطوّر.'
+                  : 'Could not start the camera. If this appears even after granting camera permission, the app may be missing the CAMERA permission declaration (AndroidManifest.xml) and needs a developer fix.') +
+              (_errorDetail != null ? '\n\n(${_errorDetail})' : ''),
         );
       case _CameraQiblaStatus.ready:
         return _buildCameraOverlay();

@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/models/azkar_models.dart';
 import '../../core/models/hadith_models.dart';
 import '../../core/models/quran_models.dart';
+import '../../core/services/app_logger.dart';
 import '../../core/services/azkar_repository.dart';
 import '../../core/services/hadith_repository.dart';
 import '../../core/services/quran_repository.dart';
