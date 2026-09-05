@@ -307,7 +307,7 @@ class _HifzScreenState extends State<HifzScreen> {
                   const SizedBox(height: 4),
                   Row(children: [
                     Text('آية ${ayah.number}', style: const TextStyle(fontSize: 11, color: AppColors.mutedText)),
-                    if (showReps && activePlan != null) ...[
+                    if (showReps) ...[
                       const Spacer(),
                       Text('$reps/${activePlan.targetReps}', style: TextStyle(fontSize: 11, color: reps >= activePlan.targetReps ? AppColors.primaryEmerald : AppColors.mutedText, fontWeight: FontWeight.w600)),
                       const SizedBox(width: 4),

@@ -39,7 +39,6 @@ import '../zakat/zakat_fitr_calculator_screen.dart';
 import '../zakat/qurbani_calculator_screen.dart';
 import '../prayer/fasting_countdown_screen.dart';
 import '../ramadan/sunnah_fasting_calendar_screen.dart';
-import '../hadith/hadith_collection_screen.dart';
 import '../hadeeth_enc/hadeeth_hub_screen.dart';
 import '../insights/wirdi_insights_screen.dart';
 import '../khatma/khatma_tracker_screen.dart';
