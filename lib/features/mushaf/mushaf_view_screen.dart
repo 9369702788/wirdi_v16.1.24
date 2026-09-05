@@ -40,6 +40,11 @@ class _MushafViewScreenState extends State<MushafViewScreen> {
   // lifts and fewer than 2 remain.
   bool _multiTouchActive = false;
 
+  /// Toggles between the classic page-flip Mushaf (default, swipe left/right)
+  /// and a continuous vertical scroll through the same page cards -- some
+  /// readers prefer scrolling top-to-bottom over flipping discrete pages.
+  bool _continuousScroll = false;
+
   /// Cached once [_loadAll] resolves, so [_onAudioChanged] (which fires
   /// on every ayah transition, independent of the FutureBuilder) can
   /// look up which page a given ayah belongs to without re-awaiting
@@ -116,6 +121,13 @@ class _MushafViewScreenState extends State<MushafViewScreen> {
         title: Text(l10n.mushafTitle),
         centerTitle: true,
         actions: [
+          IconButton(
+            tooltip: _continuousScroll
+                ? (Localizations.localeOf(context).languageCode == 'ar' ? 'وضع الصفحات' : 'Page-flip mode')
+                : (Localizations.localeOf(context).languageCode == 'ar' ? 'وضع التمرير المستمر' : 'Continuous scroll mode'),
+            icon: Icon(_continuousScroll ? Icons.auto_stories_outlined : Icons.swap_vert),
+            onPressed: () => setState(() => _continuousScroll = !_continuousScroll),
+          ),
           ListenableBuilder(
             listenable: quranAudio,
             builder: (context, _) {
@@ -170,6 +182,28 @@ class _MushafViewScreenState extends State<MushafViewScreen> {
           // Directionality and dropping `reverse` makes page-flip
           // direction consistent no matter what language the rest of
           // the app's UI is in.
+          if (_continuousScroll) {
+            return Directionality(
+              textDirection: TextDirection.rtl,
+              child: ListView.builder(
+                itemCount: pages.length,
+                itemBuilder: (context, index) {
+                  final page = pages[index];
+                  return SizedBox(
+                    height: MediaQuery.sizeOf(context).height * 0.92,
+                    child: _MushafPageView(
+                      page: page,
+                      allSurahs: allSurahs,
+                      onMultiTouch: (active) {
+                        if (mounted && _multiTouchActive != active) setState(() => _multiTouchActive = active);
+                      },
+                    ),
+                  );
+                },
+              ),
+            );
+          }
+
           return Directionality(
             textDirection: TextDirection.rtl,
             child: PageView.builder(

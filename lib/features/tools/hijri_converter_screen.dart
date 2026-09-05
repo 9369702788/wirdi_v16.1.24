@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../khatma/khatma_calendar_screen.dart' show HijriConverter;
+import '../../core/services/hijri_date.dart';
 import '../../core/theme/app_theme.dart';
 
 class HijriConverterScreen extends StatefulWidget {
@@ -16,7 +16,8 @@ class _HijriConverterScreenState extends State<HijriConverterScreen> {
   @override
   Widget build(BuildContext context) {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
-    final hijri = HijriConverter.convertToHijri(_gregorian);
+    final hijriDate = HijriDate.fromGregorian(_gregorian);
+    final hijri = '${hijriDate.toStringLocalized(Localizations.localeOf(context).languageCode)} ${isAr ? 'هـ' : 'AH'}';
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'محول التاريخ الهجري' : 'Hijri Converter'), centerTitle: true),
       body: Padding(

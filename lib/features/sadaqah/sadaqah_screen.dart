@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/services/sadaqah_service.dart';
 import '../../core/services/settings_service.dart';
+import '../../core/services/daily_reminder_scheduler.dart';
+import '../../core/services/notification_service.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../core/theme/app_theme.dart';
 
 class SadaqahScreen extends StatefulWidget {
@@ -86,6 +89,18 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
             onPressed: () async {
               final current = appSettings.dailyReminder('sadaqah');
               await appSettings.setDailyReminder('sadaqah', current.copyWith(enabled: !current.enabled));
+              // BUGFIX: this only ever saved the flag -- it never actually told
+              // the notification scheduler to pick up the change, so the
+              // reminder silently never fired no matter how many times you
+              // toggled this button (the SnackBar below claimed success either
+              // way). Mirrors the exact same rescheduleAll() call the Settings
+              // screen's reminder toggles already make correctly.
+              if (!current.enabled) {
+                await NotificationService.requestPermission();
+              }
+              if (mounted) {
+                await DailyReminderScheduler.rescheduleAll(AppLocalizations.of(context));
+              }
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(current.enabled ? '\u062a\u0630\u0643\u064a\u0631 \u0627\u0644\u0635\u062f\u0642\u0629 \u0645\u0639\u0637\u0651\u0644' : '\u062a\u0630\u0643\u064a\u0631 \u0627\u0644\u0635\u062f\u0642\u0629 \u0645\u0641\u0639\u0651\u0644')),

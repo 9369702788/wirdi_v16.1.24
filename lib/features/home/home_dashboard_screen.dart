@@ -527,7 +527,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
               const SizedBox(height: 12),
               _DashboardCard(
                 icon: Icons.auto_stories_outlined,
-                title: '${l10n.homeHadithOfTheDay}${_hadithStreak > 1 ? '  \u{1F525} $_hadithStreak' : ''}',
+                title: '${l10n.homeHadithOfTheDay}${_hadithStreak > 1 ? '  \u{1F525} ${l10n.insightsDaysCount(_hadithStreak)}' : ''}',
                 subtitle: _hadithOfToday!.translatedText,
                 trailing: IconButton(
                   tooltip: l10n.homeShareHadith,

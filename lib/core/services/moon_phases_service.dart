@@ -8,14 +8,14 @@ class MoonPhase {
 }
 
 class MoonPhasesService {
-  static Future<List<MoonPhase>> getMoonPhasesForMonth(int month, int year) async {
+  static Future<List<MoonPhase>> getMoonPhasesForMonth(int month, int year, {bool arabic = false}) async {
     final daysInMonth = DateTime(year, month + 1, 0).day;
     final result = <MoonPhase>[];
     for (var d = 1; d <= daysInMonth; d++) {
       final date = DateTime.utc(year, month, d, 12);
       final age = MoonCalculator.moonAgeDays(date);
       result.add(MoonPhase(
-        phase: MoonCalculator.phaseName(age),
+        phase: MoonCalculator.phaseName(age, arabic: arabic),
         date: '$year-${month.toString().padLeft(2, '0')}-${d.toString().padLeft(2, '0')}',
         illumination: MoonCalculator.illuminationFraction(age),
       ));

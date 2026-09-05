@@ -133,6 +133,18 @@ class DailyReminderScheduler {
       ));
     }
 
+    final dailyQuote = appSettings.dailyReminder('dailyQuote');
+    if (dailyQuote.enabled) {
+      reminders.add(RecurringReminder(
+        id: 900000010,
+        hour: dailyQuote.hour,
+        minute: dailyQuote.minute,
+        title: l10n.appTitle,
+        body: 'آية أو حديث اليوم بانتظارك في التطبيق',
+        recurrence: RecurrenceType.daily,
+      ));
+    }
+
     if (reminders.isEmpty) {
       await NotificationService.cancelAllRecurring();
       return 'All reminders disabled';

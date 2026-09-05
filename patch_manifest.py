@@ -27,6 +27,9 @@ perms = [
     'android.permission.FOREGROUND_SERVICE',
     'android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK',
     'android.permission.WAKE_LOCK',
+    # NEW: required for the Camera Qibla (AR overlay) screen added in v192,
+    # which uses CameraController/availableCameras() from the `camera` plugin.
+    'android.permission.CAMERA',
 ]
 perm_lines = '\n'.join(
     f'    <uses-permission android:name="{p}" />'

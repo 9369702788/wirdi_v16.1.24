@@ -19,6 +19,7 @@ class _FastingCountdownScreenState extends State<FastingCountdownScreen> {
   String? _error;
   Timer? _ticker;
   DateTime _now = DateTime.now();
+  List<PrayerItem>? _tomorrowPrayers;
 
   @override
   void initState() {
@@ -43,6 +44,9 @@ class _FastingCountdownScreenState extends State<FastingCountdownScreen> {
         _result = result;
         _loading = false;
       });
+      PrayerService.fetchTomorrowPrayers().then((tomorrow) {
+        if (mounted && tomorrow != null) setState(() => _tomorrowPrayers = tomorrow);
+      });
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -59,6 +63,20 @@ class _FastingCountdownScreenState extends State<FastingCountdownScreen> {
       if (p.name.toLowerCase().contains(name.toLowerCase())) return p;
     }
     return null;
+  }
+
+  PrayerItem? _findIn(List<PrayerItem>? prayers, String name) {
+    if (prayers == null) return null;
+    for (final p in prayers) {
+      if (p.name.toLowerCase().contains(name.toLowerCase())) return p;
+    }
+    return null;
+  }
+
+  PrayerItem? _suhoorTarget() {
+    final today = _find('Fajr');
+    if (today != null && today.dateTime.isAfter(_now)) return today;
+    return _findIn(_tomorrowPrayers, 'Fajr') ?? today;
   }
 
   Widget _countdownCard({required String title, required PrayerItem? target, required bool isAr}) {
@@ -111,7 +129,7 @@ class _FastingCountdownScreenState extends State<FastingCountdownScreen> {
                   children: [
                     _countdownCard(title: isAr ? 'وقت الإفطار (المغرب)' : 'Iftar time (Maghrib)', target: _find('Maghrib'), isAr: isAr),
                     const SizedBox(height: 16),
-                    _countdownCard(title: isAr ? 'نهاية وقت السحور (الفجر)' : 'End of Suhoor (Fajr)', target: _find('Fajr'), isAr: isAr),
+                    _countdownCard(title: isAr ? 'نهاية وقت السحور (الفجر)' : 'End of Suhoor (Fajr)', target: _suhoorTarget(), isAr: isAr),
                   ],
                 ),
     );

@@ -2,6 +2,9 @@
 import 'package:flutter/material.dart';
 import '../../core/services/auth_service.dart';
 import '../../core/services/sync_service.dart';
+import '../../core/services/prayer_service.dart';
+import '../../core/services/settings_service.dart';
+import '../../core/models/prayer_models.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../../features/home/home_dashboard_screen.dart';
@@ -62,6 +65,38 @@ class _RootShellState extends State<RootShell> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed &&
         AuthService.instance.isSignedIn) {
       SyncService.instance.syncNow().catchError((_) {});
+    }
+    // FIX: "Auto dark mode at Maghrib" is normally driven by a per-second
+    // timer that only lives in HomeDashboardScreen -- while the phone's
+    // screen is off or the app is backgrounded, Android throttles that
+    // timer, so the theme could stay stale (e.g. still light well after
+    // Maghrib) until that timer happened to tick again. Re-checking with
+    // the real current time right when the app is resumed/reopened fixes
+    // that up immediately instead of leaving the user waiting.
+    if (state == AppLifecycleState.resumed) {
+      _refreshAutoDarkModeOnResume();
+    }
+  }
+
+  Future<void> _refreshAutoDarkModeOnResume() async {
+    if (!appSettings.autoDarkModeAtMaghrib) return;
+    try {
+      final result = await PrayerService.fetchUsingSavedPreference();
+      PrayerItem? maghrib;
+      PrayerItem? fajr;
+      for (final p in result.prayers) {
+        if (p.name == 'Maghrib') maghrib = p;
+        if (p.name == 'Fajr') fajr = p;
+      }
+      if (maghrib == null || fajr == null) return;
+      final now = DateTime.now();
+      final isNight = now.isAfter(maghrib.dateTime) || now.isBefore(fajr.dateTime);
+      final targetMode = isNight ? ThemeMode.dark : ThemeMode.light;
+      if (appSettings.themeMode == targetMode) return;
+      await appSettings.setThemeMode(targetMode);
+    } catch (_) {
+      // Best-effort safety net only -- the Home tab's per-second check
+      // remains the primary mechanism while the app is actively open.
     }
   }
 

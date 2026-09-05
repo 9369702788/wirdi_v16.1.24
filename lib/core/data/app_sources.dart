@@ -104,17 +104,18 @@ class AppSources {
     required double longitude,
     DateTime? date,
     int method = 5,
+    int school = 0,
   }) {
     final datePath = date == null ? '' : '/${_ddmmyyyy(date)}';
-    return 'https://api.aladhan.com/v1/timings$datePath?latitude=$latitude&longitude=$longitude&method=$method';
+    return 'https://api.aladhan.com/v1/timings$datePath?latitude=$latitude&longitude=$longitude&method=$method&school=$school';
   }
 
   /// Documented AlAdhan endpoint that geocodes the address server-side,
   /// so no separate geocoding call is needed for manual city entry.
-  static String prayerTimesByAddressUrl(String address, {DateTime? date, int method = 5}) {
+  static String prayerTimesByAddressUrl(String address, {DateTime? date, int method = 5, int school = 0}) {
     final encoded = Uri.encodeComponent(address);
     final datePath = date == null ? '' : '/${_ddmmyyyy(date)}';
-    return 'https://api.aladhan.com/v1/timingsByAddress$datePath?address=$encoded&method=$method';
+    return 'https://api.aladhan.com/v1/timingsByAddress$datePath?address=$encoded&method=$method&school=$school';
   }
 
   static const List<(int, String, String)> prayerCalculationMethods = [

@@ -18,13 +18,13 @@ class ArticlesScreen extends StatelessWidget {
           return Card(
             child: ListTile(
               contentPadding: const EdgeInsets.all(14),
-              title: Text(a.title, style: const TextStyle(fontWeight: FontWeight.w700)),
-              subtitle: Padding(padding: const EdgeInsets.only(top: 6), child: Text(a.content, maxLines: 3, overflow: TextOverflow.ellipsis)),
+              title: Text(isAr ? a.titleAr : a.title, style: const TextStyle(fontWeight: FontWeight.w700)),
+              subtitle: Padding(padding: const EdgeInsets.only(top: 6), child: Text(isAr ? a.contentAr : a.content, maxLines: 3, overflow: TextOverflow.ellipsis)),
               onTap: () => showDialog<void>(
                 context: context,
                 builder: (_) => AlertDialog(
-                  title: Text(a.title),
-                  content: SingleChildScrollView(child: Text(a.content)),
+                  title: Text(isAr ? a.titleAr : a.title),
+                  content: SingleChildScrollView(child: Text(isAr ? a.contentAr : a.content)),
                   actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(isAr ? 'إغلاق' : 'Close'))],
                 ),
               ),

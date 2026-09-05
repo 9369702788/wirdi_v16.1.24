@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../core/data/asma_ul_husna.dart';
-import '../../core/services/abjad_calculator.dart';
 import '../../core/theme/app_theme.dart';
 import '../../l10n/generated/app_localizations.dart';
 
@@ -73,20 +72,6 @@ class AsmaUlHusnaScreen extends StatelessWidget {
                 name.meaningFor(Localizations.localeOf(context).languageCode),
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 16, height: 1.6),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                decoration: BoxDecoration(
-                  color: AppColors.goldAccent.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  Localizations.localeOf(context).languageCode == 'ar'
-                      ? 'القيمة العددية (حساب الجُمَّل): ${AbjadCalculator.value(name.arabic)}'
-                      : 'Abjad numeral value: ${AbjadCalculator.value(name.arabic)}',
-                  style: TextStyle(fontSize: 13, color: AppColors.goldAccent, fontWeight: FontWeight.w600),
-                ),
               ),
               const SizedBox(height: 16),
             ],

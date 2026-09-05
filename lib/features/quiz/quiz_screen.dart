@@ -116,7 +116,7 @@ class _QuizScreenState extends State<QuizScreen> {
         title: Text(isAr ? '\u0645\u0633\u0627\u0628\u0642\u0629 \u0645\u0639\u0644\u0648\u0645\u0627\u062a \u0625\u0633\u0644\u0627\u0645\u064a\u0629' : 'Islamic Quiz'),
         centerTitle: true,
       ),
-      body: finished ? _buildResults(context, isAr) : _buildQuestion(context, isAr),
+      body: SafeArea(child: finished ? _buildResults(context, isAr) : _buildQuestion(context, isAr)),
     );
   }
 

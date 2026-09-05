@@ -65,16 +65,33 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
 
   Future<void> _loadAll() async {
     try {
-      final results = await Future.wait([
-        QuranRepository.load(),
-        HadithRepository.load(languageCode: Localizations.localeOf(context).languageCode),
-        AzkarRepository.load(),
-      ]);
+      List<SurahModel> surahs = [];
+      List<HadithModel> hadiths = [];
+      List<AzkarCategoryModel> azkarCategories = [];
+      
+      try {
+        surahs = await QuranRepository.load();
+      } catch (e) {
+        AppLogger.error('Failed to load Quran', error: e);
+      }
+      
+      try {
+        hadiths = await HadithRepository.load(languageCode: Localizations.localeOf(context).languageCode);
+      } catch (e) {
+        AppLogger.error('Failed to load Hadith', error: e);
+      }
+      
+      try {
+        azkarCategories = await AzkarRepository.load();
+      } catch (e) {
+        AppLogger.error('Failed to load Azkar', error: e);
+      }
+      
       if (!mounted) return;
       setState(() {
-        _surahs = results[0] as List<SurahModel>;
-        _hadiths = results[1] as List<HadithModel>;
-        _azkarCategories = results[2] as List<AzkarCategoryModel>;
+        _surahs = surahs;
+        _hadiths = hadiths;
+        _azkarCategories = azkarCategories;
         _loading = false;
       });
     } catch (e) {

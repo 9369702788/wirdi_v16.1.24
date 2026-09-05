@@ -46,7 +46,7 @@ class _IslamicHistoryQuizScreenState extends State<IslamicHistoryQuizScreen> {
       appBar: AppBar(title: Text(isAr ? 'اختبار التاريخ الإسلامي' : 'Islamic History Quiz'), centerTitle: true, actions: [
         Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: Center(child: Text("$_score / $_attempts", style: const TextStyle(fontWeight: FontWeight.bold)))),
       ]),
-      body: Padding(
+      body: SafeArea(child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Container(
@@ -80,7 +80,7 @@ class _IslamicHistoryQuizScreenState extends State<IslamicHistoryQuizScreen> {
             FilledButton(onPressed: _next, child: Text(isAr ? 'التالي' : 'Next')),
           ],
         ]),
-      ),
+      )),
     );
   }
 }

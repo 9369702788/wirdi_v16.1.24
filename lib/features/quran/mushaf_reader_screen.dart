@@ -165,8 +165,33 @@ class _MushafReaderScreenState extends State<MushafReaderScreen> {
             '\u062d\u062c\u0645 \u0627\u0644\u062a\u062d\u0645\u064a\u0644 \u0627\u0644\u062a\u0642\u0631\u064a\u0628\u064a: \u0644 $estimatedMb \u0645\u064a\u062c\u0627\u0628\u0627\u064a\u062a. \u0647\u0644 \u062a\u0631\u064a\u062f \u0627\u0644\u0645\u062a\u0627\u0628\u0639\u0629\u061f',
             'Estimated download size: $estimatedMb MB. Continue?')),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: Text(_t(context, '\u0625\u0644\u063a\u0627\u0621', 'Cancel'))),
-          TextButton(onPressed: () => Navigator.pop(dialogContext, true), child: Text(_t(context, '\u062a\u062d\u0645\u064a\u0644', 'Download'))),
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'expand') _expandText();
+              else if (value == 'collapse') _collapseText();
+              else if (value == 'darkMode') _toggleDarkMode();
+              else if (value == 'focus') _toggleFocusMode();
+              else if (value == 'notes') _toggleNotesPanel();
+              else if (value == 'info') _showInfo();
+              else if (value == 'tajweed') _toggleTajweed();
+              else if (value == 'mute') _toggleMute();
+              else if (value == 'download') _downloadSurah();
+              else if (value == 'range') _toggleRangeMode();
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(value: 'expand', child: Text(isAr ? 'توسيع' : 'Expand')),
+              PopupMenuItem(value: 'collapse', child: Text(isAr ? 'تضييق' : 'Collapse')),
+              PopupMenuItem(value: 'darkMode', child: Text(isAr ? 'وضع ليلي' : 'Dark mode')),
+              PopupMenuItem(value: 'focus', child: Text(isAr ? 'وضع تركيز' : 'Focus')),
+              PopupMenuItem(value: 'notes', child: Text(isAr ? 'الملاحظات' : 'Notes')),
+              PopupMenuItem(value: 'info', child: Text(isAr ? 'معلومات' : 'Info')),
+              PopupMenuItem(value: 'tajweed', child: Text(isAr ? 'تجويد' : 'Tajweed')),
+              PopupMenuItem(value: 'mute', child: Text(isAr ? 'كتم الصوت' : 'Mute')),
+              PopupMenuItem(value: 'download', child: Text(isAr ? 'تحميل' : 'Download')),
+              PopupMenuItem(value: 'range', child: Text(isAr ? 'نطاق' : 'Range')),
+            ],
+            icon: const Icon(Icons.more_vert),
+          ),
         ],
       ),
     );
@@ -294,6 +319,215 @@ class _MushafReaderScreenState extends State<MushafReaderScreen> {
   }
 
   @override
+  void _showReaderOptionsSheet(BuildContext context, SurahModel? surah) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (sheetContext) => SafeArea(
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          children: [
+            ListTile(
+              leading: const Icon(Icons.font_download_outlined),
+              title: Text(_t(context, 'الخط', 'Font')),
+              onTap: () {
+                Navigator.pop(sheetContext);
+                _pickFontDialog();
+              },
+            ),
+            ListTile(
+              leading: Icon(_nightMode ? Icons.nightlight_round : Icons.nightlight_outlined),
+              title: Text(_t(context, 'وضع القراءة الليلية', 'Night reading mode')),
+              trailing: Switch(
+                value: _nightMode,
+                onChanged: (v) {
+                  setState(() => _nightMode = v);
+                  Navigator.pop(sheetContext);
+                },
+              ),
+              onTap: () {
+                setState(() => _nightMode = !_nightMode);
+                Navigator.pop(sheetContext);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.music_note_outlined),
+              title: Text(_t(context, 'الصوت الخلفي', 'Background ambiance')),
+              onTap: () {
+                Navigator.pop(sheetContext);
+                _pickAmbianceDialog();
+              },
+            ),
+            if (_selectedSurah != null)
+              ListTile(
+                leading: Icon(Icons.self_improvement, color: _focusMode ? AppColors.primaryEmerald : null),
+                title: Text(_t(context, 'وضع القراءة الهادئة', 'Calm reading mode')),
+                trailing: Switch(
+                  value: _focusMode,
+                  onChanged: (v) {
+                    setState(() => _focusMode = v);
+                    Navigator.pop(sheetContext);
+                  },
+                ),
+                onTap: () {
+                  setState(() => _focusMode = !_focusMode);
+                  Navigator.pop(sheetContext);
+                },
+              ),
+            if (_selectedSurah != null)
+              ListTile(
+                leading: const Icon(Icons.info_outline),
+                title: Text(_t(context, 'ملخص السورة', 'Surah summary')),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  _showSurahSummary(_selectedSurah!);
+                },
+              ),
+            if (surah != null) ...[
+              ListTile(
+                leading: const Icon(Icons.speed),
+                title: Text(_t(context, 'سرعة التلاوة', 'Playback speed')),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  _pickSpeedDialog();
+                },
+              ),
+              ListTile(
+                leading: Icon(
+                  quranAudio.repeatSurah || quranAudio.repeatCurrent ? Icons.repeat_on_rounded : Icons.repeat_rounded,
+                  color: (quranAudio.repeatSurah || quranAudio.repeatCurrent) ? AppColors.goldAccent : null,
+                ),
+                title: Text(_t(context, 'تكرار', 'Repeat')),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  _showRepeatDialog(forSurah: quranAudio.playingWholeSurah);
+                },
+              ),
+              ListTile(
+                leading: Icon(_sleepMinutesRemaining != null ? Icons.bedtime : Icons.bedtime_outlined),
+                title: Text(_t(context, 'مؤقت النوم', 'Sleep timer')),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  _pickSleepTimerDialog();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.download_outlined),
+                title: Text(_t(context, 'تحميل للاستماع بدون اتصال', 'Download for offline')),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  _downloadSurah(surah);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.linear_scale),
+                title: Text(_t(context, 'تشغيل نطاق آيات', 'Play a verse range')),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  _showRangeDialog(surah);
+                },
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _pickFontDialog() {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: Text(_t(context, 'اختر الخط', 'Choose font')),
+        children: [
+          for (final key in _quranFontFamilies.keys)
+            SimpleDialogOption(
+              onPressed: () {
+                appSettings.setQuranFontFamily(key);
+                Navigator.pop(dialogContext);
+              },
+              child: Row(children: [
+                if (appSettings.quranFontFamily == key) const Icon(Icons.check, size: 18) else const SizedBox(width: 18),
+                const SizedBox(width: 8),
+                Text(key == 'default' ? _t(context, 'افتراضي', 'Default') : key.replaceFirst('Quran', '')),
+              ]),
+            ),
+        ],
+      ),
+    );
+  }
+
+  void _pickAmbianceDialog() {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: Text(_t(context, 'الصوت الخلفي', 'Background ambiance')),
+        children: [
+          for (final option in AmbianceService.ambianceOptions)
+            SimpleDialogOption(
+              onPressed: () async {
+                await AmbianceService.setAmbiance(option);
+                if (mounted) setState(() => _selectedAmbiance = option);
+                if (dialogContext.mounted) Navigator.pop(dialogContext);
+              },
+              child: Row(children: [
+                if (_selectedAmbiance == option) const Icon(Icons.check, size: 18) else const SizedBox(width: 18),
+                const SizedBox(width: 8),
+                Text(option),
+              ]),
+            ),
+        ],
+      ),
+    );
+  }
+
+  void _pickSpeedDialog() {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: Text(_t(context, 'سرعة التلاوة', 'Playback speed')),
+        children: [
+          for (final rate in const [0.5, 0.75, 1.0, 1.25, 1.5, 2.0])
+            SimpleDialogOption(
+              onPressed: () {
+                quranAudio.setSpeed(rate);
+                Navigator.pop(dialogContext);
+              },
+              child: Text(rate == 1.0 ? _t(context, '1.0x (عادي)', '1.0x (normal)') : '${rate}x'),
+            ),
+        ],
+      ),
+    );
+  }
+
+  void _pickSleepTimerDialog() {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: Text(_t(context, 'مؤقت النوم', 'Sleep timer')),
+        children: [
+          if (_sleepMinutesRemaining != null)
+            SimpleDialogOption(
+              onPressed: () {
+                _cancelSleepTimer();
+                Navigator.pop(dialogContext);
+              },
+              child: Text(_t(context, 'إلغاء المؤقت', 'Cancel timer')),
+            ),
+          for (final minutes in const [5, 10, 15, 30])
+            SimpleDialogOption(
+              onPressed: () {
+                _startSleepTimer(minutes);
+                Navigator.pop(dialogContext);
+              },
+              child: Text(_t(context, '$minutes دقيقة', '$minutes minutes')),
+            ),
+        ],
+      ),
+    );
+  }
+
   Widget build(BuildContext context) {
     final surah = _selectedSurah;
     return Scaffold(
@@ -305,101 +539,11 @@ class _MushafReaderScreenState extends State<MushafReaderScreen> {
             ? IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => setState(() => _selectedSurah = null))
             : null,
         actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.font_download_outlined),
-            tooltip: _t(context, '\u0627\u0644\u062e\u0637', 'Font'),
-            onSelected: (family) => appSettings.setQuranFontFamily(family),
-            itemBuilder: (_) => [
-              for (final key in _quranFontFamilies.keys)
-                PopupMenuItem(
-                  value: key,
-                  child: Row(children: [
-                    if (appSettings.quranFontFamily == key) const Icon(Icons.check, size: 18) else const SizedBox(width: 18),
-                    const SizedBox(width: 8),
-                    Text(key == 'default' ? _t(context, '\u0627\u0641\u062a\u0631\u0627\u0636\u064a', 'Default') : key.replaceFirst('Quran', '')),
-                  ]),
-                ),
-            ],
-          ),
           IconButton(
-            icon: Icon(_nightMode ? Icons.nightlight_round : Icons.nightlight_outlined),
-            tooltip: _t(context, '\u0648\u0636\u0639 \u0627\u0644\u0642\u0631\u0627\u0621\u0629 \u0627\u0644\u0644\u064a\u0644\u064a\u0629', 'Night reading mode'),
-            onPressed: () => setState(() => _nightMode = !_nightMode),
+            icon: const Icon(Icons.more_vert),
+            tooltip: _t(context, 'خيارات القراءة', 'Reading options'),
+            onPressed: () => _showReaderOptionsSheet(context, surah),
           ),
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.music_note_outlined),
-            tooltip: _t(context, 'الصوت الخلفي', 'Background ambiance'),
-            onSelected: (value) async {
-              await AmbianceService.setAmbiance(value);
-              if (mounted) setState(() => _selectedAmbiance = value);
-            },
-            itemBuilder: (_) => [
-              for (final option in AmbianceService.ambianceOptions)
-                PopupMenuItem(
-                  value: option,
-                  child: Row(children: [
-                    if (_selectedAmbiance == option) const Icon(Icons.check, size: 18) else const SizedBox(width: 18),
-                    const SizedBox(width: 8),
-                    Text(option),
-                  ]),
-                ),
-            ],
-          ),
-          if (_selectedSurah != null)
-            IconButton(
-              icon: Icon(Icons.self_improvement, color: _focusMode ? AppColors.primaryEmerald : null),
-              tooltip: _t(context, '\u0648\u0636\u0639 \u0627\u0644\u0642\u0631\u0627\u0621\u0629 \u0627\u0644\u0647\u0627\u062f\u0626\u0629', 'Calm reading mode'),
-              onPressed: () => setState(() => _focusMode = !_focusMode),
-            ),
-          if (_selectedSurah != null)
-            IconButton(
-              icon: const Icon(Icons.info_outline),
-              tooltip: _t(context, 'ملخص السورة', 'Surah summary'),
-              onPressed: () => _showSurahSummary(_selectedSurah!),
-            ),
-          if (surah != null) ...[
-            PopupMenuButton<double>(
-              icon: const Icon(Icons.speed),
-              tooltip: _t(context, '\u0633\u0631\u0639\u0629 \u0627\u0644\u062a\u0644\u0627\u0648\u0629', 'Playback speed'),
-              onSelected: (rate) => quranAudio.setSpeed(rate),
-              itemBuilder: (_) => [
-                PopupMenuItem(value: 0.5, child: const Text('0.5x')),
-                PopupMenuItem(value: 0.75, child: const Text('0.75x')),
-                PopupMenuItem(value: 1.0, child: Text(_t(context, '1.0x (\u0639\u0627\u062f\u064a)', '1.0x (normal)'))),
-                PopupMenuItem(value: 1.25, child: const Text('1.25x')),
-                PopupMenuItem(value: 1.5, child: const Text('1.5x')),
-                PopupMenuItem(value: 2.0, child: const Text('2.0x')),
-              ],
-            ),
-            IconButton(
-              icon: Icon(quranAudio.repeatSurah || quranAudio.repeatCurrent ? Icons.repeat_on_rounded : Icons.repeat_rounded,
-                  color: (quranAudio.repeatSurah || quranAudio.repeatCurrent) ? AppColors.goldAccent : null),
-              tooltip: _t(context, '\u062a\u0643\u0631\u0627\u0631', 'Repeat'),
-              onPressed: () => _showRepeatDialog(forSurah: quranAudio.playingWholeSurah),
-            ),
-            PopupMenuButton<int>(
-              icon: Icon(_sleepMinutesRemaining != null ? Icons.bedtime : Icons.bedtime_outlined),
-              tooltip: _t(context, '\u0645\u0624\u0642\u062a \u0627\u0644\u0646\u0648\u0645', 'Sleep timer'),
-              onSelected: (minutes) => minutes == 0 ? _cancelSleepTimer() : _startSleepTimer(minutes),
-              itemBuilder: (_) => [
-                if (_sleepMinutesRemaining != null) PopupMenuItem(value: 0, child: Text(_t(context, '\u0625\u0644\u063a\u0627\u0621 \u0627\u0644\u0645\u0624\u0642\u062a', 'Cancel timer'))),
-                PopupMenuItem(value: 5, child: Text(_t(context, '5 \u062f\u0642\u0627\u0626\u0642', '5 minutes'))),
-                PopupMenuItem(value: 10, child: Text(_t(context, '10 \u062f\u0642\u0627\u0626\u0642', '10 minutes'))),
-                PopupMenuItem(value: 15, child: Text(_t(context, '15 \u062f\u0642\u064a\u0642\u0629', '15 minutes'))),
-                PopupMenuItem(value: 30, child: Text(_t(context, '30 \u062f\u0642\u064a\u0642\u0629', '30 minutes'))),
-              ],
-            ),
-            IconButton(
-              icon: const Icon(Icons.download_outlined),
-              tooltip: _t(context, '\u062a\u062d\u0645\u064a\u0644 \u0644\u0644\u0627\u0633\u062a\u0645\u0627\u0639 \u0628\u062f\u0648\u0646 \u0627\u062a\u0635\u0627\u0644', 'Download for offline'),
-              onPressed: () => _downloadSurah(surah),
-            ),
-            IconButton(
-              icon: const Icon(Icons.linear_scale),
-              tooltip: _t(context, '\u062a\u0634\u063a\u064a\u0644 \u0646\u0637\u0627\u0642 \u0622\u064a\u0627\u062a', 'Play a verse range'),
-              onPressed: () => _showRangeDialog(surah),
-            ),
-          ],
         ],
       ),
       body: _buildBody(surah),

@@ -27,27 +27,29 @@ class NearbyPlacesService {
     required double latitude,
     required double longitude,
     int radiusMeters = 5000,
+    String fallbackName = 'Mosque',
   }) async {
     final query = '[out:json][timeout:20];'
         'node["amenity"="place_of_worship"]["religion"="muslim"]'
         '(around:$radiusMeters,$latitude,$longitude);'
         'out body 40;';
-    return _query(query, latitude, longitude);
+    return _query(query, latitude, longitude, fallbackName);
   }
 
   static Future<List<NearbyPlace>> findHalalRestaurants({
     required double latitude,
     required double longitude,
     int radiusMeters = 5000,
+    String fallbackName = 'Halal Restaurant',
   }) async {
     final query = '[out:json][timeout:20];'
         'node["amenity"="restaurant"]["diet:halal"~"yes|only"]'
         '(around:$radiusMeters,$latitude,$longitude);'
         'out body 40;';
-    return _query(query, latitude, longitude);
+    return _query(query, latitude, longitude, fallbackName);
   }
 
-  static Future<List<NearbyPlace>> _query(String overpassQuery, double lat, double lon) async {
+  static Future<List<NearbyPlace>> _query(String overpassQuery, double lat, double lon, String fallbackName) async {
     try {
       final response = await http
           .post(Uri.parse(_endpoint), body: {'data': overpassQuery})
@@ -68,8 +70,8 @@ class NearbyPlacesService {
         if (placeLat == null || placeLon == null) continue;
 
         final tags = map['tags'] as Map<String, dynamic>? ?? {};
-        final name = tags['name']?.toString() ?? tags['name:ar']?.toString();
-        if (name == null || name.trim().isEmpty) continue; // skip unnamed entries
+        final rawName = tags['name']?.toString() ?? tags['name:ar']?.toString();
+        final name = (rawName == null || rawName.trim().isEmpty) ? fallbackName : rawName;
 
         final addressParts = [
           tags['addr:street']?.toString(),

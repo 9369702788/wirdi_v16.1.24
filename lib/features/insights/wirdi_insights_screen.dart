@@ -420,7 +420,7 @@ class _ActivityBarRow extends StatelessWidget {
         Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
         const SizedBox(height: 6),
         SizedBox(
-          height: 34,
+          height: 50,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: List.generate(week.length, (i) {
@@ -439,6 +439,11 @@ class _ActivityBarRow extends StatelessWidget {
                           color: color.withValues(alpha: isToday ? 1.0 : 0.55),
                           borderRadius: BorderRadius.circular(4),
                         ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        _WirdiInsightsScreenState._dayName(AppLocalizations.of(context), week[i].date.weekday),
+                        style: TextStyle(fontSize: 9, fontWeight: isToday ? FontWeight.w700 : FontWeight.normal, color: AppColors.mutedText),
                       ),
                     ],
                   ),

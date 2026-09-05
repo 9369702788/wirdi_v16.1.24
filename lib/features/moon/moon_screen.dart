@@ -19,8 +19,9 @@ class _MoonScreenState extends State<MoonScreen> {
 
   Future<void> _load() async {
     final now = DateTime.now();
-    final sighting = await MoonSightingService.getMoonSightingInfo();
-    final phases = await MoonPhasesService.getMoonPhasesForMonth(now.month, now.year);
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    final sighting = await MoonSightingService.getMoonSightingInfo(arabic: isAr);
+    final phases = await MoonPhasesService.getMoonPhasesForMonth(now.month, now.year, arabic: isAr);
     if (!mounted) return;
     setState(() { _sighting = sighting; _monthPhases = phases; _loading = false; });
   }

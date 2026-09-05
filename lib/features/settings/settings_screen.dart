@@ -1,12 +1,15 @@
 
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../auth/account_screen.dart';
 import 'theme_selection_screen.dart';
 import 'about_screen.dart';
@@ -45,6 +48,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   DateTime? _azkarCachedAt;
   int _downloadedAudioBytes = 0;
   String _selectedMathhab = 'Hanafi';
+  String? _realAppVersion;
 
   @override
   void initState() {
@@ -53,9 +57,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _loadCacheInfo();
     _loadDownloadedAudioSize();
     _loadMathhab();
+    _loadRealAppVersion();
     _previewPlayer.onPlayerComplete.listen((_) {
       if (mounted) setState(() => _previewingAdhanId = null);
     });
+  }
+
+  Future<void> _loadRealAppVersion() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      if (mounted) setState(() => _realAppVersion = '${info.version}+${info.buildNumber}');
+    } catch (_) {}
   }
 
   Future<void> _loadDownloadedAudioSize() async {
@@ -220,10 +232,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 // during development, confusing/unprofessional for a real
                 // end user to see in Settings. Debug builds only now.
                 child: kDebugMode
-                    ? const Text(
-                        'Merge build: v145-2026-09-02-all-features',
+                    ? Text(
+                        'Build: ${_realAppVersion ?? '...'}',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
                       )
                     : const SizedBox.shrink(),
               ),
@@ -528,6 +540,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           if (value == null) return;
                           setState(() => _selectedMathhab = value);
                           await MathhabService.setMathhab(value);
+                          await PrayerService.clearCache();
+                          unawaited(_rescheduleAllPrayerReminders());
                         },
                       ),
                       const SizedBox(height: 16),
@@ -913,8 +927,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       leading: const Icon(Icons.upload_file_outlined, color: AppColors.mutedText),
                       title: Text(Localizations.localeOf(context).languageCode == 'ar' ? 'تصدير نسخة احتياطية من بياناتي' : 'Export a backup of my data'),
                       onTap: () async {
-                        final json = await appSettings.exportDataAsJson();
-                        await Share.share(json, subject: 'Wirdi Data Backup');
+                        final isAr = Localizations.localeOf(context).languageCode == 'ar';
+                        try {
+                          final json = await appSettings.exportDataAsJson();
+                          final tempDir = await getTemporaryDirectory();
+                          final file = File('${tempDir.path}/wirdi_backup_${DateTime.now().millisecondsSinceEpoch}.json');
+                          await file.writeAsString(json);
+                          if (!mounted) return;
+                          await Share.shareXFiles([XFile(file.path)], subject: 'Wirdi Data Backup');
+                        } catch (e) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(isAr ? 'تعذّر تصدير النسخة الاحتياطية. حاول مرة أخرى.' : 'Could not export backup. Please try again.')),
+                            );
+                          }
+                        }
                       },
                     ),
                     const Divider(height: 1),

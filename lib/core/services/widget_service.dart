@@ -21,6 +21,12 @@ class WidgetService {
   }
 
   static Future<void> updatePrayerTimes(List<PrayerItem> prayers, PrayerItem next) async {
+    // BUGFIX: this update path was missing the widgetLocked check that
+    // updateHadith() already had, so "Lock home-screen widget" appeared
+    // to do nothing -- prayer times (the widget's main, most-frequently
+    // refreshed content) kept overwriting the frozen display regardless
+    // of the setting.
+    if (appSettings.widgetLocked) return;
     try {
       await HomeWidget.saveWidgetData<String>('next_prayer_name', next.name);
       await HomeWidget.saveWidgetData<String>('next_prayer_time', next.timeText);
@@ -31,6 +37,8 @@ class WidgetService {
   }
 
   static Future<void> updateProgress(int pagesToday, int wirdTarget, double khatmaRatio) async {
+    // Same fix as updatePrayerTimes above -- this path also ignored the lock.
+    if (appSettings.widgetLocked) return;
     try {
       final wirdText = wirdTarget == 0 ? '$pagesToday' : '$pagesToday/$wirdTarget';
       final khatmaText = '${(khatmaRatio * 100).round()}%';

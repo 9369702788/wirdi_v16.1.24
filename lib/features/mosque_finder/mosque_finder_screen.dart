@@ -83,9 +83,10 @@ class _MosqueFinderScreenState extends State<MosqueFinderScreen> with SingleTick
         locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
       ).timeout(const Duration(seconds: 15));
 
+      final isAr = Localizations.localeOf(context).languageCode == 'ar';
       final results = await Future.wait([
-        NearbyPlacesService.findMosques(latitude: position.latitude, longitude: position.longitude),
-        NearbyPlacesService.findHalalRestaurants(latitude: position.latitude, longitude: position.longitude),
+        NearbyPlacesService.findMosques(latitude: position.latitude, longitude: position.longitude, fallbackName: isAr ? 'مسجد' : 'Mosque'),
+        NearbyPlacesService.findHalalRestaurants(latitude: position.latitude, longitude: position.longitude, fallbackName: isAr ? 'مطعم حلال' : 'Halal Restaurant'),
       ]);
 
       setState(() {

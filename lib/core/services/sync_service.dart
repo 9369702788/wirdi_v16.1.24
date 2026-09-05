@@ -231,6 +231,7 @@ class SyncService {
           'wirdStreak': prefs.getInt('wird_streak') ?? 0,
           'wirdStreakLastDay': prefs.getString('wird_streak_last_day'),
           'wirdLongestStreak': prefs.getInt('wird_longest_streak') ?? 0,
+          'congregationLifetimeTotal': prefs.getInt('congregation_lifetime_total') ?? 0,
           'wirdPagesByDate': wirdPagesByDate,
           'azkarCompletedByDate': azkarCompletedByDate,
           'tasbeehDailyByDate': tasbeehDailyByDate,
@@ -240,9 +241,16 @@ class SyncService {
         }, SetOptions(merge: true));
       }, failures);
 
-      for (final e in {'bookmarks': 'advanced_bookmarks_v1', 'khatma': 'khatma_plans_v2_json', 'tasbeeh_custom': 'tasbeeh_custom_phrases_v1', 'my_duas': 'my_duas_v1'}.entries) {
+      for (final e in {'bookmarks': 'advanced_bookmarks_v1', 'khatma': 'khatma_plans_v2_json', 'tasbeeh_custom': 'tasbeeh_custom_phrases_v1', 'my_duas': 'my_duas_v1', 'custom_azkar': 'custom_azkar_items_v1', 'sadaqah': 'sadaqah_entries_v1', 'qada': 'qada_counts_v1'}.entries) {
         await _runIsolated(e.key, () async {
           final val = prefs.getString(e.value);
+          if (val != null) await _doc(e.key).set({'data': val, 'updatedAt': now}, SetOptions(merge: true));
+        }, failures);
+      }
+
+      for (final e in {'muhasabah': 'muhasabah_entries_v1', 'recitation_mistakes': 'recitation_mistakes_v1'}.entries) {
+        await _runIsolated(e.key, () async {
+          final val = prefs.getStringList(e.value);
           if (val != null) await _doc(e.key).set({'data': val, 'updatedAt': now}, SetOptions(merge: true));
         }, failures);
       }
@@ -348,6 +356,7 @@ class SyncService {
           if (d['wirdStreak'] != null) await prefs.setInt('wird_streak', _asInt(d['wirdStreak']));
           if (d['wirdStreakLastDay'] is String) await prefs.setString('wird_streak_last_day', d['wirdStreakLastDay']);
           if (d['wirdLongestStreak'] != null) await prefs.setInt('wird_longest_streak', _asInt(d['wirdLongestStreak']));
+          if (d['congregationLifetimeTotal'] != null) await prefs.setInt('congregation_lifetime_total', _asInt(d['congregationLifetimeTotal']));
           final wirdPagesByDate = (d['wirdPagesByDate'] as Map<String, dynamic>?) ?? {};
           for (final e in wirdPagesByDate.entries) {
             await prefs.setInt('wird_pages_' + e.key, _asInt(e.value));
@@ -371,10 +380,17 @@ class SyncService {
         }
       }, failures);
 
-      for (final e in {'bookmarks': 'advanced_bookmarks_v1', 'khatma': 'khatma_plans_v2_json', 'tasbeeh_custom': 'tasbeeh_custom_phrases_v1', 'my_duas': 'my_duas_v1'}.entries) {
+      for (final e in {'bookmarks': 'advanced_bookmarks_v1', 'khatma': 'khatma_plans_v2_json', 'tasbeeh_custom': 'tasbeeh_custom_phrases_v1', 'my_duas': 'my_duas_v1', 'custom_azkar': 'custom_azkar_items_v1', 'sadaqah': 'sadaqah_entries_v1', 'qada': 'qada_counts_v1'}.entries) {
         await _runIsolated(e.key, () async {
           final doc = await _doc(e.key).get();
           if (doc.exists && doc.data()!['data'] != null) await prefs.setString(e.value, doc.data()!['data']);
+        }, failures);
+      }
+
+      for (final e in {'muhasabah': 'muhasabah_entries_v1', 'recitation_mistakes': 'recitation_mistakes_v1'}.entries) {
+        await _runIsolated(e.key, () async {
+          final doc = await _doc(e.key).get();
+          if (doc.exists && doc.data()!['data'] != null) await prefs.setStringList(e.value, List<String>.from(doc.data()!['data']));
         }, failures);
       }
 

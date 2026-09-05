@@ -23,8 +23,8 @@ class IslamicHistoryScreen extends StatelessWidget {
               backgroundColor: AppColors.primaryEmerald.withValues(alpha: 0.1),
               child: Text('${e.year}', style: TextStyle(fontSize: 10, color: AppColors.primaryEmerald)),
             ),
-            title: Text(e.event, style: const TextStyle(fontWeight: FontWeight.w700)),
-            subtitle: Text('${e.description}\n${e.yearAH}', style: const TextStyle(fontSize: 12, color: AppColors.mutedText)),
+            title: Text(isAr ? e.eventAr : e.event, style: const TextStyle(fontWeight: FontWeight.w700)),
+            subtitle: Text('${isAr ? e.descriptionAr : e.description}\n${e.yearAH}', style: const TextStyle(fontSize: 12, color: AppColors.mutedText)),
             isThreeLine: true,
           );
         },

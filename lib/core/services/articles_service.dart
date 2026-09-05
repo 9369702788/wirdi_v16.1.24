@@ -2,18 +2,17 @@
 class IslamicArticle {
   final String id;
   final String title;
+  final String titleAr;
   final String content;
+  final String contentAr;
   final String author;
   final String category;
   final String publishDate;
-  
+
   const IslamicArticle({
-    required this.id,
-    required this.title,
-    required this.content,
-    required this.author,
-    required this.category,
-    required this.publishDate,
+    required this.id, required this.title, required this.titleAr,
+    required this.content, required this.contentAr,
+    required this.author, required this.category, required this.publishDate,
   });
 }
 
@@ -22,21 +21,29 @@ class ArticlesService {
     IslamicArticle(
       id: '1',
       title: 'Understanding Tawheed',
-      content: 'Tawheed is the foundation of Islamic belief...',
-      author: 'Islamic Scholar',
-      category: 'Aqeedah',
-      publishDate: '2024-01-01',
+      titleAr: 'فهم التوحيد',
+      content: 'Tawheed -- the oneness of Allah -- is the foundation of Islamic belief. It means affirming that Allah alone is the Creator, the Sustainer, and the only one deserving of worship, without any partner or equal. Tawheed is traditionally divided into three parts: Tawheed al-Rububiyyah (belief that Allah alone creates, owns, and controls all affairs), Tawheed al-Uluhiyyah (directing all acts of worship -- prayer, supplication, reliance -- to Allah alone), and Tawheed al-Asma was-Sifat (affirming Allah\'s names and attributes as He described Himself, without distortion or resemblance to creation). Every other principle of Islamic belief rests on this foundation.',
+      contentAr: 'التوحيد هو أساس العقيدة الإسلامية، ويعني إفراد الله عز وجل بالخلق والملك والتدبير، وإفراده وحده بالعبادة دون شريك. وينقسم التوحيد عند أهل العلم إلى ثلاثة أقسام: توحيد الربوبية (الإيمان بأن الله وحده هو الخالق المالك المدبر لكل شيء)، وتوحيد الألوهية (إفراد الله وحده بجميع أنواع العبادة كالصلاة والدعاء والتوكل)، وتوحيد الأسماء والصفات (إثبات ما وصف الله به نفسه من أسماء وصفات من غير تحريف ولا تمثيل). وعلى هذا الأساس تُبنى سائر أصول الاعتقاد.',
+      author: 'Islamic Scholar', category: 'Aqeedah', publishDate: '2024-01-01',
     ),
     IslamicArticle(
       id: '2',
       title: 'The Importance of Salah',
-      content: 'Prayer is the pillar of Islam...',
-      author: 'Islamic Scholar',
-      category: 'Ibadah',
-      publishDate: '2024-01-02',
+      titleAr: 'أهمية الصلاة',
+      content: 'Prayer (Salah) is the second pillar of Islam and the first matter for which a person will be held accountable on the Day of Judgment. It is a direct link between the servant and their Lord, performed five times daily, and serves as a constant reminder of Allah throughout a Muslim\'s day. The Prophet (peace be upon him) described it as the pillar of the religion, saying that whoever establishes it has established the religion, and whoever abandons it has destroyed the religion. Beyond its spiritual reward, Salah instills discipline, humility, and mindfulness in daily life.',
+      contentAr: 'الصلاة هي الركن الثاني من أركان الإسلام، وهي أول ما يُحاسب عليه العبد يوم القيامة. وهي صلة مباشرة بين العبد وربه، تؤدى خمس مرات في اليوم والليلة، وتُذكّر المسلم بربه في كل وقت من يومه. وقد وصفها النبي صلى الله عليه وسلم بأنها عماد الدين، فقال: من أقامها فقد أقام الدين، ومن هدمها فقد هدم الدين. وفوق أجرها العظيم، فإن الصلاة تغرس في المسلم الانضباط والخشوع واستحضار مراقبة الله في حياته اليومية.',
+      author: 'Islamic Scholar', category: 'Ibadah', publishDate: '2024-01-02',
+    ),
+    IslamicArticle(
+      id: '3',
+      title: 'Good Character (Akhlaq) in Islam',
+      titleAr: 'الأخلاق في الإسلام',
+      content: 'Islam places immense weight on good character, considering it a core purpose of the Prophet\'s mission. The Prophet (peace be upon him) said: "I was only sent to perfect good character." Honesty, kindness, patience, humility, and fulfilling trusts are not secondary matters in Islam -- they are integral to faith itself, so much so that the Prophet described the believer with the most complete faith as the one with the best character. Good character extends to how a Muslim treats family, neighbors, strangers, and even animals.',
+      contentAr: 'يولي الإسلام اهتمامًا عظيمًا بحسن الخلق، ويعتبره من صميم مقاصد الرسالة النبوية، حيث قال النبي صلى الله عليه وسلم: إنما بُعثت لأتمم مكارم الأخلاق. فالصدق والرفق والصبر والتواضع وأداء الأمانة ليست أمورًا هامشية في الإسلام، بل هي جزء أصيل من الإيمان نفسه، حتى قال النبي صلى الله عليه وسلم: أكمل المؤمنين إيمانًا أحسنهم خلقًا. ويمتد حسن الخلق ليشمل معاملة المسلم لأهله وجيرانه وحتى الحيوان.',
+      author: 'Islamic Scholar', category: 'Akhlaq', publishDate: '2024-01-03',
     ),
   ];
-  
+
   static Future<List<IslamicArticle>> getArticlesByCategory(String category) async {
     return articles.where((a) => a.category == category).toList();
   }

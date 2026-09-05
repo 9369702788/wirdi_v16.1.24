@@ -56,7 +56,7 @@ class _HadithCollectionScreenState extends State<HadithCollectionScreen> {
 
   void _copyHadith(HadithModel hadith) {
     final l10n = AppLocalizations.of(context);
-    Clipboard.setData(ClipboardData(text: '${hadith.arabicText}\n\n${hadith.translatedText}'));
+    Clipboard.setData(ClipboardData(text: hadith.translatedText.isEmpty ? hadith.arabicText : '${hadith.arabicText}\n\n${hadith.translatedText}'));
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.hadithCopiedSnackbar)));
   }
 
@@ -177,11 +177,13 @@ class _HadithCollectionScreenState extends State<HadithCollectionScreen> {
                                     textAlign: TextAlign.right,
                                     style: const TextStyle(fontFamily: 'AmiriQuran', fontSize: 18, height: 1.9),
                                   ),
-                                  const Divider(height: 24),
-                                  Text(
-                                    hadith.translatedText,
-                                    style: const TextStyle(fontSize: 14, height: 1.6),
-                                  ),
+                                  if (hadith.translatedText.isNotEmpty) ...[
+                                    const Divider(height: 24),
+                                    Text(
+                                      hadith.translatedText,
+                                      style: const TextStyle(fontSize: 14, height: 1.6),
+                                    ),
+                                  ],
                                   const SizedBox(height: 8),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
@@ -198,7 +200,7 @@ class _HadithCollectionScreenState extends State<HadithCollectionScreen> {
                                           MaterialPageRoute(
                                             builder: (_) => ShareableTextCardScreen(
                                               mainText: hadith.arabicText,
-                                              subText: hadith.translatedText,
+                                              subText: hadith.translatedText.isEmpty ? null : hadith.translatedText,
                                               referenceLabel: Localizations.localeOf(context).languageCode == 'ar' ? 'حديث رقم ${hadith.number}' : 'Hadith ${hadith.number}',
                                               pageTitle: Localizations.localeOf(context).languageCode == 'ar' ? 'مشاركة حديث' : 'Share Hadith',
                                             ),

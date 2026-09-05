@@ -86,9 +86,17 @@ class _KhatmaCalendarScreenState extends State<KhatmaCalendarScreen> {
     });
   }
 
+  static const List<String> _monthNamesAr = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  static const List<String> _monthNamesEn = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  String _monthYearLabel(DateTime date, bool isAr) {
+    final names = isAr ? _monthNamesAr : _monthNamesEn;
+    return '${names[date.month - 1]} ${date.year}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final today = DateTime.now();
     final todayKey = DateTime(today.year, today.month, today.day);
 
@@ -100,8 +108,13 @@ class _KhatmaCalendarScreenState extends State<KhatmaCalendarScreen> {
               onRefresh: _load,
               child: ListView(padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + MediaQuery.of(context).padding.bottom),
                 children: [
-                  for (final week in _weeks) ...[
-                    _WeekRow(week: week, today: todayKey),
+                  for (var i = 0; i < _weeks.length; i++) ...[
+                    if (_weeks[i].isNotEmpty && (i == 0 || _weeks[i].first.date.month != _weeks[i - 1].first.date.month))
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(_monthYearLabel(_weeks[i].first.date, isAr), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+                      ),
+                    _WeekRow(week: _weeks[i], today: todayKey),
                     const SizedBox(height: 8),
                   ],
                   const SizedBox(height: 12),

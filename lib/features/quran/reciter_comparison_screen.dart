@@ -97,7 +97,7 @@ class _ReciterComparisonScreenState extends State<ReciterComparisonScreen> {
     final isAr = l10n.localeName == 'ar';
     final languageCode = Localizations.localeOf(context).languageCode;
     return Scaffold(
-      appBar: AppBar(title: Text(isAr ? 'مقارنة القراء' : 'Reciter Comparison'), centerTitle: true),
+      appBar: AppBar(title: Text(isAr ? 'معلومات عن القراء' : 'Reciter Info'), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(

@@ -8,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import '../../core/services/qibla_service.dart';
 import '../../core/theme/app_theme.dart';
 import '../../l10n/generated/app_localizations.dart';
+import 'qibla_camera_screen.dart';
 
 enum _QiblaStatus { loading, locationServiceDisabled, permissionDenied, error, ready }
 
@@ -98,7 +99,17 @@ class _QiblaScreenState extends State<QiblaScreen> {
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.qiblaTitle), centerTitle: true),
+      appBar: AppBar(
+        title: Text(l10n.qiblaTitle),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.camera_alt_outlined),
+            tooltip: Localizations.localeOf(context).languageCode == 'ar' ? 'القبلة بالكاميرا' : 'Camera Qibla',
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const QiblaCameraScreen())),
+          ),
+        ],
+      ),
       body: _buildBody(l10n),
     );
   }

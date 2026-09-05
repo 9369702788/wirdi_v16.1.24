@@ -193,7 +193,7 @@ class _RamadanCompanionScreenState extends State<RamadanCompanionScreen> {
               : ListView(padding: EdgeInsets.fromLTRB(20, 20, 20, 20 + MediaQuery.of(context).padding.bottom),
                   children: [
                     Text(
-                      isRamadan ? l10n.ramadanDayOfRamadan(hijri.day) : hijri.toString(),
+                      isRamadan ? l10n.ramadanDayOfRamadan(hijri.day) : hijri.toStringLocalized(Localizations.localeOf(context).languageCode),
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                     ),

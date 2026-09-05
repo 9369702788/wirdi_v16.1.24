@@ -101,7 +101,7 @@ class _MemorizationGameScreenState extends State<MemorizationGameScreen> {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Scaffold(
       appBar: AppBar(
-        title: Text(isAr ? 'لعبة الحفظ' : 'Memorization Game'),
+        title: Text(isAr ? 'اختبار الحفظ' : 'Memorization Test'),
         centerTitle: true,
         actions: [
           Padding(

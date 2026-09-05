@@ -48,7 +48,7 @@ class _FatwaScreenState extends State<FatwaScreen> {
                   children: [
                     Padding(padding: const EdgeInsets.only(right: 8), child: ChoiceChip(label: Text(isAr ? 'الكل' : 'All'), selected: _filterCategory == null, onSelected: (_) => setState(() => _filterCategory = null))),
                     for (final cat in FatwaService.categories)
-                      Padding(padding: const EdgeInsets.only(right: 8), child: ChoiceChip(label: Text(cat), selected: _filterCategory == cat, onSelected: (_) => setState(() => _filterCategory = cat))),
+                      Padding(padding: const EdgeInsets.only(right: 8), child: ChoiceChip(label: Text(isAr ? _rulings.firstWhere((r) => r.category == cat, orElse: () => _rulings.first).categoryAr : cat), selected: _filterCategory == cat, onSelected: (_) => setState(() => _filterCategory = cat))),
                   ],
                 ),
               ),
@@ -63,11 +63,11 @@ class _FatwaScreenState extends State<FatwaScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(14),
                         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Chip(label: Text(r.category, style: const TextStyle(fontSize: 11)), visualDensity: VisualDensity.compact),
+                          Chip(label: Text(isAr ? r.categoryAr : r.category, style: const TextStyle(fontSize: 11)), visualDensity: VisualDensity.compact),
                           const SizedBox(height: 8),
-                          Text(r.question, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                          Text(isAr ? r.questionAr : r.question, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
                           const SizedBox(height: 8),
-                          Text(r.answer, style: const TextStyle(fontSize: 13, height: 1.5)),
+                          Text(isAr ? r.answerAr : r.answer, style: const TextStyle(fontSize: 13, height: 1.5)),
                           const SizedBox(height: 8),
                           Text('${r.scholar} \u2022 ${r.source}', style: const TextStyle(fontSize: 11, color: AppColors.mutedText)),
                         ]),

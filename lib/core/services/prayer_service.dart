@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../data/app_sources.dart';
 import '../models/prayer_models.dart';
 import 'app_logger.dart';
+import 'mathhab_service.dart';
 import 'settings_service.dart';
 
 // The AlAdhan API's own field names ('Fajr', 'Dhuhr', ...) are used as
@@ -54,6 +55,11 @@ class PrayerService {
 
   /// Throws a [PrayerAvailability] (not an Exception) on failure so the
   /// UI can render an exact, real reason rather than a generic message.
+  static Future<int> _schoolFromMathhab() async {
+    final mathhab = await MathhabService.getMathhab();
+    return mathhab == 'Hanafi' ? 1 : 0;
+  }
+
   static Future<PrayerTimesResult> fetchPrayerTimes() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
@@ -87,6 +93,7 @@ class PrayerService {
         latitude: position.latitude,
         longitude: position.longitude,
         method: appSettings.prayerCalcMethod,
+        school: await _schoolFromMathhab(),
       );
 
       final response =
@@ -131,7 +138,7 @@ class PrayerService {
     }
 
     try {
-      final url = AppSources.prayerTimesByAddressUrl(trimmed, method: appSettings.prayerCalcMethod);
+      final url = AppSources.prayerTimesByAddressUrl(trimmed, method: appSettings.prayerCalcMethod, school: await _schoolFromMathhab());
       final response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 15));
 
       if (response.statusCode != 200) {
@@ -298,7 +305,7 @@ class PrayerService {
       if (mode == 'manual') {
         final city = await savedManualCity();
         if (city == null || city.isEmpty) return null;
-        final url = AppSources.prayerTimesByAddressUrl(city, date: tomorrow, method: appSettings.prayerCalcMethod);
+        final url = AppSources.prayerTimesByAddressUrl(city, date: tomorrow, method: appSettings.prayerCalcMethod, school: await _schoolFromMathhab());
         final response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 15));
         if (response.statusCode != 200) return null;
         final decoded = jsonDecode(utf8.decode(response.bodyBytes));
@@ -311,7 +318,7 @@ class PrayerService {
       final lon = prefs.getDouble(_cacheLonKey);
       if (lat == null || lon == null) return null;
 
-      final url = AppSources.prayerTimesUrl(latitude: lat, longitude: lon, date: tomorrow, method: appSettings.prayerCalcMethod);
+      final url = AppSources.prayerTimesUrl(latitude: lat, longitude: lon, date: tomorrow, method: appSettings.prayerCalcMethod, school: await _schoolFromMathhab());
       final response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 15));
       if (response.statusCode != 200) return null;
       final decoded = jsonDecode(utf8.decode(response.bodyBytes));

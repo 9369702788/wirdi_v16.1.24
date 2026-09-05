@@ -34,6 +34,8 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
   Timer? _timer;
   Set<String> _prayedToday = {};
   String? _remindedForPrayer; // avoids re-firing the reminder every second
+  WeatherData? _weather;
+  SunTimes? _sunTimes;
   final AudioPlayer _adhanPlayer = AudioPlayer();
 
   @override
@@ -74,6 +76,7 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
         _loading = false;
       });
       _startCountdown();
+      unawaited(_loadWeatherAndSun());
       if (mounted) {
         unawaited(PrayerNotificationScheduler.rescheduleFromResult(context, result));
       }
@@ -89,6 +92,22 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
       });
     }
   }
+
+  Future<void> _loadWeatherAndSun() async {
+    try {
+      final w = await WeatherService.getWeatherAtPrayerTime('now');
+      if (mounted) setState(() => _weather = w);
+    } catch (_) {}
+    try {
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.low),
+      ).timeout(const Duration(seconds: 10));
+      final sun = SunriseSunsetCalculator.calculate(position.latitude, position.longitude, DateTime.now());
+      if (mounted) setState(() => _sunTimes = sun);
+    } catch (_) {}
+  }
+
+  String _fmtTime(DateTime d) => '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
 
   Future<void> _useGpsLocation() async {
     setState(() => _loading = true);
@@ -338,60 +357,84 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
             icon: const Icon(Icons.tune),
           ),
           IconButton(onPressed: _load, icon: const Icon(Icons.refresh), tooltip: l10n.prayerRefresh),
-          IconButton(
-            icon: const Icon(Icons.bar_chart_outlined),
-            tooltip: 'Prayer chart',
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PrayerChartScreen())),
-          ),
-          IconButton(
-            icon: const Icon(Icons.wb_sunny_outlined),
-            tooltip: 'Weather',
-            onPressed: () async {
-              try {
-                final w = await WeatherService.getWeatherAtPrayerTime('now');
-                if (!context.mounted) return;
-                showDialog<void>(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    title: const Text('Weather'),
-                    content: Text('${w.temperature} -- ${w.condition}\nHumidity: ${w.humidity}, Wind: ${w.windSpeed}'),
-                    actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
-                  ),
-                );
-              } catch (e) {
-                if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Could not load weather right now')),
-                );
+          PopupMenuButton<String>(
+            tooltip: l10n.navMore,
+            icon: const Icon(Icons.more_vert),
+            onSelected: (value) {
+              if (value == 'chart') {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const PrayerChartScreen()));
+              } else if (value == 'weather') {
+                () async {
+                  try {
+                    final w = await WeatherService.getWeatherAtPrayerTime('now');
+                    if (!context.mounted) return;
+                    showDialog<void>(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: const Text('Weather'),
+                        content: Text('${w.temperature} -- ${w.condition}\nHumidity: ${w.humidity}, Wind: ${w.windSpeed}'),
+                        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                      ),
+                    );
+                  } catch (e) {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Could not load weather right now')),
+                    );
+                  }
+                }();
+              } else if (value == 'sun') {
+                () async {
+                  try {
+                    final position = await Geolocator.getCurrentPosition(
+                      locationSettings: const LocationSettings(accuracy: LocationAccuracy.low),
+                    ).timeout(const Duration(seconds: 10));
+                    final sun = SunriseSunsetCalculator.calculate(position.latitude, position.longitude, DateTime.now());
+                    if (!context.mounted) return;
+                    String fmt(DateTime d) => '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
+                    showDialog<void>(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: const Text('Sunrise / Sunset'),
+                        content: Text('Sunrise: ${fmt(sun.sunrise)}\nSunset: ${fmt(sun.sunset)}'),
+                        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                      ),
+                    );
+                  } catch (e) {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Could not calculate sunrise/sunset right now')),
+                    );
+                  }
+                }();
               }
             },
-          ),
-          IconButton(
-            icon: const Icon(Icons.wb_twilight),
-            tooltip: 'Sunrise/Sunset',
-            onPressed: () async {
-              try {
-                final position = await Geolocator.getCurrentPosition(
-                  locationSettings: const LocationSettings(accuracy: LocationAccuracy.low),
-                ).timeout(const Duration(seconds: 10));
-                final sun = SunriseSunsetCalculator.calculate(position.latitude, position.longitude, DateTime.now());
-                if (!context.mounted) return;
-                String fmt(DateTime d) => '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
-                showDialog<void>(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    title: const Text('Sunrise / Sunset'),
-                    content: Text('Sunrise: ${fmt(sun.sunrise)}\nSunset: ${fmt(sun.sunset)}'),
-                    actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
-                  ),
-                );
-              } catch (e) {
-                if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Could not calculate sunrise/sunset right now')),
-                );
-              }
-            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'chart',
+                child: Row(children: [
+                  const Icon(Icons.bar_chart_outlined, size: 20),
+                  const SizedBox(width: 10),
+                  const Text('Prayer chart'),
+                ]),
+              ),
+              PopupMenuItem(
+                value: 'weather',
+                child: Row(children: [
+                  const Icon(Icons.wb_sunny_outlined, size: 20),
+                  const SizedBox(width: 10),
+                  const Text('Weather'),
+                ]),
+              ),
+              PopupMenuItem(
+                value: 'sun',
+                child: Row(children: [
+                  const Icon(Icons.wb_twilight, size: 20),
+                  const SizedBox(width: 10),
+                  const Text('Sunrise/Sunset'),
+                ]),
+              ),
+            ],
           ),
         ],
       ),
@@ -447,6 +490,37 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
                 Text(_countdown, style: TextStyle(color: AppColors.goldAccent, fontSize: 24, fontWeight: FontWeight.w700, letterSpacing: 1.5)),
                 const SizedBox(height: 6),
                 Text(l10n.prayerTimeRemaining, style: const TextStyle(color: Colors.white70)),
+                if (_weather != null || _sunTimes != null) ...[
+                  const SizedBox(height: 18),
+                  Container(height: 1, color: Colors.white24),
+                  const SizedBox(height: 14),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      if (_weather != null)
+                        Column(children: [
+                          const Icon(Icons.wb_sunny_outlined, color: Colors.white70, size: 18),
+                          const SizedBox(height: 4),
+                          Text(_weather!.temperature, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+                          Text(_weather!.condition, style: const TextStyle(color: Colors.white70, fontSize: 11)),
+                        ]),
+                      if (_sunTimes != null) ...[
+                        Column(children: [
+                          const Icon(Icons.wb_twilight, color: Colors.white70, size: 18),
+                          const SizedBox(height: 4),
+                          Text(_fmtTime(_sunTimes!.sunrise), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+                          Text(Localizations.localeOf(context).languageCode == 'ar' ? 'الشروق' : 'Sunrise', style: const TextStyle(color: Colors.white70, fontSize: 11)),
+                        ]),
+                        Column(children: [
+                          const Icon(Icons.nights_stay_outlined, color: Colors.white70, size: 18),
+                          const SizedBox(height: 4),
+                          Text(_fmtTime(_sunTimes!.sunset), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+                          Text(Localizations.localeOf(context).languageCode == 'ar' ? 'الغروب' : 'Sunset', style: const TextStyle(color: Colors.white70, fontSize: 11)),
+                        ]),
+                      ],
+                    ],
+                  ),
+                ],
               ],
             ),
           ),

@@ -94,7 +94,7 @@ class HadithRepository {
         .map((n) => HadithModel(
               number: n,
               arabicText: arabicByNumber[n] ?? '',
-              translatedText: translationByNumber[n] ?? arabicByNumber[n] ?? '',
+              translatedText: (translationByNumber[n] != null && translationByNumber[n] != arabicByNumber[n]) ? translationByNumber[n]! : '',
             ))
         .where((h) => h.arabicText.isNotEmpty || h.translatedText.isNotEmpty)
         .toList();

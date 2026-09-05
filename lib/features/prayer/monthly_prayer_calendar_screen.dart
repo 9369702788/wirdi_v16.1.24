@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import '../../core/theme/app_theme.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -76,14 +77,21 @@ class _MonthlyPrayerCalendarScreenState extends State<MonthlyPrayerCalendarScree
                       const DataColumn(label: Text('Maghrib')),
                       const DataColumn(label: Text('Isha')),
                     ],
-                    rows: (_days ?? []).map((d) => DataRow(cells: [
-                          DataCell(Text('${d['day']}')),
-                          DataCell(Text('${d['fajr']}')),
-                          DataCell(Text('${d['dhuhr']}')),
-                          DataCell(Text('${d['asr']}')),
-                          DataCell(Text('${d['maghrib']}')),
-                          DataCell(Text('${d['isha']}')),
-                        ])).toList(),
+                    rows: (_days ?? []).map((d) {
+                          final isToday = d['day'] == DateTime.now().day;
+                          final cellStyle = isToday ? const TextStyle(fontWeight: FontWeight.bold) : null;
+                          return DataRow(
+                            color: isToday ? WidgetStateProperty.all(AppColors.primaryEmerald.withValues(alpha: 0.15)) : null,
+                            cells: [
+                              DataCell(Text('${d['day']}', style: cellStyle)),
+                              DataCell(Text('${d['fajr']}', style: cellStyle)),
+                              DataCell(Text('${d['dhuhr']}', style: cellStyle)),
+                              DataCell(Text('${d['asr']}', style: cellStyle)),
+                              DataCell(Text('${d['maghrib']}', style: cellStyle)),
+                              DataCell(Text('${d['isha']}', style: cellStyle)),
+                            ],
+                          );
+                        }).toList(),
                   ),
                 ),
     );

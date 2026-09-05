@@ -43,17 +43,29 @@ class _PrayerChartScreenState extends State<PrayerChartScreen> {
   }
 
   Widget _buildChart(PrayerTimesResult result) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final prayers = result.prayers;
     if (prayers.isEmpty) return const SizedBox.shrink();
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
+        Text(
+          isAr
+              ? 'يمثل طول كل شريط المدة الزمنية من هذه الصلاة حتى الصلاة التالية'
+              : 'Each bar\'s length represents the time from that prayer until the next one',
+          style: const TextStyle(fontSize: 12, color: AppColors.mutedText),
+        ),
+        const SizedBox(height: 12),
         SizedBox(
           height: 40,
           child: Row(children: [
             for (var i = 0; i < prayers.length; i++)
               Expanded(
-                flex: i == prayers.length - 1 ? 1 : prayers[i + 1].dateTime.difference(prayers[i].dateTime).inMinutes.clamp(1, 1 << 30),
+                flex: (i == prayers.length - 1
+                        ? prayers.first.dateTime.add(const Duration(days: 1)).difference(prayers[i].dateTime)
+                        : prayers[i + 1].dateTime.difference(prayers[i].dateTime))
+                    .inMinutes
+                    .clamp(1, 1 << 30),
                 child: Container(margin: const EdgeInsets.symmetric(horizontal: 1), decoration: BoxDecoration(color: _colors[i % _colors.length], borderRadius: BorderRadius.circular(4))),
               ),
           ]),

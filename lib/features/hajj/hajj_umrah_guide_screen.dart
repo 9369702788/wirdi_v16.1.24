@@ -27,8 +27,8 @@ class HajjUmrahGuideScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final entry = steps[index];
           final data = entry.value as Map<String, dynamic>;
-          final duas = (data['duas'] as List<dynamic>?)?.cast<String>() ?? const <String>[];
-          final name = entry.key.isEmpty ? entry.key : (entry.key[0].toUpperCase() + entry.key.substring(1));
+          final duas = ((isAr ? data['duasAr'] : data['duas']) as List<dynamic>?)?.cast<String>() ?? const <String>[];
+          final name = isAr ? (data['nameAr'] as String? ?? entry.key) : (entry.key.isEmpty ? entry.key : (entry.key[0].toUpperCase() + entry.key.substring(1)));
           return Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -49,7 +49,7 @@ class HajjUmrahGuideScreen extends StatelessWidget {
                       children: [
                         Text(name, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
                         const SizedBox(height: 4),
-                        Text('${data['description']}', style: const TextStyle(fontSize: 13)),
+                        Text(isAr ? (data['descriptionAr'] as String? ?? '${data['description']}') : '${data['description']}', style: const TextStyle(fontSize: 13)),
                         if (duas.isNotEmpty) ...[
                           const SizedBox(height: 8),
                           for (final d in duas)

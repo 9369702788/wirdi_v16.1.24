@@ -1006,25 +1006,54 @@ class _SurahReaderScreenState extends State<SurahReaderScreen> {
             onPressed: _openMushafView,
             icon: const Icon(Icons.import_contacts_outlined),
           ),
-          IconButton(
-            tooltip: l10n.quranChooseReciterTooltip(Reciters.byId(appSettings.reciterId).displayNameFor(languageCode)),
-            onPressed: _pickReciter,
-            icon: const Icon(Icons.record_voice_over_outlined),
-          ),
-          IconButton(
-            tooltip: l10n.quranDecreaseFontTooltip,
-            onPressed: () => setState(() => _fontScale = (_fontScale - 0.1).clamp(0.7, 1.6)),
-            icon: const Icon(Icons.text_decrease),
-          ),
-          IconButton(
-            tooltip: l10n.quranIncreaseFontTooltip,
-            onPressed: () => setState(() => _fontScale = (_fontScale + 0.1).clamp(0.7, 1.6)),
-            icon: const Icon(Icons.text_increase),
-          ),
-          IconButton(
-            tooltip: l10n.quranAddToWirdTooltip,
-            onPressed: _markSurahReadToday,
-            icon: const Icon(Icons.playlist_add_check),
+          PopupMenuButton<String>(
+            tooltip: l10n.navMore,
+            icon: const Icon(Icons.more_vert),
+            onSelected: (value) {
+              if (value == 'reciter') {
+                _pickReciter();
+              } else if (value == 'fontDec') {
+                setState(() => _fontScale = (_fontScale - 0.1).clamp(0.7, 1.6));
+              } else if (value == 'fontInc') {
+                setState(() => _fontScale = (_fontScale + 0.1).clamp(0.7, 1.6));
+              } else if (value == 'wird') {
+                _markSurahReadToday();
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'reciter',
+                child: Row(children: [
+                  const Icon(Icons.record_voice_over_outlined, size: 20),
+                  const SizedBox(width: 10),
+                  Flexible(child: Text(l10n.quranChooseReciterTooltip(Reciters.byId(appSettings.reciterId).displayNameFor(languageCode)))),
+                ]),
+              ),
+              PopupMenuItem(
+                value: 'fontDec',
+                child: Row(children: [
+                  const Icon(Icons.text_decrease, size: 20),
+                  const SizedBox(width: 10),
+                  Text(l10n.quranDecreaseFontTooltip),
+                ]),
+              ),
+              PopupMenuItem(
+                value: 'fontInc',
+                child: Row(children: [
+                  const Icon(Icons.text_increase, size: 20),
+                  const SizedBox(width: 10),
+                  Text(l10n.quranIncreaseFontTooltip),
+                ]),
+              ),
+              PopupMenuItem(
+                value: 'wird',
+                child: Row(children: [
+                  const Icon(Icons.playlist_add_check, size: 20),
+                  const SizedBox(width: 10),
+                  Text(l10n.quranAddToWirdTooltip),
+                ]),
+              ),
+            ],
           ),
         ],
       ),
