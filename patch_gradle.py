@@ -196,3 +196,63 @@ else:
     print('WARNING: could not find the expected flutter.compileSdkVersion/targetSdkVersion lines to pin -- '
           'the generated build.gradle(.kts) may use different property names than expected. '
           'Check android/app/build.gradle(.kts) manually and verify compileSdk/targetSdk are 36.')
+
+
+# ---- FIX: force ALL Android modules (including third-party plugins like
+# file_picker) to compile against the same SDK version as our app.
+# ROOT CAUSE (2026-09 CI failure): Flutter plugin subprojects (fetched
+# from pub, NOT part of this repo, e.g. file_picker) set their OWN
+# compileSdk via `flutter.compileSdkVersion`, a property resolved from
+# whichever Flutter SDK release the CI runner happens to have installed
+# that day (channel: stable, unpinned). That is the exact same
+# non-determinism problem the "PRODUCTION READINESS" pin above already
+# solves for OUR app module -- but pinning android/app/build.gradle(.kts)
+# alone has ZERO effect on plugin subprojects, since each one is its own
+# independent Gradle module with its own build.gradle. The build failed
+# with: ":file_picker is currently compiled against android-34" while a
+# transitive dependency (flutter_plugin_android_lifecycle) required 36+.
+# The only way to force ALL Android modules in the whole Gradle build
+# (app AND every plugin) is a `subprojects {{ afterEvaluate {{ ... }} }}`
+# override placed in the ROOT-level android/build.gradle(.kts) -- this
+# runs once per module, for every module, regardless of where that
+# module's own build.gradle came from.
+root_kts_path = Path('android/build.gradle.kts')
+root_groovy_path = Path('android/build.gradle')
+root_path = root_kts_path if root_kts_path.exists() else root_groovy_path
+
+if root_path.exists():
+    root_text = root_path.read_text()
+    if 'FORCE_COMPILE_SDK_ALL_SUBPROJECTS' not in root_text:
+        if root_path.suffix == '.kts':
+            override_block = (
+                '\n// FORCE_COMPILE_SDK_ALL_SUBPROJECTS -- see patch_gradle.py for why this exists\n'
+                'subprojects {\n'
+                '    afterEvaluate {\n'
+                '        val androidExt = extensions.findByName("android")\n'
+                '        if (androidExt is com.android.build.gradle.BaseExtension) {\n'
+                '            androidExt.compileSdkVersion(36)\n'
+                '        }\n'
+                '    }\n'
+                '}\n'
+            )
+        else:
+            override_block = (
+                '\n// FORCE_COMPILE_SDK_ALL_SUBPROJECTS -- see patch_gradle.py for why this exists\n'
+                'subprojects {\n'
+                '    afterEvaluate { proj ->\n'
+                '        if (proj.hasProperty("android")) {\n'
+                '            proj.android {\n'
+                '                compileSdkVersion 36\n'
+                '            }\n'
+                '        }\n'
+                '    }\n'
+                '}\n'
+            )
+        root_path.write_text(root_text.rstrip() + '\n' + override_block)
+        print(f'Forced compileSdk=36 for ALL subprojects (plugins included) via {{root_path}}')
+    else:
+        print(f'Subprojects compileSdk override already present in {{root_path}} -- skipping')
+else:
+    print('WARNING: neither android/build.gradle.kts nor android/build.gradle found -- '
+          'could not add the subprojects-wide compileSdk override. Third-party plugins '
+          'may still fail to build against a newer required SDK level.')
