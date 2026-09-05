@@ -13,13 +13,21 @@ class _MoonScreenState extends State<MoonScreen> {
   MoonSightingInfo? _sighting;
   List<MoonPhase> _monthPhases = [];
   bool _loading = true;
+  String? _loadedForLanguageCode;
 
   @override
-  void initState() { super.initState(); _load(); }
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final languageCode = Localizations.localeOf(context).languageCode;
+    if (_loadedForLanguageCode != languageCode) {
+      _loadedForLanguageCode = languageCode;
+      _load(languageCode);
+    }
+  }
 
-  Future<void> _load() async {
+  Future<void> _load(String languageCode) async {
     final now = DateTime.now();
-    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    final isAr = languageCode == 'ar';
     final sighting = await MoonSightingService.getMoonSightingInfo(arabic: isAr);
     final phases = await MoonPhasesService.getMoonPhasesForMonth(now.month, now.year, arabic: isAr);
     if (!mounted) return;

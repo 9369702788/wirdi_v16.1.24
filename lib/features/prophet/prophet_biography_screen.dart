@@ -6,53 +6,64 @@ import '../../core/theme/app_theme.dart';
 class ProphetBiographyScreen extends StatelessWidget {
   const ProphetBiographyScreen({super.key});
 
-  static const Map<String, List<String>> _labels = {
-    'birth': ['الميلاد', 'Birth'],
-    'revelation': ['بدء الوحي', 'First Revelation'],
-    'hijra': ['الهجرة', 'The Hijra'],
-    'badr': ['غزوة بدر', 'Battle of Badr'],
-    'uhud': ['غزوة أحد', 'Battle of Uhud'],
-    'khandaq': ['غزوة الخندق', 'Battle of the Trench'],
-    'hudaybiyyah': ['صلح الحديبية', 'Treaty of Hudaybiyyah'],
-    'fatah_mecca': ['فتح مكة', 'Conquest of Mecca'],
-    'farewell': ['حجة الوداع', 'Farewell Pilgrimage'],
-  };
-
   @override
   Widget build(BuildContext context) {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
-    final entries = ProphetBiography.prophetLife.entries.toList()
-      ..sort((a, b) {
-        final av = a.value as Map<String, dynamic>;
-        final bv = b.value as Map<String, dynamic>;
-        return (av['year'] as int).compareTo(bv['year'] as int);
-      });
     return Scaffold(
-      appBar: AppBar(title: Text(isAr ? 'سيرة النبي صلى الله عليه وسلم' : "Prophet's Biography"), centerTitle: true),
-      body: ListView.separated(
+      appBar: AppBar(title: Text(isAr ? "سيرة النبي صلى الله عليه وسلم" : "The Prophet's Biography"), centerTitle: true),
+      body: ListView(
         padding: const EdgeInsets.all(16),
-        itemCount: entries.length,
-        separatorBuilder: (_, __) => const Divider(height: 24),
-        itemBuilder: (context, index) {
-          final entry = entries[index];
-          final data = entry.value as Map<String, dynamic>;
-          final label = _labels[entry.key];
-          final title = label == null ? entry.key : (isAr ? label[0] : label[1]);
-          final year = data['year'] as int;
-          final parts = <String>[
-            if (data['location'] != null) '${data['location']}',
-            if (data['age'] != null) (isAr ? 'العمر: ${data['age']}' : 'Age: ${data['age']}'),
-          ];
-          final extra = parts.join('  \u2022  ');
-          return ListTile(
-            leading: CircleAvatar(
-              backgroundColor: AppColors.primaryEmerald.withValues(alpha: 0.1),
-              child: Text('$year', style: TextStyle(fontSize: 11, color: AppColors.primaryEmerald)),
+        children: [
+          for (final milestone in ProphetBiography.milestones)
+            Card(
+              margin: const EdgeInsets.only(bottom: 12),
+              child: Padding(
+                padding: const EdgeInsets.all(14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: AppColors.primaryEmerald.withValues(alpha: 0.1),
+                          child: Text('${milestone.year}', style: TextStyle(fontSize: 11, color: AppColors.primaryEmerald)),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                isAr ? milestone.titleAr : milestone.titleEn,
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                              if (milestone.hijriNote.isNotEmpty)
+                                Text(milestone.hijriNote, style: const TextStyle(fontSize: 11, color: AppColors.mutedText)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      isAr ? milestone.bodyAr : milestone.bodyEn,
+                      style: const TextStyle(fontSize: 14, height: 1.8),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
-            subtitle: extra.isEmpty ? null : Text(extra, style: const TextStyle(fontSize: 12, color: AppColors.mutedText)),
-          );
-        },
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Text(
+              isAr
+                  ? 'المصادر: السيرة النبوية لابن هشام، والرحيق المختوم للمباركفوري.'
+                  : "Sources: Ibn Hisham's As-Seerah an-Nabawiyyah and Al-Mubarakpuri's Ar-Raheeq al-Makhtum (The Sealed Nectar).",
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 11, color: AppColors.mutedText),
+            ),
+          ),
+        ],
       ),
     );
   }

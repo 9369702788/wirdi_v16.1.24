@@ -28,14 +28,19 @@ class _HadithMemorizationScreenState extends State<HadithMemorizationScreen> {
   List<String> _choices = [];
   final _random = Random();
 
+  String? _loadedForLanguageCode;
+
   @override
-  void initState() {
-    super.initState();
-    _load();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final languageCode = Localizations.localeOf(context).languageCode;
+    if (_loadedForLanguageCode != languageCode) {
+      _loadedForLanguageCode = languageCode;
+      _load(languageCode);
+    }
   }
 
-  Future<void> _load() async {
-    final languageCode = Localizations.localeOf(context).languageCode;
+  Future<void> _load(String languageCode) async {
     final hadiths = await HadithRepository.load(languageCode: languageCode);
     if (!mounted) return;
     setState(() {

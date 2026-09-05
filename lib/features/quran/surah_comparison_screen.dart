@@ -95,7 +95,7 @@ class _SurahComparisonScreenState extends State<SurahComparisonScreen> {
     final l10n = AppLocalizations.of(context);
     final isAr = l10n.localeName == 'ar';
     return Scaffold(
-      appBar: AppBar(title: Text(isAr ? 'مقارنة السور' : 'Surah Comparison'), centerTitle: true),
+      appBar: AppBar(title: Text(isAr ? 'معلومات عن السور' : 'Surah Information'), centerTitle: true),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : Padding(

@@ -21,7 +21,11 @@ import 'app_logger.dart';
 class NearbyPlacesService {
   NearbyPlacesService._();
 
-  static const String _endpoint = 'https://overpass-api.de/api/interpreter';
+  static const List<String> _endpoints = [
+    'https://overpass-api.de/api/interpreter',
+    'https://overpass.kumi.systems/api/interpreter',
+    'https://overpass.openstreetmap.ru/api/interpreter',
+  ];
 
   static Future<List<NearbyPlace>> findMosques({
     required double latitude,
@@ -50,49 +54,59 @@ class NearbyPlacesService {
   }
 
   static Future<List<NearbyPlace>> _query(String overpassQuery, double lat, double lon, String fallbackName) async {
-    try {
-      final response = await http
-          .post(Uri.parse(_endpoint), body: {'data': overpassQuery})
-          .timeout(const Duration(seconds: 25));
+    Object? lastError;
+    StackTrace? lastStack;
 
-      if (response.statusCode != 200) {
-        throw Exception('Overpass HTTP ${response.statusCode}');
+    for (final endpoint in _endpoints) {
+      try {
+        final response = await http
+            .post(Uri.parse(endpoint), body: {'data': overpassQuery})
+            .timeout(const Duration(seconds: 25));
+
+        if (response.statusCode != 200) {
+          throw Exception('Overpass HTTP ${response.statusCode} from $endpoint');
+        }
+
+        final decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+        final elements = decoded['elements'] as List<dynamic>? ?? [];
+
+        final places = <NearbyPlace>[];
+        for (final el in elements) {
+          final map = el as Map<String, dynamic>;
+          final placeLat = (map['lat'] as num?)?.toDouble();
+          final placeLon = (map['lon'] as num?)?.toDouble();
+          if (placeLat == null || placeLon == null) continue;
+
+          final tags = map['tags'] as Map<String, dynamic>? ?? {};
+          final rawName = tags['name']?.toString() ?? tags['name:ar']?.toString();
+          final name = (rawName == null || rawName.trim().isEmpty) ? fallbackName : rawName;
+
+          final addressParts = [
+            tags['addr:street']?.toString(),
+            tags['addr:city']?.toString(),
+          ].where((p) => p != null && p.isNotEmpty).join('، ');
+
+          places.add(NearbyPlace(
+            name: name,
+            latitude: placeLat,
+            longitude: placeLon,
+            distanceMeters: _distanceMeters(lat, lon, placeLat, placeLon),
+            address: addressParts.isEmpty ? null : addressParts,
+          ));
+        }
+
+        places.sort((a, b) => a.distanceMeters.compareTo(b.distanceMeters));
+        return places;
+      } catch (e, st) {
+        lastError = e;
+        lastStack = st;
+        AppLogger.error('Nearby places query failed via $endpoint, trying next mirror if any', error: e, stackTrace: st);
+        continue;
       }
-
-      final decoded = jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
-      final elements = decoded['elements'] as List<dynamic>? ?? [];
-
-      final places = <NearbyPlace>[];
-      for (final el in elements) {
-        final map = el as Map<String, dynamic>;
-        final placeLat = (map['lat'] as num?)?.toDouble();
-        final placeLon = (map['lon'] as num?)?.toDouble();
-        if (placeLat == null || placeLon == null) continue;
-
-        final tags = map['tags'] as Map<String, dynamic>? ?? {};
-        final rawName = tags['name']?.toString() ?? tags['name:ar']?.toString();
-        final name = (rawName == null || rawName.trim().isEmpty) ? fallbackName : rawName;
-
-        final addressParts = [
-          tags['addr:street']?.toString(),
-          tags['addr:city']?.toString(),
-        ].where((p) => p != null && p.isNotEmpty).join('، ');
-
-        places.add(NearbyPlace(
-          name: name,
-          latitude: placeLat,
-          longitude: placeLon,
-          distanceMeters: _distanceMeters(lat, lon, placeLat, placeLon),
-          address: addressParts.isEmpty ? null : addressParts,
-        ));
-      }
-
-      places.sort((a, b) => a.distanceMeters.compareTo(b.distanceMeters));
-      return places;
-    } catch (e, st) {
-      AppLogger.error('Nearby places query failed', error: e, stackTrace: st);
-      rethrow;
     }
+
+    AppLogger.error('Nearby places query failed on all Overpass mirrors', error: lastError, stackTrace: lastStack);
+    throw Exception('All Overpass mirrors failed: $lastError');
   }
 
   /// Haversine formula — real great-circle distance, not a flat

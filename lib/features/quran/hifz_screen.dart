@@ -11,13 +11,6 @@ String _ht(BuildContext context, String ar, String en) =>
 
 enum HifzVisibility { visible, blurred, hidden }
 
-/// Memorization practice mode: pick a surah, then hide/blur its verses one
-/// at a time (or all at once) to test recall. Also supports an optional
-/// daily memorization plan (surah + ayah range + a target repeat count
-/// per ayah) with day-streak tracking, persisted via [HifzService] --
-/// unlike the visibility-cycling state (still intentionally ephemeral,
-/// resets when leaving the screen), the plan/reps/streak survive
-/// across app restarts since a "daily" plan is meaningless otherwise.
 class HifzScreen extends StatefulWidget {
   const HifzScreen({super.key});
   @override
@@ -30,7 +23,7 @@ class _HifzScreenState extends State<HifzScreen> {
   HifzVisibility _globalMode = HifzVisibility.visible;
   final Map<int, HifzVisibility> _perAyahOverride = {};
 
-  HifzPlan? _plan;
+  List<HifzPlan> _plans = [];
   int _streak = 0;
   final Map<int, int> _repsCache = {};
 
@@ -40,36 +33,45 @@ class _HifzScreenState extends State<HifzScreen> {
     QuranRepository.load().then((s) {
       if (mounted) setState(() => _allSurahs = s);
     });
-    _loadPlanAndStreak();
+    _loadPlansAndStreak();
   }
 
-  Future<void> _loadPlanAndStreak() async {
-    final plan = await HifzService.getPlan();
+  Future<void> _loadPlansAndStreak() async {
+    final plans = await HifzService.getAllPlans();
     final streak = await HifzService.getStreak();
     if (!mounted) return;
     setState(() {
-      _plan = plan;
+      _plans = plans;
       _streak = streak;
     });
   }
 
+  HifzPlan? _planForSurah(int surahNumber) {
+    for (final p in _plans) {
+      if (p.surahNumber == surahNumber) return p;
+    }
+    return null;
+  }
+
   Future<void> _loadRepsForSurah(SurahModel surah) async {
-    final plan = _plan;
-    if (plan == null || plan.surahNumber != surah.number) return;
+    final plan = _planForSurah(surah.number);
+    if (plan == null) return;
     final entries = <int, int>{};
     for (var a = plan.startAyah; a <= plan.endAyah; a++) {
-      entries[a] = await HifzService.getTodayReps(surah.number, a);
+      entries[a] = await HifzService.getTodayReps(plan.id, surah.number, a);
     }
     if (!mounted) return;
     setState(() => _repsCache.addAll(entries));
   }
 
   Future<void> _incrementRep(int ayahNumber) async {
-    final plan = _plan;
+    final surah = _selectedSurah;
+    if (surah == null) return;
+    final plan = _planForSurah(surah.number);
     if (plan == null) return;
-    final updated = await HifzService.incrementReps(plan.surahNumber, ayahNumber, plan.targetReps);
+    final updated = await HifzService.incrementReps(plan.id, plan.surahNumber, ayahNumber, plan.targetReps);
     final wasStreak = _streak;
-    final newStreak = await HifzService.checkAndUpdateStreakIfPlanCompleted();
+    final newStreak = await HifzService.checkAndUpdateStreakIfPlanCompleted(plan);
     if (newStreak != wasStreak) {
       await HifzService.markPortionMemorized(plan.surahNumber, plan.startAyah, plan.endAyah);
     }
@@ -93,18 +95,24 @@ class _HifzScreenState extends State<HifzScreen> {
     });
   }
 
-  Future<void> _openPlanEditor() async {
+  Future<void> _addNewPlan() async {
     final surahs = _allSurahs;
     if (surahs == null) return;
     final result = await showDialog<HifzPlan>(
       context: context,
-      builder: (context) => _PlanEditorDialog(surahs: surahs, initial: _plan),
+      builder: (context) => _PlanEditorDialog(surahs: surahs),
     );
     if (result != null) {
-      await HifzService.setPlan(result);
+      await HifzService.addPlan(result);
       _repsCache.clear();
-      await _loadPlanAndStreak();
+      await _loadPlansAndStreak();
     }
+  }
+
+  Future<void> _deletePlan(String id) async {
+    await HifzService.removePlan(id);
+    _repsCache.clear();
+    await _loadPlansAndStreak();
   }
 
   @override
@@ -112,7 +120,7 @@ class _HifzScreenState extends State<HifzScreen> {
     final surah = _selectedSurah;
     return Scaffold(
       appBar: AppBar(
-        title: Text(surah == null ? _ht(context, '\u0648\u0636\u0639 \u0627\u0644\u062d\u0641\u0638', 'Hifz Mode') : surah.name),
+        title: Text(surah == null ? _ht(context, 'وضع الحفظ', 'Hifz Mode') : surah.name),
         centerTitle: true,
         leading: surah != null
             ? IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => setState(() {
@@ -125,15 +133,15 @@ class _HifzScreenState extends State<HifzScreen> {
             : [
                 PopupMenuButton<HifzVisibility>(
                   icon: const Icon(Icons.visibility_outlined),
-                  tooltip: _ht(context, '\u0648\u0636\u0639 \u0627\u0644\u0625\u062e\u0641\u0627\u0621', 'Hide mode'),
+                  tooltip: _ht(context, 'وضع الإخفاء', 'Hide mode'),
                   onSelected: (mode) => setState(() {
                     _globalMode = mode;
                     _perAyahOverride.clear();
                   }),
                   itemBuilder: (_) => [
-                    PopupMenuItem(value: HifzVisibility.visible, child: Text(_ht(context, '\u0645\u0631\u0626\u064a', 'Visible'))),
-                    PopupMenuItem(value: HifzVisibility.blurred, child: Text(_ht(context, '\u0645\u0636\u0628\u0651\u0628', 'Blurred'))),
-                    PopupMenuItem(value: HifzVisibility.hidden, child: Text(_ht(context, '\u0645\u062e\u0641\u064a', 'Hidden'))),
+                    PopupMenuItem(value: HifzVisibility.visible, child: Text(_ht(context, 'مرئي', 'Visible'))),
+                    PopupMenuItem(value: HifzVisibility.blurred, child: Text(_ht(context, 'مضبّب', 'Blurred'))),
+                    PopupMenuItem(value: HifzVisibility.hidden, child: Text(_ht(context, 'مخفي', 'Hidden'))),
                   ],
                 ),
               ],
@@ -151,8 +159,7 @@ class _HifzScreenState extends State<HifzScreen> {
     return null;
   }
 
-  Widget _buildDailyPlanCard() {
-    final plan = _plan;
+  Widget _buildPlansSection() {
     final surahs = _allSurahs;
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 4),
@@ -167,30 +174,53 @@ class _HifzScreenState extends State<HifzScreen> {
           const SizedBox(width: 6),
           Text(
             _streak > 0
-                ? _ht(context, '\u0633\u0644\u0633\u0644\u0629 $_streak \u064a\u0648\u0645', 'Streak: $_streak days')
-                : _ht(context, '\u0627\u0628\u062f\u0623 \u0633\u0644\u0633\u0644\u062a\u0643 \u0627\u0644\u064a\u0648\u0645', 'Start your streak today'),
+                ? _ht(context, 'سلسلة $_streak يوم', 'Streak: $_streak days')
+                : _ht(context, 'ابدأ سلسلتك اليوم', 'Start your streak today'),
             style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
           ),
           const Spacer(),
           TextButton(
-            onPressed: surahs == null ? null : _openPlanEditor,
+            onPressed: surahs == null ? null : _addNewPlan,
             style: TextButton.styleFrom(foregroundColor: Colors.white),
-            child: Text(_ht(context, plan == null ? '\u062a\u062d\u062f\u064a\u062f \u062e\u0637\u0629' : '\u062a\u0639\u062f\u064a\u0644', plan == null ? 'Set plan' : 'Edit')),
+            child: Text(_ht(context, '+ خطة جديدة', '+ New plan')),
           ),
         ]),
-        if (plan != null) ...[
-          const SizedBox(height: 6),
-          Builder(builder: (context) {
-            final s = _findSurah(plan.surahNumber);
-            final label = s == null
-                ? '\u0633\u0648\u0631\u0629 ${plan.surahNumber}'
-                : '${s.name} (${plan.startAyah}-${plan.endAyah})';
-            return Text(
-              '$label \u2022 ${_ht(context, '\u0627\u0644\u0647\u062f\u0641', 'target')}: ${plan.targetReps}\u00d7',
-              style: const TextStyle(color: Colors.white, fontSize: 12),
-            );
-          }),
-        ],
+        if (_plans.isEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Text(
+              _ht(context, 'لا توجد خطط حالياً. أضف خطة للبدء -- يمكنك إضافة أكثر من خطة في نفس الوقت.',
+                  'No plans yet. Add one to get started -- you can have more than one plan active at the same time.'),
+              style: const TextStyle(color: Colors.white70, fontSize: 12),
+            ),
+          )
+        else
+          for (final activePlan in _plans)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Row(children: [
+                Expanded(
+                  child: Builder(builder: (context) {
+                    final s = _findSurah(activePlan.surahNumber);
+                    final label = s == null
+                        ? _ht(context, 'سورة ${activePlan.surahNumber}', 'Surah ${activePlan.surahNumber}')
+                        : '${s.name} (${activePlan.startAyah}-${activePlan.endAyah})';
+                    return Text(
+                      '$label • ${_ht(context, 'الهدف', 'target')}: ${activePlan.targetReps}×',
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                    );
+                  }),
+                ),
+                InkWell(
+                  onTap: () => _deletePlan(activePlan.id),
+                  borderRadius: BorderRadius.circular(20),
+                  child: const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Icon(Icons.close, color: Colors.white70, size: 16),
+                  ),
+                ),
+              ]),
+            ),
       ]),
     );
   }
@@ -200,7 +230,7 @@ class _HifzScreenState extends State<HifzScreen> {
     if (surahs == null) return const Center(child: CircularProgressIndicator());
     return ListView(
       children: [
-        _buildDailyPlanCard(),
+        _buildPlansSection(),
         ...surahs.map((s) => ListTile(
               leading: CircleAvatar(
                 radius: 16,
@@ -208,7 +238,7 @@ class _HifzScreenState extends State<HifzScreen> {
                 child: Text('${s.number}', style: TextStyle(color: AppColors.primaryEmerald, fontSize: 12, fontWeight: FontWeight.bold)),
               ),
               title: Text(s.name, textDirection: TextDirection.rtl),
-              subtitle: Text('${s.ayahs.length} ${_ht(context, '\u0622\u064a\u0629', 'verses')}', style: const TextStyle(fontSize: 12, color: AppColors.mutedText)),
+              subtitle: Text('${s.ayahs.length} ${_ht(context, 'آية', 'verses')}', style: const TextStyle(fontSize: 12, color: AppColors.mutedText)),
               onTap: () {
                 setState(() => _selectedSurah = s);
                 _repsCache.clear();
@@ -220,16 +250,16 @@ class _HifzScreenState extends State<HifzScreen> {
   }
 
   Widget _buildAyahList(SurahModel surah) {
-    final plan = _plan;
-    final planActiveHere = plan != null && plan.surahNumber == surah.number;
+    final activePlan = _planForSurah(surah.number);
+    final planActiveHere = activePlan != null;
     return Column(children: [
       Container(
         width: double.infinity,
         color: AppColors.primaryEmerald.withValues(alpha: 0.06),
         padding: const EdgeInsets.all(10),
         child: Text(
-          _ht(context, '\u0627\u0636\u063a\u0637 \u0639\u0644\u0649 \u0623\u064a \u0622\u064a\u0629 \u0644\u062a\u063a\u064a\u064a\u0631 \u0648\u0636\u0639\u0647\u0627 (\u0645\u0631\u0626\u064a \u2190 \u0645\u0636\u0628\u0651\u0628 \u2190 \u0645\u062e\u0641\u064a)',
-              'Tap any verse to cycle its state (visible \u2192 blurred \u2192 hidden)'),
+          _ht(context, 'اضغط على أي آية لتغيير وضعها (مرئي ← مضبّب ← مخفي)',
+              'Tap any verse to cycle its state (visible → blurred → hidden)'),
           style: const TextStyle(fontSize: 12, color: AppColors.mutedText),
           textAlign: TextAlign.center,
         ),
@@ -241,7 +271,7 @@ class _HifzScreenState extends State<HifzScreen> {
           itemBuilder: (context, index) {
             final ayah = surah.ayahs[index];
             final mode = _modeFor(ayah.number);
-            final showReps = planActiveHere && ayah.number >= plan.startAyah && ayah.number <= plan.endAyah;
+            final showReps = planActiveHere && ayah.number >= activePlan.startAyah && ayah.number <= activePlan.endAyah;
             final reps = _repsCache[ayah.number] ?? 0;
             return GestureDetector(
               onTap: () => _cycleAyah(ayah.number),
@@ -276,20 +306,20 @@ class _HifzScreenState extends State<HifzScreen> {
                     ),
                   const SizedBox(height: 4),
                   Row(children: [
-                    Text('\u0622\u064a\u0629 ${ayah.number}', style: const TextStyle(fontSize: 11, color: AppColors.mutedText)),
-                    if (showReps) ...[
+                    Text('آية ${ayah.number}', style: const TextStyle(fontSize: 11, color: AppColors.mutedText)),
+                    if (showReps && activePlan != null) ...[
                       const Spacer(),
-                      Text('$reps/${plan.targetReps}', style: TextStyle(fontSize: 11, color: reps >= plan.targetReps ? AppColors.primaryEmerald : AppColors.mutedText, fontWeight: FontWeight.w600)),
+                      Text('$reps/${activePlan.targetReps}', style: TextStyle(fontSize: 11, color: reps >= activePlan.targetReps ? AppColors.primaryEmerald : AppColors.mutedText, fontWeight: FontWeight.w600)),
                       const SizedBox(width: 4),
                       InkWell(
-                        onTap: reps >= plan.targetReps ? null : () => _incrementRep(ayah.number),
+                        onTap: reps >= activePlan.targetReps ? null : () => _incrementRep(ayah.number),
                         borderRadius: BorderRadius.circular(20),
                         child: Padding(
                           padding: const EdgeInsets.all(4),
                           child: Icon(
-                            reps >= plan.targetReps ? Icons.check_circle : Icons.add_circle_outline,
+                            reps >= activePlan.targetReps ? Icons.check_circle : Icons.add_circle_outline,
                             size: 18,
-                            color: reps >= plan.targetReps ? AppColors.primaryEmerald : AppColors.goldAccent,
+                            color: reps >= activePlan.targetReps ? AppColors.primaryEmerald : AppColors.goldAccent,
                           ),
                         ),
                       ),
@@ -307,8 +337,7 @@ class _HifzScreenState extends State<HifzScreen> {
 
 class _PlanEditorDialog extends StatefulWidget {
   final List<SurahModel> surahs;
-  final HifzPlan? initial;
-  const _PlanEditorDialog({required this.surahs, required this.initial});
+  const _PlanEditorDialog({required this.surahs});
 
   @override
   State<_PlanEditorDialog> createState() => _PlanEditorDialogState();
@@ -323,25 +352,17 @@ class _PlanEditorDialogState extends State<_PlanEditorDialog> {
   @override
   void initState() {
     super.initState();
-    final initial = widget.initial;
-    SurahModel initialSurah = widget.surahs.first;
-    for (final s in widget.surahs) {
-      if (s.number == initial?.surahNumber) {
-        initialSurah = s;
-        break;
-      }
-    }
-    _surah = initialSurah;
-    _startAyah = initial?.startAyah ?? 1;
-    _endAyah = initial?.endAyah ?? (_surah.ayahs.isNotEmpty ? _surah.ayahs.first.number : 1);
-    _targetReps = initial?.targetReps ?? 5;
+    _surah = widget.surahs.first;
+    _startAyah = 1;
+    _endAyah = _surah.ayahs.isNotEmpty ? _surah.ayahs.first.number : 1;
+    _targetReps = 5;
   }
 
   @override
   Widget build(BuildContext context) {
     final maxAyah = _surah.ayahs.isEmpty ? 1 : _surah.ayahs.last.number;
     return AlertDialog(
-      title: Text(_ht(context, '\u062e\u0637\u0629 \u0627\u0644\u062d\u0641\u0638 \u0627\u0644\u064a\u0648\u0645\u064a\u0629', 'Daily Hifz Plan')),
+      title: Text(_ht(context, 'خطة حفظ جديدة', 'New Hifz Plan')),
       content: SingleChildScrollView(
         child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           DropdownButtonFormField<SurahModel>(
@@ -358,7 +379,7 @@ class _PlanEditorDialogState extends State<_PlanEditorDialog> {
                 _endAyah = s.ayahs.isNotEmpty ? s.ayahs.first.number : 1;
               });
             },
-            decoration: InputDecoration(labelText: _ht(context, '\u0627\u0644\u0633\u0648\u0631\u0629', 'Surah')),
+            decoration: InputDecoration(labelText: _ht(context, 'السورة', 'Surah')),
           ),
           const SizedBox(height: 12),
           Row(children: [
@@ -367,7 +388,7 @@ class _PlanEditorDialogState extends State<_PlanEditorDialog> {
                 key: ValueKey('start_${_surah.number}'),
                 initialValue: '$_startAyah',
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: _ht(context, '\u0645\u0646 \u0622\u064a\u0629', 'From ayah')),
+                decoration: InputDecoration(labelText: _ht(context, 'من آية', 'From ayah')),
                 onChanged: (v) => _startAyah = int.tryParse(v)?.clamp(1, maxAyah) ?? _startAyah,
               ),
             ),
@@ -377,7 +398,7 @@ class _PlanEditorDialogState extends State<_PlanEditorDialog> {
                 key: ValueKey('end_${_surah.number}'),
                 initialValue: '$_endAyah',
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: _ht(context, '\u0625\u0644\u0649 \u0622\u064a\u0629', 'To ayah')),
+                decoration: InputDecoration(labelText: _ht(context, 'إلى آية', 'To ayah')),
                 onChanged: (v) => _endAyah = int.tryParse(v)?.clamp(1, maxAyah) ?? _endAyah,
               ),
             ),
@@ -386,23 +407,29 @@ class _PlanEditorDialogState extends State<_PlanEditorDialog> {
           TextFormField(
             initialValue: '$_targetReps',
             keyboardType: TextInputType.number,
-            decoration: InputDecoration(labelText: _ht(context, '\u0639\u062f\u062f \u0645\u0631\u0627\u062a \u0627\u0644\u062a\u0643\u0631\u0627\u0631 \u0644\u0643\u0644 \u0622\u064a\u0629', 'Repeats per ayah')),
+            decoration: InputDecoration(labelText: _ht(context, 'عدد مرات التكرار لكل آية', 'Repeats per ayah')),
             onChanged: (v) => _targetReps = int.tryParse(v)?.clamp(1, 50) ?? _targetReps,
           ),
         ]),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: Text(_ht(context, '\u0625\u0644\u063a\u0627\u0621', 'Cancel'))),
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(_ht(context, 'إلغاء', 'Cancel'))),
         FilledButton(
           onPressed: () {
             final start = _startAyah <= _endAyah ? _startAyah : _endAyah;
             final end = _startAyah <= _endAyah ? _endAyah : _startAyah;
             Navigator.pop(
               context,
-              HifzPlan(surahNumber: _surah.number, startAyah: start, endAyah: end, targetReps: _targetReps),
+              HifzPlan(
+                id: 'plan_${DateTime.now().millisecondsSinceEpoch}',
+                surahNumber: _surah.number,
+                startAyah: start,
+                endAyah: end,
+                targetReps: _targetReps,
+              ),
             );
           },
-          child: Text(_ht(context, '\u062d\u0641\u0638', 'Save')),
+          child: Text(_ht(context, 'حفظ', 'Save')),
         ),
       ],
     );

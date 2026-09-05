@@ -2,11 +2,13 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -949,32 +951,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       leading: const Icon(Icons.download_outlined, color: AppColors.mutedText),
                       title: Text(Localizations.localeOf(context).languageCode == 'ar' ? '\u0627\u0633\u062a\u064a\u0631\u0627\u062f\u0020\u0646\u0633\u062e\u0629\u0020\u0627\u062d\u062a\u064a\u0627\u0637\u064a\u0629' : 'Import a backup'),
                       onTap: () async {
-                        final controller = TextEditingController();
-                        final pasted = await showDialog<String>(
-                          context: context,
-                          builder: (dialogContext) => AlertDialog(
-                            title: Text(Localizations.localeOf(context).languageCode == 'ar' ? '\u0627\u0633\u062a\u0639\u0627\u062f\u0629\u0020\u0645\u0646\u0020\u0646\u0633\u062e\u0629\u0020\u0627\u062d\u062a\u064a\u0627\u0637\u064a\u0629' : 'Restore from backup'),
-                            content: TextField(
-                              controller: controller,
-                              maxLines: 6,
-                              decoration: InputDecoration(
-                                border: const OutlineInputBorder(),
-                                hintText: Localizations.localeOf(context).languageCode == 'ar' ? '\u0627\u0644\u0635\u0642\u0020\u0645\u062d\u062a\u0648\u0649\u0020\u0645\u0644\u0641\u0020\u0627\u0644\u0646\u0633\u062e\u0629\u0020\u0627\u0644\u0627\u062d\u062a\u064a\u0627\u0637\u064a\u0629\u0020\u0028\u004a\u0053\u004f\u004e\u0029\u0020\u0647\u0646\u0627' : 'Paste the backup file (JSON) content here',
-                              ),
-                            ),
-                            actions: [
-                              TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text(Localizations.localeOf(context).languageCode == 'ar' ? '\u0625\u0644\u063a\u0627\u0621' : 'Cancel')),
-                              TextButton(onPressed: () => Navigator.pop(dialogContext, controller.text), child: Text(Localizations.localeOf(context).languageCode == 'ar' ? '\u0627\u0633\u062a\u0639\u0627\u062f\u0629' : 'Restore')),
-                            ],
-                          ),
-                        );
-                        if (pasted == null || pasted.trim().isEmpty) return;
-                        final ok = await appSettings.importDataFromJson(pasted.trim());
+                        final isAr = Localizations.localeOf(context).languageCode == 'ar';
+                        String? jsonContent;
+                        try {
+                          final result = await FilePicker.platform.pickFiles(
+                            type: FileType.custom,
+                            allowedExtensions: ['json'],
+                            withData: true,
+                          );
+                          if (result == null || result.files.isEmpty) return;
+                          final picked = result.files.single;
+                          if (picked.bytes != null) {
+                            jsonContent = utf8.decode(picked.bytes!);
+                          } else if (picked.path != null) {
+                            jsonContent = await File(picked.path!).readAsString();
+                          }
+                        } catch (e) {
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(isAr ? 'تعذّر فتح الملف المختار.' : 'Could not open the selected file.')),
+                          );
+                          return;
+                        }
+                        if (jsonContent == null || jsonContent.trim().isEmpty) return;
+                        final ok = await appSettings.importDataFromJson(jsonContent.trim());
                         if (!context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(Localizations.localeOf(context).languageCode == 'ar'
-                              ? (ok ? '\u062a\u0645\u0020\u0627\u0633\u062a\u0639\u0627\u062f\u0629\u0020\u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a\u0020\u0628\u0646\u062c\u0627\u062d' : '\u062a\u0639\u0630\u0651\u0631\u062a\u0020\u0627\u0644\u0627\u0633\u062a\u0639\u0627\u062f\u0629\u003a\u0020\u062a\u0623\u0643\u062f\u0020\u0645\u0646\u0020\u0644\u0635\u0642\u0020\u0646\u0635\u0020\u0646\u0633\u062e\u0629\u0020\u0627\u062d\u062a\u064a\u0627\u0637\u064a\u0629\u0020\u0635\u062d\u064a\u062d')
-                              : (ok ? 'Data restored successfully' : 'Restore failed: make sure you pasted a valid backup'))),
+                          SnackBar(content: Text(isAr
+                              ? (ok ? 'تم استعادة البيانات بنجاح' : 'تعذّرت الاستعادة: تأكد من اختيار ملف نسخة احتياطية صحيح (JSON)')
+                              : (ok ? 'Data restored successfully' : 'Restore failed: make sure you selected a valid backup (JSON) file'))),
                         );
                       },
                     ),

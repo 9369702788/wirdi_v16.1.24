@@ -13,6 +13,9 @@ import '../../core/models/prayer_models.dart';
 import '../../core/models/progress_models.dart';
 import '../../core/services/hijri_date.dart';
 import '../../core/services/prayer_display.dart';
+import '../../core/services/weather_service.dart';
+import '../../core/services/sunrise_sunset_calculator.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../core/services/prayer_notification_scheduler.dart';
 import '../../core/services/prayer_service.dart';
 import '../../core/services/settings_service.dart';
@@ -133,11 +136,35 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
       unawaited(WidgetService.updatePrayerTimes(result.prayers, result.next));
       _startCountdown();
       unawaited(PrayerNotificationScheduler.rescheduleFromResult(context, result));
+      unawaited(_loadWeatherAndSun());
     } catch (_) {
       if (!mounted) return;
       setState(() => _prayerFailed = true);
     }
   }
+
+  WeatherData? _weather;
+  SunTimes? _sunTimes;
+
+  Future<void> _loadWeatherAndSun() async {
+    try {
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.low),
+      ).timeout(const Duration(seconds: 10));
+      final sun = SunriseSunsetCalculator.calculate(position.latitude, position.longitude, DateTime.now());
+      if (mounted) setState(() => _sunTimes = sun);
+    } catch (_) {
+      // no-op -- sunrise/sunset row just won't show
+    }
+    try {
+      final weather = await WeatherService.getWeatherAtPrayerTime('now');
+      if (mounted) setState(() => _weather = weather);
+    } catch (_) {
+      // no-op -- weather row just won't show
+    }
+  }
+
+  String _fmtSunTime(DateTime d) => '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
 
   void _startCountdown() {
     _timer?.cancel();
@@ -433,6 +460,34 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                           padding: const EdgeInsets.only(top: 6),
                           child: Text(l10n.homeCachedPrayerTimes, style: const TextStyle(color: Colors.white54, fontSize: 11)),
                         ),
+                      if (_weather != null || _sunTimes != null) ...[
+                        const SizedBox(height: 14),
+                        Container(height: 1, color: Colors.white24),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            if (_weather != null)
+                              Column(children: [
+                                const Icon(Icons.wb_sunny_outlined, color: Colors.white70, size: 16),
+                                const SizedBox(height: 2),
+                                Text(_weather!.temperature, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 12)),
+                              ]),
+                            if (_sunTimes != null) ...[
+                              Column(children: [
+                                const Icon(Icons.wb_twilight, color: Colors.white70, size: 16),
+                                const SizedBox(height: 2),
+                                Text(_fmtSunTime(_sunTimes!.sunrise), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 12)),
+                              ]),
+                              Column(children: [
+                                const Icon(Icons.nightlight_round, color: Colors.white70, size: 16),
+                                const SizedBox(height: 2),
+                                Text(_fmtSunTime(_sunTimes!.sunset), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 12)),
+                              ]),
+                            ],
+                          ],
+                        ),
+                      ],
                     ] else if (_prayerFailed)
                       Text(l10n.homeEnableLocationForPrayer, style: const TextStyle(color: Colors.white70, fontSize: 15))
                     else
@@ -631,9 +686,9 @@ class _DashboardCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
+                    Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
                     const SizedBox(height: 3),
-                    Text(subtitle, style: const TextStyle(color: AppColors.mutedText, fontSize: 14)),
+                    Text(subtitle, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.mutedText, fontSize: 14)),
                   ],
                 ),
               ),

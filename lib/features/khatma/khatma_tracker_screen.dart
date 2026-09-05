@@ -280,12 +280,32 @@ class _KhatmaPlanCard extends StatelessWidget {
     required this.onDelete,
   });
 
+  // Standard ayah count per surah (1-114), used only to give a much more
+  // meaningful progress breakdown than raw surah count -- a completed
+  // Al-Ikhlas (4 ayahs) is not equivalent to a completed Al-Baqarah (286
+  // ayahs), which was the exact complaint that led to this.
+  static const List<int> _ayahCounts = [7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6];
+  static const int _totalAyahs = 6236;
+  static const int _totalPages = 604; // standard Madani mushaf page count
+  static const int _totalJuz = 30;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final rawCompleted = plan.newlyCompletedCount(globalCompleted);
     final completedCount = rawCompleted > totalSurahs ? totalSurahs : rawCompleted;
     final ratio = totalSurahs == 0 ? 0.0 : (completedCount / totalSurahs).clamp(0.0, 1.0);
+
+    // Weighted by actual ayah count, not just surah count.
+    var ayahsCompleted = 0;
+    for (final surahNumber in globalCompleted) {
+      if (surahNumber >= 1 && surahNumber <= _ayahCounts.length) {
+        ayahsCompleted += _ayahCounts[surahNumber - 1];
+      }
+    }
+    final ayahRatio = (ayahsCompleted / _totalAyahs).clamp(0.0, 1.0);
+    final pagesCompletedEstimate = (ayahRatio * _totalPages).round();
+    final juzCompletedEstimate = (ayahRatio * _totalJuz).round();
 
     final expectedByNow = plan.totalDays == 0 ? 0 : ((totalSurahs * plan.daysElapsed) / plan.totalDays).round();
     final behindByRaw = expectedByNow - completedCount;
@@ -342,6 +362,13 @@ class _KhatmaPlanCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(l10n.khatmaProgressLabel(completedCount, totalSurahs), style: const TextStyle(fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 2),
+                      Text(
+                        Localizations.localeOf(context).languageCode == 'ar'
+                            ? '~$pagesCompletedEstimate/$_totalPages صفحة  •  ~$juzCompletedEstimate/$_totalJuz جزء  •  $ayahsCompleted/$_totalAyahs آية'
+                            : '~$pagesCompletedEstimate/$_totalPages pages  •  ~$juzCompletedEstimate/$_totalJuz juz  •  $ayahsCompleted/$_totalAyahs ayahs',
+                        style: const TextStyle(fontSize: 11, color: AppColors.mutedText),
+                      ),
                       const SizedBox(height: 2),
                       Text(
                         '${l10n.khatmaTargetDate}: ${dateFormat.format(plan.targetDate)}',

@@ -5,6 +5,7 @@ import '../../core/models/azkar_models.dart';
 import '../../core/models/hadith_models.dart';
 import '../../core/models/quran_models.dart';
 import '../../core/services/app_logger.dart';
+import '../../core/services/arabic_text_utils.dart';
 import '../../core/services/azkar_repository.dart';
 import '../../core/services/hadith_repository.dart';
 import '../../core/services/quran_repository.dart';
@@ -119,7 +120,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       outer:
       for (final surah in _surahs!) {
         for (final ayah in surah.ayahs) {
-          if (ayah.text.contains(q)) {
+          if (ArabicTextUtils.contains(ayah.text, q)) {
             quranHits.add(_QuranHit(surah, ayah));
             if (quranHits.length >= 30) break outer;
           }
@@ -129,7 +130,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
     final hadithHits = <HadithModel>[];
     if (_hadiths != null) {
       for (final h in _hadiths!) {
-        if (h.arabicText.contains(q) || h.translatedText.contains(q)) {
+        if (ArabicTextUtils.contains(h.arabicText, q) || ArabicTextUtils.contains(h.translatedText, q)) {
           hadithHits.add(h);
           if (hadithHits.length >= 30) break;
         }
@@ -140,7 +141,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       outer2:
       for (final cat in _azkarCategories!) {
         for (final item in cat.items) {
-          if (item.text.contains(q)) {
+          if (ArabicTextUtils.contains(item.text, q)) {
             azkarHits.add((cat, item));
             if (azkarHits.length >= 30) break outer2;
           }

@@ -15,8 +15,14 @@ class SunnahFastingCalendarScreen extends StatelessWidget {
       final isMonday = date.weekday == DateTime.monday;
       final isThursday = date.weekday == DateTime.thursday;
       final isWhiteDay = hijri.day == 13 || hijri.day == 14 || hijri.day == 15;
-      if (isMonday || isThursday || isWhiteDay) {
+      final isAshura = hijri.month == 1 && hijri.day == 10;
+      final isTasua = hijri.month == 1 && hijri.day == 9;
+      final isArafah = hijri.month == 12 && hijri.day == 9;
+      if (isMonday || isThursday || isWhiteDay || isAshura || isTasua || isArafah) {
         final reasons = <String>[];
+        if (isArafah) reasons.add(isAr ? 'يوم عرفة' : 'Day of Arafah');
+        if (isAshura) reasons.add(isAr ? 'يوم عاشوراء' : 'Day of Ashura');
+        if (isTasua) reasons.add(isAr ? 'يوم تاسوعاء' : "Day of Tasu'a");
         if (isMonday) reasons.add(isAr ? 'الإثنين' : 'Monday');
         if (isThursday) reasons.add(isAr ? 'الخميس' : 'Thursday');
         if (isWhiteDay) reasons.add(isAr ? 'الأيام البيض' : 'White Days');
@@ -43,8 +49,8 @@ class SunnahFastingCalendarScreen extends StatelessWidget {
               decoration: BoxDecoration(color: AppColors.primaryEmerald.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12)),
               child: Text(
                 isAr
-                    ? 'أيام الصيام المستحبة خلال الـ30 يومًا القادمة: كل إثنين وخميس، وأيام 13-14-15 من كل شهر هجري (الأيام البيض).'
-                    : 'Recommended voluntary fasting days over the next 30 days: every Monday and Thursday, plus the 13th-15th of each Hijri month (White Days).',
+                    ? 'أيام الصيام المستحبة خلال الـ30 يومًا القادمة: كل إثنين وخميس، أيام 13-14-15 من كل شهر هجري (الأيام البيض)، ويوم عرفة (9 ذو الحجة)، ويوما تاسوعاء وعاشوراء (9-10 محرم).'
+                    : "Recommended voluntary fasting days over the next 30 days: every Monday and Thursday, the 13th-15th of each Hijri month (White Days), the Day of Arafah (9 Dhul-Hijjah), and Tasu'a and Ashura (9-10 Muharram).",
                 style: const TextStyle(fontSize: 13, height: 1.6),
               ),
             );

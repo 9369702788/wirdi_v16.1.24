@@ -2,32 +2,51 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HifzPlan {
+  final String id;
   final int surahNumber;
   final int startAyah;
   final int endAyah;
   final int targetReps;
 
   const HifzPlan({
+    required this.id,
     required this.surahNumber,
     required this.startAyah,
     required this.endAyah,
     required this.targetReps,
   });
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'surahNumber': surahNumber,
+        'startAyah': startAyah,
+        'endAyah': endAyah,
+        'targetReps': targetReps,
+      };
+
+  factory HifzPlan.fromJson(Map<String, dynamic> json) => HifzPlan(
+        id: json['id'] as String,
+        surahNumber: json['surahNumber'] as int,
+        startAyah: json['startAyah'] as int,
+        endAyah: json['endAyah'] as int,
+        targetReps: json['targetReps'] as int,
+      );
 }
 
 /// Persists Hifz (memorization) progress: how many times each ayah has
-/// been repeated TODAY, the current daily plan (surah + ayah range +
-/// target repeats per ayah), and a simple day-streak counter for
-/// fully-completed plans. Plain SharedPreferences key/value pairs --
-/// consistent with the rest of the app, intentionally simple: this is
-/// a practice aid, not a scientific spaced-repetition system.
+/// been repeated TODAY per plan, the user's active daily plans (each a
+/// surah + ayah range + target repeats per ayah -- now a LIST, so more
+/// than one surah can be memorized at the same time), and a simple
+/// day-streak counter that advances when at least one plan is fully
+/// completed each day.
 class HifzService {
   HifzService._();
 
   static const List<int> _leitnerIntervalsDays = [1, 3, 7, 16, 35];
 
-  static const _planKey = 'hifz_plan_v1';
-  static const _repsPrefix = 'hifz_reps_v1_';
+  static const _planKey = 'hifz_plan_v1'; // legacy single-plan keys, migration-only
+  static const _plansListKey = 'hifz_plans_v2';
+  static const _repsPrefix = 'hifz_reps_v2_';
   static const _streakKey = 'hifz_streak_v1';
   static const _lastCompletedDateKey = 'hifz_last_completed_date_v1';
   static const _revisionKey = 'hifz_revision_portions_v1';
@@ -37,24 +56,24 @@ class HifzService {
     return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
   }
 
-  static String _repKey(int surahNumber, int ayahNumber) =>
-      '$_repsPrefix${surahNumber}_${ayahNumber}_${_todayKey()}';
+  static String _repKey(String planId, int surahNumber, int ayahNumber) =>
+      '$_repsPrefix${planId}_${surahNumber}_${ayahNumber}_${_todayKey()}';
 
-  static Future<int> getTodayReps(int surahNumber, int ayahNumber) async {
+  static Future<int> getTodayReps(String planId, int surahNumber, int ayahNumber) async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getInt(_repKey(surahNumber, ayahNumber)) ?? 0;
+    return prefs.getInt(_repKey(planId, surahNumber, ayahNumber)) ?? 0;
   }
 
-  static Future<int> incrementReps(int surahNumber, int ayahNumber, int cap) async {
+  static Future<int> incrementReps(String planId, int surahNumber, int ayahNumber, int cap) async {
     final prefs = await SharedPreferences.getInstance();
-    final key = _repKey(surahNumber, ayahNumber);
+    final key = _repKey(planId, surahNumber, ayahNumber);
     final current = prefs.getInt(key) ?? 0;
     final next = current >= cap ? current : current + 1;
     await prefs.setInt(key, next);
     return next;
   }
 
-  static Future<HifzPlan?> getPlan() async {
+  static Future<HifzPlan?> _getLegacyPlan() async {
     final prefs = await SharedPreferences.getInstance();
     final surahNumber = prefs.getInt('${_planKey}_surah');
     final startAyah = prefs.getInt('${_planKey}_start');
@@ -63,18 +82,10 @@ class HifzService {
     if (surahNumber == null || startAyah == null || endAyah == null || targetReps == null) {
       return null;
     }
-    return HifzPlan(surahNumber: surahNumber, startAyah: startAyah, endAyah: endAyah, targetReps: targetReps);
+    return HifzPlan(id: 'plan_migrated_v1', surahNumber: surahNumber, startAyah: startAyah, endAyah: endAyah, targetReps: targetReps);
   }
 
-  static Future<void> setPlan(HifzPlan plan) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('${_planKey}_surah', plan.surahNumber);
-    await prefs.setInt('${_planKey}_start', plan.startAyah);
-    await prefs.setInt('${_planKey}_end', plan.endAyah);
-    await prefs.setInt('${_planKey}_target', plan.targetReps);
-  }
-
-  static Future<void> clearPlan() async {
+  static Future<void> _clearLegacyPlan() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('${_planKey}_surah');
     await prefs.remove('${_planKey}_start');
@@ -82,15 +93,46 @@ class HifzService {
     await prefs.remove('${_planKey}_target');
   }
 
+  static Future<void> _savePlans(List<HifzPlan> plans) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_plansListKey, plans.map((p) => jsonEncode(p.toJson())).toList());
+  }
+
+  static Future<List<HifzPlan>> getAllPlans() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getStringList(_plansListKey);
+    if (raw != null) {
+      return raw.map((e) => HifzPlan.fromJson(jsonDecode(e) as Map<String, dynamic>)).toList();
+    }
+    final legacy = await _getLegacyPlan();
+    if (legacy != null) {
+      await _savePlans([legacy]);
+      await _clearLegacyPlan();
+      return [legacy];
+    }
+    await _savePlans(const []);
+    return [];
+  }
+
+  static Future<void> addPlan(HifzPlan plan) async {
+    final plans = await getAllPlans();
+    plans.add(plan);
+    await _savePlans(plans);
+  }
+
+  static Future<void> removePlan(String id) async {
+    final plans = await getAllPlans();
+    plans.removeWhere((p) => p.id == id);
+    await _savePlans(plans);
+  }
+
   static Future<int> getStreak() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt(_streakKey) ?? 0;
   }
 
-  static Future<int> checkAndUpdateStreakIfPlanCompleted() async {
-    final plan = await getPlan();
+  static Future<int> checkAndUpdateStreakIfPlanCompleted(HifzPlan plan) async {
     final prefs = await SharedPreferences.getInstance();
-    if (plan == null) return prefs.getInt(_streakKey) ?? 0;
 
     final todayStr = _todayKey();
     final lastCompleted = prefs.getString(_lastCompletedDateKey);
@@ -99,7 +141,7 @@ class HifzService {
     }
 
     for (var a = plan.startAyah; a <= plan.endAyah; a++) {
-      final reps = await getTodayReps(plan.surahNumber, a);
+      final reps = await getTodayReps(plan.id, plan.surahNumber, a);
       if (reps < plan.targetReps) {
         return prefs.getInt(_streakKey) ?? 0;
       }

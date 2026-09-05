@@ -134,9 +134,38 @@ class _ActivityHeatmapScreenState extends State<ActivityHeatmapScreen> {
                     ),
                     const SizedBox(height: 2),
                   ],
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 14,
+                    runSpacing: 6,
+                    children: [
+                      _LegendSwatch(color: AppColors.mutedText.withValues(alpha: 0.06), label: isAr ? 'مستقبلي' : 'Future'),
+                      _LegendSwatch(color: AppColors.mutedText.withValues(alpha: 0.08), label: isAr ? 'بلا نشاط' : 'No activity'),
+                      _LegendSwatch(color: AppColors.primaryEmerald.withValues(alpha: 0.4), label: isAr ? 'نشاط متوسط' : 'Some activity'),
+                      _LegendSwatch(color: AppColors.primaryEmerald.withValues(alpha: 1.0), label: isAr ? 'نشاط كامل' : 'Full activity'),
+                    ],
+                  ),
                 ],
               ),
             ),
+    );
+  }
+}
+
+class _LegendSwatch extends StatelessWidget {
+  final Color color;
+  final String label;
+  const _LegendSwatch({required this.color, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(width: 14, height: 14, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4))),
+        const SizedBox(width: 6),
+        Text(label, style: const TextStyle(fontSize: 11, color: AppColors.mutedText)),
+      ],
     );
   }
 }

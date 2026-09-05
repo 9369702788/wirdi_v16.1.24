@@ -57,4 +57,43 @@ final List<Map<String, Object>> quranicArabicLessons = [
       QuranicWord(arabic: 'خَلَقَ', transliteration: 'khalaqa', meaningAr: 'أوجد من عدم', meaningEn: 'He created', noteAr: 'من أوائل الأفعال ورودًا في القرآن', noteEn: 'One of the earliest-revealed verbs in the Quran'),
     ],
   },
+
+  {
+    'titleAr': 'كلمات من آية الكرسي',
+    'titleEn': 'Words from Ayat al-Kursi',
+    'words': [
+      QuranicWord(arabic: 'الْحَيُّ', transliteration: 'al-Hayy', meaningAr: 'الدائم الحياة الذي لا يموت', meaningEn: 'The Ever-Living', noteAr: 'من أسماء الله الحسنى، ويقترن غالباً باسم القيوم', noteEn: 'One of the Names of Allah, often paired with al-Qayyum'),
+      QuranicWord(arabic: 'الْقَيُّومُ', transliteration: 'al-Qayyum', meaningAr: 'القائم بذاته والمُقيم لغيره', meaningEn: 'The Self-Sustaining, Sustainer of all', noteAr: 'يدل على استقلاله تعالى عن كل شيء وحاجة كل شيء إليه', noteEn: "Indicates Allah's total independence and everything's dependence on Him"),
+      QuranicWord(arabic: 'سِنَةٌ', transliteration: 'sinah', meaningAr: 'النعاس الخفيف قبل النوم', meaningEn: 'Drowsiness / slumber', noteAr: 'نُفيت عن الله مع النوم في نفس الآية', noteEn: 'Negated of Allah in the same verse as sleep'),
+      QuranicWord(arabic: 'الْكُرْسِيُّ', transliteration: 'al-Kursi', meaningAr: 'موضع القدمين، كناية عن عظمة الملك', meaningEn: "The Footstool, symbolizing Allah's vast dominion", noteAr: 'وسع السماوات والأرض كما ورد في الآية', noteEn: 'Described as encompassing the heavens and earth'),
+      QuranicWord(arabic: 'يَؤُودُهُ', transliteration: "ya'ooduhu", meaningAr: 'يُثقله ويُتعبه', meaningEn: 'Burdens or wearies Him', noteAr: 'منفي عن الله، فحفظ الكون لا يُتعبه سبحانه', noteEn: 'Negated of Allah -- sustaining creation does not tire Him'),
+      QuranicWord(arabic: 'الْعَلِيُّ', transliteration: "al-'Aliyy", meaningAr: 'المرتفع فوق خلقه بذاته وقدره', meaningEn: 'The Most High', noteAr: 'من أسماء الله الحسنى', noteEn: 'One of the Names of Allah'),
+      QuranicWord(arabic: 'الْعَظِيمُ', transliteration: "al-'Adheem", meaningAr: 'العظيم في ذاته وصفاته', meaningEn: 'The Most Great', noteAr: 'ختمت به آية الكرسي', noteEn: 'The final Name in Ayat al-Kursi'),
+    ],
+  },
+  {
+    'titleAr': 'أسماء وصفات شائعة',
+    'titleEn': 'Common Quranic nouns and attributes',
+    'words': [
+      QuranicWord(arabic: 'الْغَفُورُ', transliteration: 'al-Ghafoor', meaningAr: 'كثير المغفرة والستر للذنوب', meaningEn: 'The Most Forgiving', noteAr: 'من أكثر أسماء الله ذكراً في القرآن', noteEn: "One of Allah's most frequently mentioned Names"),
+      QuranicWord(arabic: 'الرَّحِيمُ', transliteration: 'ar-Raheem', meaningAr: 'واسع الرحمة بالمؤمنين خاصة', meaningEn: 'The Especially Merciful (to believers)', noteAr: 'يقترن غالباً باسم الغفور', noteEn: 'Often paired with al-Ghafoor'),
+      QuranicWord(arabic: 'الْعَزِيزُ', transliteration: "al-'Azeez", meaningAr: 'الغالب القوي الذي لا يُقهر', meaningEn: 'The Almighty', noteAr: 'يقترن كثيراً باسم الحكيم', noteEn: 'Often paired with al-Hakeem'),
+      QuranicWord(arabic: 'الْحَكِيمُ', transliteration: 'al-Hakeem', meaningAr: 'صاحب الحكمة البالغة في كل أمر', meaningEn: 'The All-Wise', noteAr: 'يشير إلى إتقان خلق الله وتدبيره', noteEn: "Points to Allah's perfect wisdom in creation and decree"),
+      QuranicWord(arabic: 'السَّمِيعُ', transliteration: 'as-Samee', meaningAr: 'الذي يسمع كل شيء', meaningEn: 'The All-Hearing', noteAr: 'يقترن غالباً باسم البصير', noteEn: 'Often paired with al-Baseer'),
+      QuranicWord(arabic: 'الْبَصِيرُ', transliteration: 'al-Baseer', meaningAr: 'الذي يرى كل شيء', meaningEn: 'The All-Seeing', noteAr: 'يدل على إحاطة علم الله بكل تفصيل', noteEn: "Indicates Allah's complete awareness of every detail"),
+      QuranicWord(arabic: 'كَتَبَ', transliteration: 'kataba', meaningAr: 'فرض وأوجب', meaningEn: 'He decreed / prescribed', noteAr: 'يُستخدم للدلالة على الفرض مثل الصيام', noteEn: 'Used for obligations, such as fasting'),
+    ],
+  },
+  {
+    'titleAr': 'كلمات الزمن والمصير',
+    'titleEn': 'Words about time and the hereafter',
+    'words': [
+      QuranicWord(arabic: 'الْآخِرَةُ', transliteration: "al-Akhirah", meaningAr: 'الحياة بعد الموت والبعث', meaningEn: 'The Hereafter', noteAr: 'تقابل الدنيا في القرآن كثيراً', noteEn: 'Frequently contrasted with ad-Dunya (this worldly life)'),
+      QuranicWord(arabic: 'السَّاعَةُ', transliteration: "as-Sa'ah", meaningAr: 'يوم القيامة', meaningEn: 'The Hour (Day of Judgment)', noteAr: 'وُصفت بأنها قريبة وآتية لا ريب فيها', noteEn: 'Described as imminent and certain to come'),
+      QuranicWord(arabic: 'يَوْمَئِذٍ', transliteration: "yawma'idhin", meaningAr: 'في ذلك اليوم', meaningEn: 'On that day', noteAr: 'يتكرر كثيراً في وصف أهوال القيامة', noteEn: 'Frequently used describing the events of the Day of Judgment'),
+      QuranicWord(arabic: 'الْجَنَّةُ', transliteration: 'al-Jannah', meaningAr: 'دار النعيم الأبدي للمؤمنين', meaningEn: 'Paradise', noteAr: 'سُميت جنة لكثافة أشجارها المُظِلّة', noteEn: 'Named for its dense, shading trees'),
+      QuranicWord(arabic: 'النَّارُ', transliteration: 'an-Naar', meaningAr: 'دار العذاب للكافرين', meaningEn: 'The Fire (Hell)', noteAr: 'يقابلها ذكر الجنة في آيات كثيرة', noteEn: 'Frequently contrasted with Paradise'),
+      QuranicWord(arabic: 'خَالِدِينَ', transliteration: 'khalideen', meaningAr: 'باقين إلى الأبد', meaningEn: 'Abiding forever', noteAr: 'تصف دوام النعيم أو العذاب', noteEn: 'Describes the permanence of reward or punishment'),
+    ],
+  },
 ];

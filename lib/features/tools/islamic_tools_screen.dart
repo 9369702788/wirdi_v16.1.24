@@ -40,6 +40,7 @@ import '../zakat/qurbani_calculator_screen.dart';
 import '../prayer/fasting_countdown_screen.dart';
 import '../ramadan/sunnah_fasting_calendar_screen.dart';
 import '../hadith/hadith_collection_screen.dart';
+import '../hadeeth_enc/hadeeth_hub_screen.dart';
 import '../insights/wirdi_insights_screen.dart';
 import '../khatma/khatma_tracker_screen.dart';
 import '../mosque_finder/mosque_finder_screen.dart';
@@ -114,7 +115,7 @@ class IslamicToolsScreen extends StatelessWidget {
     ),
     _ToolEntry(
       icon: Icons.compare_arrows,
-      titleFor: (l10n) => l10n.localeName == 'ar' ? 'مقارنة السور' : 'Surah Comparison',
+      titleFor: (l10n) => l10n.localeName == 'ar' ? 'معلومات عن السور' : 'Surah Information',
       subtitleFor: (l10n) => l10n.localeName == 'ar' ? 'قارن بين سورتين في عدد الآيات وطولها' : 'Compare two surahs by verse count and length',
       builder: (_) => const SurahComparisonScreen(),
     ),
@@ -158,7 +159,7 @@ class IslamicToolsScreen extends StatelessWidget {
       icon: Icons.menu_book_outlined,
       titleFor: (l10n) => l10n.toolHadithTitle,
       subtitleFor: (l10n) => l10n.toolHadithSubtitle,
-      builder: (_) => const HadithCollectionScreen(),
+      builder: (_) => const HadeethHubScreen(),
     ),
     _ToolEntry(
       icon: Icons.menu_book,

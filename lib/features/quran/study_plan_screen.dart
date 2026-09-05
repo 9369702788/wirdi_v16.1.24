@@ -4,6 +4,7 @@ import '../../core/models/quran_models.dart';
 import '../../core/services/hifz_service.dart';
 import '../../core/services/quran_repository.dart';
 import '../../core/theme/app_theme.dart';
+import 'hifz_screen.dart';
 
 class StudyPlanScreen extends StatefulWidget {
   const StudyPlanScreen({super.key});
@@ -42,7 +43,8 @@ class _StudyPlanScreenState extends State<StudyPlanScreen> {
     final totalAyahs = surah.ayahs.length;
     final perDay = (totalAyahs / _days).ceil().clamp(1, totalAyahs);
     final endAyah = perDay > totalAyahs ? totalAyahs : perDay;
-    await HifzService.setPlan(HifzPlan(
+    await HifzService.addPlan(HifzPlan(
+      id: 'plan_${DateTime.now().millisecondsSinceEpoch}',
       surahNumber: surah.number,
       startAyah: 1,
       endAyah: endAyah,
@@ -51,8 +53,8 @@ class _StudyPlanScreenState extends State<StudyPlanScreen> {
     if (!mounted) return;
     setState(() {
       _resultMessage = isAr
-          ? 'تم إنشاء الخطة: ${surah.name}، ستحفظ تقريبًا $perDay آية يوميًا لمدة $_days يوم (بمعدل $_repsPerAyah تكرارات لكل آية). ابدأ من وضع الحفظ الآن.'
-          : 'Plan created: ${surah.englishName}, roughly $perDay verse(s) per day over $_days day(s), $_repsPerAyah repeats per verse. Open Hifz Mode to start.';
+          ? 'تمت إضافة خطة جديدة: ${surah.name}، ستحفظ تقريبًا $perDay آية يوميًا لمدة $_days يوم (بمعدل $_repsPerAyah تكرارات لكل آية). يمكنك إضافة أكثر من خطة في نفس الوقت. اضغط الزر تحت لفتح وضع الحفظ والبدء فعليًا -- المراجعة لاحقًا (بعد يوم واحد على الأقل) هتظهر تلقائيًا هناك.'
+          : "New plan added: ${surah.englishName}, roughly $perDay verse(s) per day over $_days day(s), $_repsPerAyah repeats per verse. You can add more than one plan at the same time. Tap the button below to open Hifz Mode and actually start -- revision (from at least a day later) will appear there automatically.";
     });
   }
 
@@ -112,6 +114,12 @@ class _StudyPlanScreenState extends State<StudyPlanScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(_resultMessage!, textDirection: isAr ? TextDirection.rtl : TextDirection.ltr, style: const TextStyle(fontSize: 13, height: 1.6)),
+                  ),
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HifzScreen())),
+                    icon: const Icon(Icons.menu_book_outlined),
+                    label: Text(isAr ? 'فتح وضع الحفظ الآن' : 'Open Hifz Mode now'),
                   ),
                 ],
               ],

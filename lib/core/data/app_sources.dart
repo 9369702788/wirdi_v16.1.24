@@ -87,6 +87,8 @@ class AppSources {
   static String hadithTranslationEditionFor(String languageCode) =>
       hadithTranslationEditionByLocale[languageCode] ?? hadithTranslationEditionByLocale['en']!;
 
+  static const String hadeethEncApiBase = 'https://hadeethenc.com/api/v1';
+
   /// Adhan audio recordings, officially hosted by AlAdhan (the same
   /// provider already used for prayer times), listed at
   /// https://aladhan.com/download-adhans
@@ -219,6 +221,11 @@ https://github.com/aliftype/amiri
 مرخصة بموجب Open Database License (ODbL)
 https://www.openstreetmap.org/copyright
 
+موسوعة الأحاديث النبوية:
+HadeethEnc.com
+https://hadeethenc.com
+يُعاد نشر الترجمات وفق شروط HadeethEnc.com بدون أي تعديل أو حذف.
+
 ملاحظات مهمة:
 - يجب عدم تعديل نص القرآن الكريم.
 - يجب ذكر مصدر Tanzil داخل صفحة المصادر والتراخيص.
@@ -279,6 +286,11 @@ Nearby mosque & halal restaurant data:
 © OpenStreetMap contributors, via the Overpass API
 Licensed under the Open Database License (ODbL)
 https://www.openstreetmap.org/copyright
+
+Hadith Encyclopedia:
+HadeethEnc.com
+https://hadeethenc.com
+Translations are republished per HadeethEnc.com's terms without modification.
 
 Important notes:
 - The Quran text must not be modified.
@@ -341,6 +353,11 @@ Daten zu Moscheen & Halal-Restaurants in der Nähe:
 Lizenziert unter der Open Database License (ODbL)
 https://www.openstreetmap.org/copyright
 
+Hadith-Enzyklopädie:
+HadeethEnc.com
+https://hadeethenc.com
+Übersetzungen werden unverändert gemäß HadeethEnc.com weiterveröffentlicht.
+
 Wichtige Hinweise:
 - Der Korantext darf nicht verändert werden.
 - Die Quelle Tanzil muss auf der Seite „Quellen & Lizenzen" genannt werden.
@@ -401,6 +418,11 @@ Yakındaki cami ve helal restoran verileri:
 © OpenStreetMap katkıda bulunanları, Overpass API aracılığıyla
 Open Database License (ODbL) ile lisanslanmıştır
 https://www.openstreetmap.org/copyright
+
+Hadis Ansiklopedisi:
+HadeethEnc.com
+https://hadeethenc.com
+Çeviriler HadeethEnc.com şartlarına uygun olarak değiştirilmeden yayınlanır.
 
 Önemli notlar:
 - Kur'an metni değiştirilemez.

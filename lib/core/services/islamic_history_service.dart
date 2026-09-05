@@ -1,4 +1,3 @@
-
 class IslamicHistoryEvent {
   final int year;
   final String yearAH;
@@ -13,16 +12,107 @@ class IslamicHistoryEvent {
   });
 }
 
+/// A curated timeline of major early-Islamic events, summarized mainly
+/// from Ibn Hisham's seerah, At-Tabari's history, and Ibn Kathir's
+/// Al-Bidaya wa'l-Nihaya -- widely accepted classical references.
 class IslamicHistoryService {
   static const List<IslamicHistoryEvent> timeline = [
-    IslamicHistoryEvent(year: 610, yearAH: 'Before Hijra', event: 'Beginning of Revelation', eventAr: 'بداية الوحي', description: 'Prophet Muhammad (peace be upon him) receives the first revelation in the cave of Hira', descriptionAr: 'نزول الوحي على النبي محمد صلى الله عليه وسلم لأول مرة في غار حراء'),
-    IslamicHistoryEvent(year: 622, yearAH: '1 AH', event: 'The Hijra', eventAr: 'الهجرة النبوية', description: 'Migration of the Prophet and his companions from Mecca to Medina', descriptionAr: 'هجرة النبي صلى الله عليه وسلم وأصحابه من مكة إلى المدينة المنورة'),
-    IslamicHistoryEvent(year: 624, yearAH: '2 AH', event: 'Battle of Badr', eventAr: 'غزوة بدر', description: 'The first major battle between the Muslims and the Quraysh of Mecca', descriptionAr: 'أول معركة كبرى بين المسلمين وقريش، وتُعرف بيوم الفرقان'),
-    IslamicHistoryEvent(year: 625, yearAH: '3 AH', event: 'Battle of Uhud', eventAr: 'غزوة أُحد', description: 'Second major battle between the Muslims and the Quraysh', descriptionAr: 'المعركة الثانية الكبرى بين المسلمين وقريش عند جبل أُحد'),
-    IslamicHistoryEvent(year: 627, yearAH: '5 AH', event: 'Battle of the Trench', eventAr: 'غزوة الخندق', description: 'Siege of Medina by a coalition of Quraysh and allied tribes', descriptionAr: 'حصار المدينة المنورة من قِبل تحالف قريش والأحزاب، وحفر الخندق دفاعًا عنها'),
-    IslamicHistoryEvent(year: 628, yearAH: '6 AH', event: 'Treaty of Hudaybiyyah', eventAr: 'صلح الحديبية', description: 'A peace treaty between the Muslims and the Quraysh of Mecca', descriptionAr: 'معاهدة صلح بين المسلمين وقريش مهّدت لفتح مكة لاحقًا'),
-    IslamicHistoryEvent(year: 630, yearAH: '8 AH', event: 'Conquest of Mecca', eventAr: 'فتح مكة', description: 'The Muslims peacefully enter and take control of Mecca', descriptionAr: 'دخول المسلمين مكة المكرمة فتحًا بلا قتال يُذكر، وتحطيم الأصنام حول الكعبة'),
-    IslamicHistoryEvent(year: 632, yearAH: '10 AH', event: 'The Farewell Pilgrimage', eventAr: 'حجة الوداع', description: 'The last pilgrimage and sermon of Prophet Muhammad (peace be upon him)', descriptionAr: 'آخر حجة أداها النبي صلى الله عليه وسلم، وألقى فيها خطبة الوداع الجامعة'),
+    IslamicHistoryEvent(
+      year: 610, yearAH: 'Before Hijra',
+      event: 'Beginning of Revelation', eventAr: 'بداية الوحي',
+      description:
+          'At the age of forty, while in retreat in the Cave of Hira, Prophet Muhammad received the first revelation through the angel Jibreel, opening with the command "Read in the name of your Lord who created." This marked the start of twenty-three years of revelation that would become the Quran, and the beginning of his mission calling people to the worship of Allah alone.',
+      descriptionAr:
+          'وهو في الأربعين من عمره، وبينما هو متعبّد في غار حراء، نزل عليه الوحي لأول مرة على يد الملَك جبريل عليه السلام بقوله "اقرأ باسم ربك الذي خلق". كانت هذه بداية ثلاث وعشرين سنة من نزول القرآن الكريم، وبداية مهمته في دعوة الناس إلى توحيد الله.',
+    ),
+    IslamicHistoryEvent(
+      year: 613, yearAH: 'Before Hijra',
+      event: 'Public Call to Islam', eventAr: 'الجهر بالدعوة',
+      description:
+          'After three years of quiet, private invitation among close family and friends, the Prophet was commanded to publicly proclaim his message on Mount Safa. This open call provoked fierce opposition from Quraysh, who saw it as a threat to their social order and the profitable pilgrimage trade tied to their idols, beginning years of persecution against the early Muslims.',
+      descriptionAr:
+          'بعد ثلاث سنوات من الدعوة السرية بين المقربين، أُمر النبي صلى الله عليه وسلم بالجهر بدعوته على جبل الصفا. أثار هذا الإعلان العلني معارضة شديدة من قريش التي رأت في الدعوة تهديداً لنظامها الاجتماعي وتجارة الحج المرتبطة بأصنامها، فبدأت سنوات من اضطهاد المسلمين الأوائل.',
+    ),
+    IslamicHistoryEvent(
+      year: 622, yearAH: '1 AH',
+      event: 'The Hijra', eventAr: 'الهجرة النبوية',
+      description:
+          "Facing an assassination plot and unrelenting persecution, the Prophet and his companion Abu Bakr migrated from Mecca to Medina, whose people had pledged support. This migration established the first organized Islamic community and state, and later became the starting point of the Islamic (Hijri) calendar under Caliph Umar ibn al-Khattab.",
+      descriptionAr:
+          'أمام مؤامرة اغتيال واضطهاد مستمر، هاجر النبي صلى الله عليه وسلم وصاحبه أبو بكر من مكة إلى المدينة التي بايعه أهلها على النصرة. أسّست هذه الهجرة أول مجتمع ودولة إسلامية منظمة، وصارت لاحقاً بداية التقويم الهجري في عهد الخليفة عمر بن الخطاب رضي الله عنه.',
+    ),
+    IslamicHistoryEvent(
+      year: 624, yearAH: '2 AH',
+      event: 'Battle of Badr', eventAr: 'غزوة بدر',
+      description:
+          "The first major military engagement between the roughly 300 Muslims of Medina and the far larger Quraysh army of Mecca. Despite being heavily outnumbered, the Muslims won a decisive victory, which strengthened the fledgling Islamic state's standing and is remembered as a defining moment of faith and divine support.",
+      descriptionAr:
+          'أول معركة كبرى بين نحو ثلاثمائة مسلم من المدينة وجيش قريش الأكبر عدداً من مكة. رغم قلة العدد، حقق المسلمون نصراً حاسماً عزّز مكانة الدولة الإسلامية الوليدة، وتُذكر هذه الغزوة كلحظة فارقة في الإيمان والتأييد الإلهي.',
+    ),
+    IslamicHistoryEvent(
+      year: 625, yearAH: '3 AH',
+      event: 'Battle of Uhud', eventAr: 'غزوة أُحد',
+      description:
+          "Quraysh returned seeking revenge for Badr. A tactical error by archers who left their post led to a reversal of Muslim fortunes and the martyrdom of seventy companions, including the Prophet's uncle Hamza. The battle taught enduring lessons about discipline, obedience to leadership, and steadfastness after setbacks.",
+      descriptionAr:
+          'عادت قريش للثأر من هزيمة بدر. أدى خطأ تكتيكي من الرماة الذين تركوا موقعهم إلى انقلاب موازين المعركة واستشهاد سبعين من الصحابة، منهم عم النبي حمزة رضي الله عنه. علّمت الغزوة دروساً خالدة في الانضباط وطاعة القيادة والثبات بعد النكسات.',
+    ),
+    IslamicHistoryEvent(
+      year: 627, yearAH: '5 AH',
+      event: 'Battle of the Trench', eventAr: 'غزوة الخندق',
+      description:
+          "A coalition of Quraysh and allied tribes besieged Medina, but the Muslims -- on the suggestion of Salman al-Farisi -- dug a defensive trench, a tactic unknown to the Arabs at the time. The siege failed after a harsh storm scattered the confederate army, marking a lasting shift in the balance of power toward the Muslims.",
+      descriptionAr:
+          'حاصر تحالف من قريش وقبائل حليفة المدينة، لكن المسلمين -- باقتراح من سلمان الفارسي -- حفروا خندقاً دفاعياً، وهي تقنية لم تعرفها العرب من قبل. فشل الحصار بعد أن فرّقت عاصفة شديدة جيش الأحزاب، مما أحدث تحوّلاً دائماً في ميزان القوى لصالح المسلمين.',
+    ),
+    IslamicHistoryEvent(
+      year: 628, yearAH: '6 AH',
+      event: 'Treaty of Hudaybiyyah', eventAr: 'صلح الحديبية',
+      description:
+          "A ten-year peace treaty between the Muslims and Quraysh that appeared unfavorable on its surface, yet the Quran described it as a clear victory. The resulting calm allowed Islam to spread peacefully, and more people accepted it in the following two years than in all the years before combined.",
+      descriptionAr:
+          'صلح مدته عشر سنوات بين المسلمين وقريش بدا في ظاهره مجحفاً، لكن القرآن وصفه بـ"الفتح المبين". أتاح الهدوء الناتج انتشار الإسلام سلماً، ودخل فيه خلال السنتين التاليتين أكثر ممن دخلوا في كل السنوات السابقة مجتمعة.',
+    ),
+    IslamicHistoryEvent(
+      year: 630, yearAH: '8 AH',
+      event: 'Conquest of Mecca', eventAr: 'فتح مكة',
+      description:
+          "After Quraysh broke the Hudaybiyyah treaty, the Prophet marched on Mecca with a large army and entered it almost without bloodshed, granting a general amnesty to those who had persecuted the Muslims for two decades. He then removed the idols surrounding the Kaaba, restoring it to the monotheistic worship established by Ibrahim.",
+      descriptionAr:
+          'بعد نقض قريش لصلح الحديبية، سار النبي صلى الله عليه وسلم إلى مكة بجيش كبير ودخلها بلا قتال يُذكر، وعفا عفواً عاماً عمّن اضطهد المسلمين عشرين عاماً. ثم أزال الأصنام المحيطة بالكعبة، مُعيداً إياها إلى التوحيد الذي أسّسه إبراهيم عليه السلام.',
+    ),
+    IslamicHistoryEvent(
+      year: 632, yearAH: '10 AH',
+      event: 'The Farewell Pilgrimage', eventAr: 'حجة الوداع',
+      description:
+          "The Prophet's only pilgrimage after the Hijra, attended by over a hundred thousand Muslims, where he delivered his Farewell Sermon establishing timeless principles of justice, equality, and the sanctity of life and property, and confirmed that the message of Islam had been completed.",
+      descriptionAr:
+          'حجة النبي صلى الله عليه وسلم الوحيدة بعد الهجرة، حضرها أكثر من مائة ألف مسلم، وألقى فيها خطبة الوداع التي أرست مبادئ خالدة في العدل والمساواة وحرمة الدماء والأموال، وأكّدت اكتمال رسالة الإسلام.',
+    ),
+    IslamicHistoryEvent(
+      year: 632, yearAH: '11 AH',
+      event: "The Prophet's Passing and Abu Bakr's Caliphate", eventAr: 'وفاة النبي وخلافة أبي بكر',
+      description:
+          "The Prophet passed away in Medina a few months after the Farewell Pilgrimage. The Muslim community chose Abu Bakr as-Siddiq as the first caliph, who firmly held the nation together through the Ridda wars (the apostasy wars) against tribes that refused to pay zakat or claimed false prophethood after the Prophet's death.",
+      descriptionAr:
+          'توفي النبي صلى الله عليه وسلم في المدينة بعد أشهر قليلة من حجة الوداع. اختارت الأمة أبا بكر الصديق خليفة أول، فحافظ بحزم على وحدة الأمة خلال حروب الردة ضد قبائل رفضت الزكاة أو ادّعت النبوة زوراً بعد وفاة النبي.',
+    ),
+    IslamicHistoryEvent(
+      year: 633, yearAH: '12 AH',
+      event: 'Compilation of the Quran', eventAr: 'جمع القرآن الكريم',
+      description:
+          "Following the deaths of many companions who had memorized the Quran in the Battle of Yamama, Abu Bakr ordered the Quran compiled into a single written copy under Zayd ibn Thabit's supervision. Decades later, Caliph Uthman ibn Affan had standardized copies distributed to major cities to preserve one unified text and recitation.",
+      descriptionAr:
+          'بعد استشهاد عدد كبير من حفظة القرآن في معركة اليمامة، أمر أبو بكر الصديق بجمع القرآن في مصحف واحد بإشراف زيد بن ثابت. وبعد عقود، أمر الخليفة عثمان بن عفان بنسخ مصاحف موحّدة ووزّعها على الأمصار الكبرى للحفاظ على نص وقراءة موحّدة.',
+    ),
+    IslamicHistoryEvent(
+      year: 636, yearAH: '15 AH',
+      event: 'Battle of Yarmouk', eventAr: 'معركة اليرموك',
+      description:
+          "A decisive battle in the Levant between the Muslim army led by Khalid ibn al-Walid and the Byzantine Empire. The Muslim victory ended centuries of Byzantine rule over the region and opened the way for the rapid early expansion of the Islamic state under the Rightly-Guided Caliphs.",
+      descriptionAr:
+          'معركة فاصلة في بلاد الشام بين الجيش الإسلامي بقيادة خالد بن الوليد والإمبراطورية البيزنطية. أنهى النصر الإسلامي قروناً من الحكم البيزنطي للمنطقة، وفتح الطريق أمام التوسع السريع للدولة الإسلامية في عهد الخلفاء الراشدين.',
+    ),
   ];
 
   static List<IslamicHistoryEvent> getTimelineEvents() {
