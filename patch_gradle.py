@@ -198,24 +198,33 @@ else:
           'Check android/app/build.gradle(.kts) manually and verify compileSdk/targetSdk are 36.')
 
 
-# ---- FIX: force ALL Android modules (including third-party plugins like
-# file_picker) to compile against the same SDK version as our app.
-# ROOT CAUSE (2026-09 CI failure): Flutter plugin subprojects (fetched
+# ---- FIX v219: force ALL Android modules (including third-party plugins
+# like file_picker) to compile against the same SDK version as our app.
+# ROOT CAUSE (2026-09 CI failure #1): Flutter plugin subprojects (fetched
 # from pub, NOT part of this repo, e.g. file_picker) set their OWN
-# compileSdk via `flutter.compileSdkVersion`, a property resolved from
-# whichever Flutter SDK release the CI runner happens to have installed
-# that day (channel: stable, unpinned). That is the exact same
-# non-determinism problem the "PRODUCTION READINESS" pin above already
-# solves for OUR app module -- but pinning android/app/build.gradle(.kts)
-# alone has ZERO effect on plugin subprojects, since each one is its own
-# independent Gradle module with its own build.gradle. The build failed
-# with: ":file_picker is currently compiled against android-34" while a
+# compileSdk via `flutter.compileSdkVersion`, resolved from whichever
+# Flutter SDK release the CI runner has installed that day (channel:
+# stable, unpinned). Pinning ONLY android/app/build.gradle(.kts) (done
+# above) has ZERO effect on plugin subprojects -- each is its own
+# independent Gradle module. Build failed with:
+# ":file_picker is currently compiled against android-34" while a
 # transitive dependency (flutter_plugin_android_lifecycle) required 36+.
-# The only way to force ALL Android modules in the whole Gradle build
-# (app AND every plugin) is a `subprojects {{ afterEvaluate {{ ... }} }}`
-# override placed in the ROOT-level android/build.gradle(.kts) -- this
-# runs once per module, for every module, regardless of where that
-# module's own build.gradle came from.
+#
+# ROOT CAUSE (2026-09 CI failure #2, v218 attempt): the first fix for
+# this used `subprojects {{ afterEvaluate {{ ... }} }}` APPENDED at the
+# END of android/build.gradle.kts -- i.e. registered AFTER the
+# Flutter-template's own `subprojects {{ project.evaluationDependsOn(":app") }}`
+# block. `evaluationDependsOn(":app")` forces Gradle to fully evaluate
+# the :app project immediately, INCLUDING running every subprojects{{}}
+# action registered on it SO FAR -- by the time our afterEvaluate action
+# (registered LAST) was reached, :app had often already finished
+# evaluating, and calling `Project.afterEvaluate()` on an
+# already-evaluated project throws:
+# "Cannot run Project.afterEvaluate(Action) when the project is already
+# evaluated." Fix: register our override as the FIRST subprojects{{}}
+# action in the file (inserted before the Flutter template's own
+# subprojects{{}} blocks), so our afterEvaluate callback is attached to
+# every project BEFORE evaluationDependsOn can force early evaluation.
 root_kts_path = Path('android/build.gradle.kts')
 root_groovy_path = Path('android/build.gradle')
 root_path = root_kts_path if root_kts_path.exists() else root_groovy_path
@@ -225,7 +234,7 @@ if root_path.exists():
     if 'FORCE_COMPILE_SDK_ALL_SUBPROJECTS' not in root_text:
         if root_path.suffix == '.kts':
             override_block = (
-                '\n// FORCE_COMPILE_SDK_ALL_SUBPROJECTS -- see patch_gradle.py for why this exists\n'
+                '// FORCE_COMPILE_SDK_ALL_SUBPROJECTS -- see patch_gradle.py for why this exists\n'
                 'subprojects {\n'
                 '    afterEvaluate {\n'
                 '        val androidExt = extensions.findByName("android")\n'
@@ -233,11 +242,11 @@ if root_path.exists():
                 '            androidExt.compileSdkVersion(36)\n'
                 '        }\n'
                 '    }\n'
-                '}\n'
+                '}\n\n'
             )
         else:
             override_block = (
-                '\n// FORCE_COMPILE_SDK_ALL_SUBPROJECTS -- see patch_gradle.py for why this exists\n'
+                '// FORCE_COMPILE_SDK_ALL_SUBPROJECTS -- see patch_gradle.py for why this exists\n'
                 'subprojects {\n'
                 '    afterEvaluate { proj ->\n'
                 '        if (proj.hasProperty("android")) {\n'
@@ -246,12 +255,29 @@ if root_path.exists():
                 '            }\n'
                 '        }\n'
                 '    }\n'
-                '}\n'
+                '}\n\n'
             )
-        root_path.write_text(root_text.rstrip() + '\n' + override_block)
-        print(f'Forced compileSdk=36 for ALL subprojects (plugins included) via {{root_path}}')
+
+        # Insert BEFORE the first existing "subprojects {" / "subprojects{"
+        # declaration, so our afterEvaluate registers before any
+        # evaluationDependsOn() call can force early evaluation. If no
+        # subprojects block exists at all (unexpected), fall back to
+        # inserting right after the first "allprojects" block, or else
+        # prepend at the very top of the file.
+        insert_idx = root_text.find('subprojects {')
+        if insert_idx == -1:
+            insert_idx = root_text.find('subprojects{')
+        if insert_idx == -1:
+            # Fallback: put it at the very top of the file (still valid
+            # Gradle -- subprojects{} can appear anywhere at top level).
+            new_root_text = override_block + root_text
+            print('WARNING: no existing "subprojects {" found -- prepended override at top of file instead')
+        else:
+            new_root_text = root_text[:insert_idx] + override_block + root_text[insert_idx:]
+        root_path.write_text(new_root_text)
+        print(f'Forced compileSdk=36 for ALL subprojects (plugins included) via {root_path}, inserted BEFORE the first existing subprojects{{}} block to avoid the already-evaluated error')
     else:
-        print(f'Subprojects compileSdk override already present in {{root_path}} -- skipping')
+        print(f'Subprojects compileSdk override already present in {root_path} -- skipping')
 else:
     print('WARNING: neither android/build.gradle.kts nor android/build.gradle found -- '
           'could not add the subprojects-wide compileSdk override. Third-party plugins '
