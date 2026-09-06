@@ -42,7 +42,7 @@ class _MonthlyPrayerCalendarScreenState extends State<MonthlyPrayerCalendarScree
         final dateInfo = d['date'] as Map<String, dynamic>;
         String clean(String key) => (timings[key] as String).split(' ').first;
         return {
-          'day': (dateInfo['gregorian'] as Map<String, dynamic>)['day'],
+          'day': int.tryParse('${(dateInfo['gregorian'] as Map<String, dynamic>)['day']}') ?? -1,
           'fajr': clean('Fajr'),
           'dhuhr': clean('Dhuhr'),
           'asr': clean('Asr'),

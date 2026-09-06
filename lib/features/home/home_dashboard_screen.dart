@@ -583,7 +583,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
               _DashboardCard(
                 icon: Icons.auto_stories_outlined,
                 title: '${l10n.homeHadithOfTheDay}${_hadithStreak > 1 ? '  \u{1F525} ${l10n.insightsDaysCount(_hadithStreak)}' : ''}',
-                subtitle: _hadithOfToday!.translatedText,
+                subtitle: _hadithOfToday!.translatedText.isNotEmpty ? _hadithOfToday!.translatedText : _hadithOfToday!.arabicText,
                 trailing: IconButton(
                   tooltip: l10n.homeShareHadith,
                   icon: const Icon(Icons.share_outlined, color: AppColors.mutedText),

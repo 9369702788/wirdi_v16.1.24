@@ -142,7 +142,8 @@ class _AdvancedQiblaScreenState extends State<AdvancedQiblaScreen> {
     final needleAngle = (qibla - heading) * math.pi / 180;
     final isAligned = _angleDifference(qibla, heading) < 5;
 
-    return Column(children: [
+    return SingleChildScrollView(
+      child: Column(children: [
       Container(
         margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -157,7 +158,8 @@ class _AdvancedQiblaScreenState extends State<AdvancedQiblaScreen> {
           ),
         ]),
       ),
-      Expanded(
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24),
         child: Center(
           child: Stack(alignment: Alignment.center, children: [
             Container(width: 280, height: 280,
@@ -200,7 +202,8 @@ class _AdvancedQiblaScreenState extends State<AdvancedQiblaScreen> {
           ],
         ]),
       ),
-    ]);
+      ]),
+    );
   }
 
   static double _angleDifference(double a, double b) {

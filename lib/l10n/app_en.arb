@@ -623,7 +623,7 @@
   "toolDuasSubtitle": "Save your own personal duas",
   "toolMosqueTitle": "Nearby Mosques & Halal Food",
   "toolMosqueSubtitle": "Free search powered by OpenStreetMap data",
-  "hadithTitle": "Forty Hadith of an-Nawawi",
+  "hadithTitle": "Prophetic Hadiths",
   "hadithSubtitle": "A concise collection of hadiths covering the fundamentals of the religion",
   "hadithLoadError": "Couldn't load the hadiths. Check your internet connection.",
   "hadithRetry": "Retry",

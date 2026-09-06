@@ -221,7 +221,7 @@ class IslamicToolsScreen extends StatelessWidget {
       builder: (_) => const SajdaSahwGuideScreen(),
     ),
     _ToolEntry(
-      icon: Icons.church_outlined,
+      icon: Icons.mosque,
       titleFor: (l10n) => l10n.localeName == 'ar' ? 'دليل صلاة الجنازة' : 'Janazah Prayer Guide',
       subtitleFor: (l10n) => l10n.localeName == 'ar' ? 'التكبيرات الأربع وما يُقال في كل واحدة' : 'The four Takbirs and what to say in each',
       builder: (_) => const JanazahGuideScreen(),

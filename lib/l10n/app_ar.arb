@@ -315,7 +315,7 @@
   "toolDuasSubtitle": "احفظ أدعيتك الخاصة",
   "toolMosqueTitle": "المساجد والمطاعم الحلال القريبة",
   "toolMosqueSubtitle": "بحث مجاني عبر بيانات OpenStreetMap",
-  "hadithTitle": "الأربعون النووية",
+  "hadithTitle": "الأحاديث النبوية",
   "hadithSubtitle": "مجموعة مختصرة من الأحاديث الجامعة لأصول الدين",
   "hadithLoadError": "تعذر تحميل الأحاديث. تأكد من اتصال الإنترنت.",
   "hadithRetry": "إعادة المحاولة",

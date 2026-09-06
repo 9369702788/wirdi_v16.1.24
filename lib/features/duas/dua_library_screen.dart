@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_theme.dart';
+import '../../core/services/arabic_text_utils.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../quran/shareable_text_card_screen.dart';
 
@@ -278,9 +279,9 @@ class _DuaLibraryScreenState extends State<DuaLibraryScreen> {
           (isAr ? d.categoryAr : d.categoryEn) == _selectedCategory;
       final q = _query.trim().toLowerCase();
       final matchesQuery = q.isEmpty ||
-          d.titleAr.contains(_query.trim()) ||
+          ArabicTextUtils.contains(d.titleAr, _query.trim()) ||
           d.titleEn.toLowerCase().contains(q) ||
-          d.arabic.contains(_query.trim());
+          ArabicTextUtils.contains(d.arabic, _query.trim());
       return matchesCategory && matchesQuery;
     }).toList();
 

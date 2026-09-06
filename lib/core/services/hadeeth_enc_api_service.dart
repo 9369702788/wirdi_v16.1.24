@@ -64,7 +64,7 @@ class HadeethEncApiService {
     required String id,
     required String languageCode,
   }) async {
-    final json = await _getJson(_uri('/hadeeths/list/', {'language': languageCode, 'id': id}));
+    final json = await _getJson(_uri('/hadeeths/one/', {'language': languageCode, 'id': id}));
     dynamic raw = json['data'] ?? json;
     if (raw is List) {
       if (raw.isEmpty) throw Exception('HadeethEnc: hadith $id not found');

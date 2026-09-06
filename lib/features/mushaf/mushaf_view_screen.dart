@@ -45,6 +45,9 @@ class _MushafViewScreenState extends State<MushafViewScreen> {
   /// readers prefer scrolling top-to-bottom over flipping discrete pages.
   bool _continuousScroll = false;
 
+  int _currentPageIndex = 0;
+  ScrollController? _continuousScrollController;
+
   /// Cached once [_loadAll] resolves, so [_onAudioChanged] (which fires
   /// on every ayah transition, independent of the FutureBuilder) can
   /// look up which page a given ayah belongs to without re-awaiting
@@ -55,6 +58,7 @@ class _MushafViewScreenState extends State<MushafViewScreen> {
   void initState() {
     super.initState();
     _future = _loadAll();
+    _currentPageIndex = (widget.initialPage ?? 1) - 1;
     _pageController = PageController(initialPage: (widget.initialPage ?? 1) - 1);
     quranAudio.addListener(_onAudioChanged);
     // FIX: keep the screen awake while reading the Mushaf, same as a
@@ -109,6 +113,7 @@ class _MushafViewScreenState extends State<MushafViewScreen> {
   void dispose() {
     quranAudio.removeListener(_onAudioChanged);
     _pageController.dispose();
+    _continuousScrollController?.dispose();
     WakelockPlus.disable();
     super.dispose();
   }
@@ -126,7 +131,29 @@ class _MushafViewScreenState extends State<MushafViewScreen> {
                 ? (Localizations.localeOf(context).languageCode == 'ar' ? 'وضع الصفحات' : 'Page-flip mode')
                 : (Localizations.localeOf(context).languageCode == 'ar' ? 'وضع التمرير المستمر' : 'Continuous scroll mode'),
             icon: Icon(_continuousScroll ? Icons.auto_stories_outlined : Icons.swap_vert),
-            onPressed: () => setState(() => _continuousScroll = !_continuousScroll),
+            onPressed: () {
+              final itemHeight = MediaQuery.sizeOf(context).height * 0.92;
+              if (!_continuousScroll) {
+                if (_pageController.hasClients) {
+                  _currentPageIndex = _pageController.page?.round() ?? _pageController.initialPage;
+                }
+                _continuousScrollController?.dispose();
+                _continuousScrollController = ScrollController(initialScrollOffset: _currentPageIndex * itemHeight);
+              } else {
+                final controller = _continuousScrollController;
+                if (controller != null && controller.hasClients) {
+                  _currentPageIndex = (controller.offset / itemHeight).round().clamp(0, 1 << 20);
+                }
+                controller?.dispose();
+                _continuousScrollController = null;
+              }
+              setState(() => _continuousScroll = !_continuousScroll);
+              if (_continuousScroll == false) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (_pageController.hasClients) _pageController.jumpToPage(_currentPageIndex);
+                });
+              }
+            },
           ),
           ListenableBuilder(
             listenable: quranAudio,
@@ -186,6 +213,7 @@ class _MushafViewScreenState extends State<MushafViewScreen> {
             return Directionality(
               textDirection: TextDirection.rtl,
               child: ListView.builder(
+                controller: _continuousScrollController,
                 itemCount: pages.length,
                 itemBuilder: (context, index) {
                   final page = pages[index];
@@ -211,6 +239,7 @@ class _MushafViewScreenState extends State<MushafViewScreen> {
               physics: _multiTouchActive ? const NeverScrollableScrollPhysics() : const PageScrollPhysics(),
               itemCount: pages.length,
               onPageChanged: (index) {
+                _currentPageIndex = index;
                 UserProgressService.saveLastReading(
                   surahNumber: pages[index].ayahs.isNotEmpty ? pages[index].ayahs.first.surahNumber : 1,
                   surahName: '',
