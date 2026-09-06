@@ -138,22 +138,76 @@ class PrayerService {
     }
 
     try {
-      final url = AppSources.prayerTimesByAddressUrl(trimmed, method: appSettings.prayerCalcMethod, school: await _schoolFromMathhab());
+      // ROOT CAUSE FIX: AlAdhan's `timingsByAddress` endpoint relies on
+      // ITS OWN server-side geocoding, which frequently fails to
+      // resolve valid city names (especially Arabic-script names, or a
+      // bare city name without ", Country") and returns a non-200
+      // response -- showing "city not found" even for cities that
+      // clearly exist. Nominatim forward-geocoding is used here
+      // instead (the SAME reliable service already used for
+      // reverse-geocoding above), converting the city name to
+      // coordinates ourselves, then calling the plain lat/lon `timings`
+      // endpoint already proven to work for GPS-based lookups.
+      final coords = await _forwardGeocode(trimmed);
+      if (coords == null) {
+        throw Exception('لم يتم العثور على هذه المدينة. جرّب كتابتها بصيغة "المدينة، الدولة"');
+      }
+
+      final url = AppSources.prayerTimesUrl(
+        latitude: coords.$1,
+        longitude: coords.$2,
+        method: appSettings.prayerCalcMethod,
+        school: await _schoolFromMathhab(),
+      );
       final response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 15));
 
       if (response.statusCode != 200) {
-        throw Exception('لم يتم العثور على هذه المدينة');
+        throw Exception('تعذّر جلب مواقيت الصلاة لهذه المدينة، حاول مرة أخرى');
       }
 
       final decoded = jsonDecode(utf8.decode(response.bodyBytes));
       final timings = decoded['data']['timings'] as Map<String, dynamic>;
 
-      await _saveCache(timings: timings, locationLabel: trimmed, mode: 'manual', manualCity: trimmed);
+      await _saveCache(
+        timings: timings,
+        locationLabel: trimmed,
+        mode: 'manual',
+        manualCity: trimmed,
+        latitude: coords.$1,
+        longitude: coords.$2,
+      );
 
       return _buildResult(timings, isFromCache: false, cachedAt: DateTime.now(), locationLabel: trimmed);
     } catch (e, st) {
       AppLogger.error('Manual city prayer times fetch failed', error: e, stackTrace: st);
       rethrow;
+    }
+  }
+
+  /// Forward-geocodes a free-text city name to (latitude, longitude)
+  /// using Nominatim -- the same OpenStreetMap service already used for
+  /// reverse-geocoding in this file, now used in the other direction.
+  static Future<(double, double)?> _forwardGeocode(String city) async {
+    try {
+      final url = Uri.parse(
+        'https://nominatim.openstreetmap.org/search?format=jsonv2&q=${Uri.encodeComponent(city)}&limit=1&accept-language=ar',
+      );
+      final response = await http.get(
+        url,
+        headers: {'User-Agent': 'WirdiApp/1.0 (Islamic daily companion app)'},
+      ).timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) return null;
+
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decoded is! List || decoded.isEmpty) return null;
+      final first = decoded.first as Map<String, dynamic>;
+      final lat = double.tryParse(first['lat']?.toString() ?? '');
+      final lon = double.tryParse(first['lon']?.toString() ?? '');
+      if (lat == null || lon == null) return null;
+      return (lat, lon);
+    } catch (e, st) {
+      AppLogger.error('Forward geocoding failed for city search', error: e, stackTrace: st);
+      return null;
     }
   }
 

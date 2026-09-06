@@ -11,7 +11,8 @@ import '../../l10n/generated/app_localizations.dart';
 import '../quran/shareable_text_card_screen.dart';
 
 class HadithCollectionScreen extends StatefulWidget {
-  const HadithCollectionScreen({super.key});
+  final int? initialHadithNumber;
+  const HadithCollectionScreen({super.key, this.initialHadithNumber});
 
   @override
   State<HadithCollectionScreen> createState() => _HadithCollectionScreenState();
@@ -22,6 +23,22 @@ class _HadithCollectionScreenState extends State<HadithCollectionScreen> {
   final TextEditingController _searchController = TextEditingController();
   Set<String> _favorites = {};
   String? _loadedForLanguageCode;
+  final Map<int, GlobalKey> _itemKeys = {};
+  bool _didScrollToInitial = false;
+
+  GlobalKey _keyFor(int number) => _itemKeys.putIfAbsent(number, () => GlobalKey());
+
+  void _maybeScrollToInitial() {
+    final target = widget.initialHadithNumber;
+    if (target == null || _didScrollToInitial) return;
+    _didScrollToInitial = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ctx = _itemKeys[target]?.currentContext;
+      if (ctx != null) {
+        Scrollable.ensureVisible(ctx, duration: const Duration(milliseconds: 400), alignment: 0.1, curve: Curves.easeInOut);
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -99,6 +116,7 @@ class _HadithCollectionScreenState extends State<HadithCollectionScreen> {
           }
 
           final all = snapshot.data!;
+          _maybeScrollToInitial();
           final query = _searchController.text.trim();
           final filtered = query.isEmpty
               ? all
@@ -158,9 +176,14 @@ class _HadithCollectionScreenState extends State<HadithCollectionScreen> {
                         itemBuilder: (context, index) {
                           final hadith = filtered[index];
                           final isFavorite = _favorites.contains(hadith.uid);
+                          final isHighlighted = hadith.number == widget.initialHadithNumber;
 
                           return Card(
+                            key: _keyFor(hadith.number),
                             margin: const EdgeInsets.only(bottom: 12),
+                            shape: isHighlighted
+                                ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(4), side: BorderSide(color: AppColors.goldAccent, width: 2))
+                                : null,
                             child: Padding(
                               padding: const EdgeInsets.all(16),
                               child: Column(

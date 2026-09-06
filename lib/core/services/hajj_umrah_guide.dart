@@ -5,7 +5,7 @@
 class HajjUmrahGuide {
   static const Map<String, dynamic> hajjSteps = {
     'ihram': {
-      'step': 1, 'nameAr': 'الإحرام',
+      'type': 'both', 'step': 1, 'nameAr': 'الإحرام',
       'description':
           'Enter the state of Ihram at the designated Miqat boundary with the intention (niyyah) for Hajj or Umrah, wearing the two unstitched white garments (for men) and reciting the Talbiyah repeatedly until reaching the Kaaba.',
       'descriptionAr':
@@ -14,7 +14,7 @@ class HajjUmrahGuide {
       'duasAr': ['لبيك اللهم لبيك، لبيك لا شريك لك لبيك، إن الحمد والنعمة لك والملك، لا شريك لك'],
     },
     'tawaf': {
-      'step': 2, 'nameAr': 'الطواف',
+      'type': 'both', 'step': 2, 'nameAr': 'الطواف',
       'description':
           'Circumambulate the Kaaba seven times counter-clockwise, starting and ending at the Black Stone corner, ideally in a state of ritual purity (wudu). Men perform Idtiba (exposing the right shoulder) and Raml (brisk walking) in the first three rounds for Umrah or the arrival tawaf of Hajj.',
       'descriptionAr':
@@ -23,7 +23,7 @@ class HajjUmrahGuide {
       'duasAr': ['بسم الله، والله أكبر (تُقال عند محاذاة الحجر الأسود في كل شوط)', 'ربنا آتنا في الدنيا حسنة وفي الآخرة حسنة وقنا عذاب النار (بين الركن اليماني والحجر الأسود)'],
     },
     'sai': {
-      'step': 3, 'nameAr': 'السعي',
+      'type': 'both', 'step': 3, 'nameAr': 'السعي',
       'description':
           "Walk seven times between the hills of Safa and Marwa, starting at Safa and ending at Marwa, in remembrance of Hajar's search for water for her son Ismail. Men jog briskly between the two green markers.",
       'descriptionAr':
@@ -32,7 +32,7 @@ class HajjUmrahGuide {
       'duasAr': ['إن الصفا والمروة من شعائر الله (تُقال عند الاقتراب من الصفا)', 'لا إله إلا الله وحده لا شريك له، له الملك وله الحمد، وهو على كل شيء قدير (تُقال أعلى الصفا والمروة متجهاً للكعبة)'],
     },
     'waiting_mina': {
-      'step': 4, 'nameAr': 'التوجه إلى منى (يوم التروية)',
+      'type': 'hajj', 'step': 4, 'nameAr': 'التوجه إلى منى (يوم التروية)',
       'description':
           'On the 8th of Dhul-Hijjah (Yawm at-Tarwiyah), Hajj pilgrims head to Mina and spend the day and night there, performing the five daily prayers shortened (but not combined) in preparation for the standing at Arafah.',
       'descriptionAr':
@@ -41,7 +41,7 @@ class HajjUmrahGuide {
       'duasAr': [],
     },
     'arafah': {
-      'step': 5, 'nameAr': 'الوقوف بعرفة',
+      'type': 'hajj', 'step': 5, 'nameAr': 'الوقوف بعرفة',
       'description':
           'Stand at Mount Arafah from noon until sunset on the 9th of Dhul-Hijjah -- described by the Prophet as "Hajj is Arafah," and the single most essential pillar of Hajj without which it is not valid. This is the time for the most sincere, extended personal supplication of the year.',
       'descriptionAr':
@@ -50,7 +50,7 @@ class HajjUmrahGuide {
       'duasAr': ['لا إله إلا الله وحده لا شريك له، له الملك وله الحمد، وهو على كل شيء قدير (خير الدعاء يوم عرفة كما علّم النبي صلى الله عليه وسلم)'],
     },
     'muzdalifah': {
-      'step': 6, 'nameAr': 'المبيت بمزدلفة',
+      'type': 'hajj', 'step': 6, 'nameAr': 'المبيت بمزدلفة',
       'description':
           'After sunset, leave Arafah for Muzdalifah, combining Maghrib and Isha prayers there. Spend the night (or at least its latter part) and gather at least 49 pebbles for the stoning ritual over the following days.',
       'descriptionAr':
@@ -59,7 +59,7 @@ class HajjUmrahGuide {
       'duasAr': ['اللهم إني أسألك من خير ما سألك منه عبادك الصالحون (دعاء عام لهذه الليلة المباركة)'],
     },
     'ramy': {
-      'step': 7, 'nameAr': 'رمي جمرة العقبة',
+      'type': 'hajj', 'step': 7, 'nameAr': 'رمي جمرة العقبة',
       'description':
           'On the 10th of Dhul-Hijjah (Eid al-Adha), stone the largest pillar (Jamrat al-Aqabah) with seven pebbles, saying "Allahu Akbar" with each throw -- marking the beginning of Tahallul (partial release from Ihram restrictions).',
       'descriptionAr':
@@ -68,7 +68,7 @@ class HajjUmrahGuide {
       'duasAr': ['الله أكبر (تُقال مع كل حصاة من الحصيات السبع)'],
     },
     'hady': {
-      'step': 8, 'nameAr': 'الهدي (الذبح)',
+      'type': 'hajj', 'step': 8, 'nameAr': 'الهدي (الذبح)',
       'description':
           "Slaughter a sacrificial animal (Hady) on the 10th of Dhul-Hijjah, obligatory for those performing Hajj at-Tamattu' or al-Qiran, commemorating Ibrahim's willingness to sacrifice his son. The meat is distributed to the poor.",
       'descriptionAr':
@@ -77,7 +77,7 @@ class HajjUmrahGuide {
       'duasAr': ['بسم الله والله أكبر، اللهم هذا منك ولك (تُقال قبل الذبح)'],
     },
     'halq_taqsir': {
-      'step': 9, 'nameAr': 'الحلق أو التقصير',
+      'type': 'both', 'step': 9, 'nameAr': 'الحلق أو التقصير',
       'description':
           'Shave the head completely (Halq, preferred and more rewarded for men) or trim the hair (Taqsir), completing the greater Tahallul when combined with the pillar Tawaf. Women only trim a fingertip-length of hair.',
       'descriptionAr':
@@ -86,7 +86,7 @@ class HajjUmrahGuide {
       'duasAr': [],
     },
     'tawaf_ifadah': {
-      'step': 10, 'nameAr': 'طواف الإفاضة',
+      'type': 'hajj', 'step': 10, 'nameAr': 'طواف الإفاضة',
       'description':
           'Perform the obligatory pillar Tawaf (Tawaf al-Ifadah) around the Kaaba, ideally on the 10th of Dhul-Hijjah or within the following days, followed by Sai if it was not already completed for this Hajj. This tawaf, combined with Halq/Taqsir, completes the full release from Ihram.',
       'descriptionAr':
@@ -95,7 +95,7 @@ class HajjUmrahGuide {
       'duasAr': [],
     },
     'tashreeq': {
-      'step': 11, 'nameAr': 'أيام التشريق',
+      'type': 'hajj', 'step': 11, 'nameAr': 'أيام التشريق',
       'description':
           'Stay in Mina during the Days of Tashreeq (11th-13th of Dhul-Hijjah), stoning all three pillars (small, medium, and largest) each day after noon with seven pebbles each, saying "Allahu Akbar" with every throw.',
       'descriptionAr':
@@ -104,7 +104,7 @@ class HajjUmrahGuide {
       'duasAr': ['ربنا آتنا في الدنيا حسنة وفي الآخرة حسنة وقنا عذاب النار (تُقال بعد رمي الجمرتين الصغرى والوسطى، مستقبلاً القبلة)'],
     },
     'tawaf_wada': {
-      'step': 12, 'nameAr': 'طواف الوداع',
+      'type': 'both', 'step': 12, 'nameAr': 'طواف الوداع',
       'description':
           'Perform the Farewell Tawaf (Tawaf al-Wada) around the Kaaba as the very last act before leaving Mecca, obligatory for pilgrims from outside the Haram (not required for women in their menstrual period). This marks the conclusion of the Hajj journey.',
       'descriptionAr':

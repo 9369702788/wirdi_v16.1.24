@@ -96,4 +96,47 @@ final List<Map<String, Object>> quranicArabicLessons = [
       QuranicWord(arabic: 'خَالِدِينَ', transliteration: 'khalideen', meaningAr: 'باقين إلى الأبد', meaningEn: 'Abiding forever', noteAr: 'تصف دوام النعيم أو العذاب', noteEn: 'Describes the permanence of reward or punishment'),
     ],
   },
+  {
+    'titleAr': 'كلمات الهداية والضلال',
+    'titleEn': 'Words of guidance and misguidance',
+    'words': [
+      QuranicWord(arabic: 'الْهُدَى', transliteration: 'al-huda', meaningAr: 'الدلالة الموصلة إلى المطلوب', meaningEn: 'Guidance', noteAr: 'يقابله الضلال في آيات كثيرة', noteEn: 'Frequently contrasted with misguidance'),
+      QuranicWord(arabic: 'الضَّلَالُ', transliteration: 'ad-dalal', meaningAr: 'الانحراف عن طريق الحق', meaningEn: 'Misguidance / straying', noteAr: 'ضد الهدى', noteEn: 'The opposite of guidance'),
+      QuranicWord(arabic: 'الْفُرْقَانُ', transliteration: 'al-furqan', meaningAr: 'الفارق بين الحق والباطل', meaningEn: 'The Criterion (distinguishing truth from falsehood)', noteAr: 'من أسماء القرآن الكريم', noteEn: 'One of the names of the Quran'),
+      QuranicWord(arabic: 'النُّورُ', transliteration: 'an-noor', meaningAr: 'الضياء المبصر', meaningEn: 'Light', noteAr: 'يُستعار كثيرًا للهداية والإيمان', noteEn: 'Often used metaphorically for guidance and faith'),
+      QuranicWord(arabic: 'الظُّلُمَاتُ', transliteration: 'adh-dhulumaat', meaningAr: 'جمع ظلمة، ضد النور', meaningEn: 'Darknesses', noteAr: 'كثيرًا ما تُقابل بالنور في القرآن', noteEn: 'Frequently contrasted with light in the Quran'),
+    ],
+  },
+  {
+    'titleAr': 'كلمات القرابة والأسرة',
+    'titleEn': 'Words of kinship and family',
+    'words': [
+      QuranicWord(arabic: 'الْوَالِدَيْنِ', transliteration: 'al-walidayn', meaningAr: 'الأب والأم', meaningEn: 'The two parents', noteAr: 'وردت وصية برّهما في مواضع عديدة', noteEn: 'Kindness to parents is commanded in many verses'),
+      QuranicWord(arabic: 'الْأَرْحَامُ', transliteration: 'al-arham', meaningAr: 'جمع رحم، القرابة', meaningEn: 'Wombs / kinship ties', noteAr: 'أمر القرآن بصلتها ونهى عن قطعها', noteEn: 'The Quran commands maintaining these ties'),
+      QuranicWord(arabic: 'الذُّرِّيَّةُ', transliteration: 'adh-dhurriyyah', meaningAr: 'النسل والأولاد', meaningEn: 'Offspring / progeny', noteAr: 'وردت في دعاء الأنبياء لذريتهم', noteEn: 'Appears in the prophets\' supplications for their offspring'),
+      QuranicWord(arabic: 'الْيَتَامَى', transliteration: 'al-yatama', meaningAr: 'جمع يتيم، من فقد أباه قبل البلوغ', meaningEn: 'Orphans', noteAr: 'أوصى القرآن بالإحسان إليهم مرارًا', noteEn: 'The Quran repeatedly commands kindness to them'),
+    ],
+  },
+  {
+    'titleAr': 'كلمات العبادة والشعائر',
+    'titleEn': 'Words of worship and rituals',
+    'words': [
+      QuranicWord(arabic: 'الصَّلَاةُ', transliteration: 'as-salah', meaningAr: 'العبادة المخصوصة ذات الأركان المعروفة', meaningEn: 'Prayer', noteAr: 'الركن الثاني من أركان الإسلام', noteEn: 'The second pillar of Islam'),
+      QuranicWord(arabic: 'الزَّكَاةُ', transliteration: 'az-zakah', meaningAr: 'حق مالي واجب في المال', meaningEn: 'Obligatory charity', noteAr: 'كثيرًا ما تُقرن بالصلاة في القرآن', noteEn: 'Frequently paired with prayer in the Quran'),
+      QuranicWord(arabic: 'الصِّيَامُ', transliteration: 'as-siyam', meaningAr: 'الإمساك عن المفطرات بنية التعبد', meaningEn: 'Fasting', noteAr: 'فُرض في شهر رمضان', noteEn: 'Prescribed in the month of Ramadan'),
+      QuranicWord(arabic: 'الْحَجُّ', transliteration: 'al-hajj', meaningAr: 'قصد بيت الله الحرام لأداء مناسك مخصوصة', meaningEn: 'Pilgrimage', noteAr: 'واجب على المستطيع مرة في العمر', noteEn: 'Obligatory once in a lifetime for those able'),
+      QuranicWord(arabic: 'الدُّعَاءُ', transliteration: 'ad-dua', meaningAr: 'طلب العبد من ربه', meaningEn: 'Supplication', noteAr: 'وصفه النبي بأنه مخ العبادة', noteEn: "Described by the Prophet as the essence of worship"),
+    ],
+  },
+  {
+    'titleAr': 'كلمات الكون والخلق',
+    'titleEn': 'Words of the universe and creation',
+    'words': [
+      QuranicWord(arabic: 'السَّمَاوَاتُ', transliteration: 'as-samawat', meaningAr: 'جمع سماء', meaningEn: 'The heavens', noteAr: 'غالبًا ما تُذكر مع الأرض للدلالة على شمول الملك', noteEn: 'Often mentioned with the earth to denote total dominion'),
+      QuranicWord(arabic: 'الْأَرْضُ', transliteration: 'al-ard', meaningAr: 'الكوكب الذي نعيش عليه', meaningEn: 'The earth', noteAr: 'وصفها القرآن بأنها مهاد وفراش للإنسان', noteEn: "The Quran describes it as a cradle for humanity"),
+      QuranicWord(arabic: 'الشَّمْسُ', transliteration: 'ash-shams', meaningAr: 'كوكب النهار المضيء', meaningEn: 'The sun', noteAr: 'سُمّيت سورة كاملة باسمها', noteEn: 'A full surah is named after it'),
+      QuranicWord(arabic: 'الْقَمَرُ', transliteration: 'al-qamar', meaningAr: 'كوكب الليل', meaningEn: 'The moon', noteAr: 'يُستخدم في تحديد الأشهر القمرية', noteEn: 'Used to determine the lunar months'),
+      QuranicWord(arabic: 'الْجِبَالُ', transliteration: 'al-jibal', meaningAr: 'جمع جبل', meaningEn: 'The mountains', noteAr: 'وصفها القرآن بأنها أوتاد للأرض', noteEn: 'The Quran describes them as pegs stabilizing the earth'),
+    ],
+  },
 ];

@@ -70,15 +70,14 @@ class _HifzScreenState extends State<HifzScreen> {
     final plan = _planForSurah(surah.number);
     if (plan == null) return;
     final updated = await HifzService.incrementReps(plan.id, plan.surahNumber, ayahNumber, plan.targetReps);
-    final wasStreak = _streak;
-    final newStreak = await HifzService.checkAndUpdateStreakIfPlanCompleted(plan);
-    if (newStreak != wasStreak) {
+    final result = await HifzService.checkAndUpdateStreakIfPlanCompleted(plan);
+    if (result.planCompletedNow) {
       await HifzService.markPortionMemorized(plan.surahNumber, plan.startAyah, plan.endAyah);
     }
     if (!mounted) return;
     setState(() {
       _repsCache[ayahNumber] = updated;
-      _streak = newStreak;
+      _streak = result.streak;
     });
   }
 

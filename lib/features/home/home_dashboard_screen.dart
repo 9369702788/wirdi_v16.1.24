@@ -595,7 +595,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const HadithCollectionScreen(),
+                    builder: (_) => HadithCollectionScreen(initialHadithNumber: _hadithOfToday!.number),
                   ),
                 ),
               ),

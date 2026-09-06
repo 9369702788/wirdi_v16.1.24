@@ -42,6 +42,30 @@ class ArticlesService {
       contentAr: 'يولي الإسلام اهتمامًا عظيمًا بحسن الخلق، ويعتبره من صميم مقاصد الرسالة النبوية، حيث قال النبي صلى الله عليه وسلم: إنما بُعثت لأتمم مكارم الأخلاق. فالصدق والرفق والصبر والتواضع وأداء الأمانة ليست أمورًا هامشية في الإسلام، بل هي جزء أصيل من الإيمان نفسه، حتى قال النبي صلى الله عليه وسلم: أكمل المؤمنين إيمانًا أحسنهم خلقًا. ويمتد حسن الخلق ليشمل معاملة المسلم لأهله وجيرانه وحتى الحيوان.',
       author: 'Islamic Scholar', category: 'Akhlaq', publishDate: '2024-01-03',
     ),
+    IslamicArticle(
+      id: '4',
+      title: 'The Etiquette of Seeking Knowledge',
+      titleAr: 'آداب طلب العلم',
+      content: 'Seeking beneficial knowledge is emphasized throughout the Quran and Sunnah, beginning with the first revealed word: "Read." Scholars stressed that knowledge should be paired with sincere intention, humility toward teachers, patience, and -- crucially -- acting upon what is learned.',
+      contentAr: 'طلب العلم النافع فضيلة عظيمة، وبدأ الوحي بكلمة اقرأ. شدد العلماء على أن يقترن طلب العلم بالإخلاص والتواضع للمعلمين والصبر، والأهم العمل بما يُتعلَّم.',
+      author: 'Islamic Scholar', category: 'Knowledge', publishDate: '2024-02-01',
+    ),
+    IslamicArticle(
+      id: '5',
+      title: 'The Balance Between Worship and Worldly Life',
+      titleAr: 'التوازن بين العبادة والحياة الدنيا',
+      content: 'Islam does not call for abandoning worldly life for isolated worship. The Prophet (peace be upon him) taught a companion that his body, family, and guests each have a right over him -- reflecting Islam\'s comprehensive balance.',
+      contentAr: 'لا يدعو الإسلام لترك الدنيا للانقطاع للعبادة. علّم النبي صلى الله عليه وسلم صحابيًا بأن لجسده وأهله وزائريه حقًا عليه، وهذا يعكس توازن الإسلام كمنهج حياة.',
+      author: 'Islamic Scholar', category: 'Lifestyle', publishDate: '2024-02-15',
+    ),
+    IslamicArticle(
+      id: '6',
+      title: 'Patience (Sabr) in the Quran',
+      titleAr: 'الصبر في القرآن الكريم',
+      content: 'The Quran mentions patience in over ninety places: "Indeed, the patient will be given their reward without account" (Az-Zumar 39:10). Scholars categorize it into patience in obedience, in avoiding sin, and in accepting Allah\'s decree.',
+      contentAr: 'ذكر القرآن الصبر في أكثر من تسعين موضعًا: إنما يوفى الصابرون أجرهم بغير حساب (الزمر: 10). وقسّمه العلماء إلى صبر على الطاعة وعن المعصية وعلى الأقدار.',
+      author: 'Islamic Scholar', category: 'Spirituality', publishDate: '2024-03-01',
+    ),
   ];
 
   static Future<List<IslamicArticle>> getArticlesByCategory(String category) async {

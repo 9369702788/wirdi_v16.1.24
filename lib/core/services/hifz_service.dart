@@ -131,20 +131,28 @@ class HifzService {
     return prefs.getInt(_streakKey) ?? 0;
   }
 
-  static Future<int> checkAndUpdateStreakIfPlanCompleted(HifzPlan plan) async {
-    final prefs = await SharedPreferences.getInstance();
+  static const _planCompletedPrefix = 'hifz_plan_completed_';
 
+  static Future<({int streak, bool planCompletedNow})> checkAndUpdateStreakIfPlanCompleted(HifzPlan plan) async {
+    final prefs = await SharedPreferences.getInstance();
     final todayStr = _todayKey();
-    final lastCompleted = prefs.getString(_lastCompletedDateKey);
-    if (lastCompleted == todayStr) {
-      return prefs.getInt(_streakKey) ?? 0;
-    }
 
     for (var a = plan.startAyah; a <= plan.endAyah; a++) {
       final reps = await getTodayReps(plan.id, plan.surahNumber, a);
       if (reps < plan.targetReps) {
-        return prefs.getInt(_streakKey) ?? 0;
+        return (streak: prefs.getInt(_streakKey) ?? 0, planCompletedNow: false);
       }
+    }
+
+    final planDoneKey = '$_planCompletedPrefix${plan.id}_$todayStr';
+    if (prefs.getBool(planDoneKey) ?? false) {
+      return (streak: prefs.getInt(_streakKey) ?? 0, planCompletedNow: false);
+    }
+    await prefs.setBool(planDoneKey, true);
+
+    final lastCompleted = prefs.getString(_lastCompletedDateKey);
+    if (lastCompleted == todayStr) {
+      return (streak: prefs.getInt(_streakKey) ?? 0, planCompletedNow: true);
     }
 
     final yesterday = DateTime.now().subtract(const Duration(days: 1));
@@ -168,7 +176,7 @@ class HifzService {
     }
     await prefs.setInt(_streakKey, newStreak);
     await prefs.setString(_lastCompletedDateKey, todayStr);
-    return newStreak;
+    return (streak: newStreak, planCompletedNow: true);
   }
 
   static const _freezesKey = 'hifz_streak_freezes_available';

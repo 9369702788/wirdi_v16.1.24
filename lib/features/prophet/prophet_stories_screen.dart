@@ -141,6 +141,54 @@ class ProphetStoriesScreen extends StatelessWidget {
       bodyEn:
           "Born without a father through Allah's miracle to the truthful virgin Maryam, he spoke from the cradle in defense of his mother's honor. Allah gave him the Gospel and supported him with great miracles: reviving the dead, healing the blind and the leper, and shaping clay into a bird that would fly, all by Allah's permission. His people rejected him and sought to kill him, but Allah raised him up to Himself, and Islamic tradition holds -- based on the Prophet Muhammad's own statements -- that he will return in the end times to rule with justice.",
     ),
+    _ProphetStory(
+      nameAr: 'إسحاق عليه السلام',
+      nameEn: 'Ishaq / Isaac (peace be upon him)',
+      bodyAr: 'ابن إبراهيم عليه السلام من زوجته سارة، وُلد بشارةً من الله بعد أن تقدّم بهما العمر. تزوّج وأنجب يعقوب عليه السلام، واستمرت من نسله سلسلة الأنبياء إلى بني إسرائيل.',
+      bodyEn: "Son of Ibrahim from his wife Sarah, born as a divine glad tiding in their old age. He fathered Ya'qub (Jacob), and through his line the chain of prophethood continued among the Children of Israel.",
+    ),
+    _ProphetStory(
+      nameAr: 'يعقوب عليه السلام',
+      nameEn: "Ya'qub / Jacob (peace be upon him)",
+      bodyAr: 'ابن إسحاق عليه السلام، ويُلقّب بإسرائيل، وهو أبو الأسباط الاثني عشر. عُرف بصبره الطويل حين فقد ابنه يوسف عليه السلام سنين طويلة، حتى رد الله عليه بصره وجمعه بيوسف من جديد.',
+      bodyEn: "Son of Ishaq, also called Israel, and the father of the twelve tribes. Remembered for his extraordinary patience after losing his son Yusuf for many years, until Allah reunited them.",
+    ),
+    _ProphetStory(
+      nameAr: 'هارون عليه السلام',
+      nameEn: 'Harun / Aaron (peace be upon him)',
+      bodyAr: 'أخو موسى عليه السلام الأكبر، طلب موسى من ربه أن يجعله معينًا له في تبليغ الرسالة، فاستجاب الله وأشركه معه في النبوة. وقف مع موسى أمام فرعون، وكان أمينًا على بني إسرائيل في غيابه.',
+      bodyEn: "Musa's elder brother, made a prophet alongside him as a helper in conveying the message. He stood with Musa before Pharaoh, and was left in charge of the Children of Israel in his absence.",
+    ),
+    _ProphetStory(
+      nameAr: 'ذو الكفل عليه السلام',
+      nameEn: 'Dhul-Kifl (peace be upon him)',
+      bodyAr: 'ذكره القرآن مقترنًا بإسماعيل واليسع عليهما السلام ضمن "الأخيار"، ووصفه بأنه "من الصابرين". كان نبيًا صالحًا ملتزمًا بما تكفّل به من عبادة وعدل بين الناس.',
+      bodyEn: 'Mentioned in the Quran alongside Ismail and Al-Yasa among "the outstanding," described as "among the patient." A righteous prophet who steadfastly fulfilled his commitments of worship and just dealings.',
+    ),
+    _ProphetStory(
+      nameAr: 'إلياس عليه السلام',
+      nameEn: 'Ilyas / Elijah (peace be upon him)',
+      bodyAr: 'أُرسل إلى قومه من بني إسرائيل بعد انتشار عبادة الصنم "بعل" فيهم، فدعاهم إلى توحيد الله. كذّبه أكثر قومه، وأثنى الله عليه في القرآن بأنه من المرسلين.',
+      bodyEn: "Sent to his people after the worship of the idol Ba'l spread among them, calling them to Allah's oneness. Most rejected him, but Allah praised him as one of the messengers.",
+    ),
+    _ProphetStory(
+      nameAr: 'اليسع عليه السلام',
+      nameEn: 'Al-Yasa / Elisha (peace be upon him)',
+      bodyAr: 'ذُكر في القرآن مقترنًا بإسماعيل وذي الكفل ضمن من فضّلهم الله على العالمين. يرى كثير من المفسرين أنه خلَف النبي إلياس عليه السلام في الدعوة من بعده.',
+      bodyEn: 'Mentioned in the Quran alongside Ismail and Dhul-Kifl among those Allah favored. Many commentators hold he succeeded the prophet Ilyas in calling his people after him.',
+    ),
+    _ProphetStory(
+      nameAr: 'زكريا عليه السلام',
+      nameEn: 'Zakariya / Zechariah (peace be upon him)',
+      bodyAr: 'كان كافلًا لمريم عليها السلام في المحراب، ودعا ربه أن يهب له ذرية طيبة رغم كبر سنه، فاستجاب الله له وبشّره بيحيى عليه السلام.',
+      bodyEn: "Guardian of Maryam in the sanctuary. He prayed for righteous offspring despite his old age, and Allah answered him with the glad tidings of Yahya.",
+    ),
+    _ProphetStory(
+      nameAr: 'يحيى عليه السلام',
+      nameEn: 'Yahya / John (peace be upon him)',
+      bodyAr: 'ابن زكريا عليه السلام، آتاه الله الحكم صبيًا، ووصفه القرآن بأنه كان عفيفًا زاهدًا وبرًّا بوالديه، وسلّم الله عليه يوم وُلد ويوم يموت ويوم يُبعث حيًا.',
+      bodyEn: "Son of Zakariya. Allah gave him wisdom while still a boy, and the Quran describes him as chaste, devoted, and dutiful to his parents.",
+    ),
   ];
 
   @override

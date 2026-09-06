@@ -571,6 +571,14 @@ class _MushafReaderScreenState extends State<MushafReaderScreen> {
                 ),
               ),
             ]),
+            const SizedBox(height: 6),
+            Text(
+              _searchInVerses
+                  ? _t(context, 'ابحث بأي كلمة من نص الآية نفسه، أيًا كانت السورة', "Search by any word from the verse's own text, in any surah")
+                  : _t(context, 'ابحث باسم السورة أو رقمها فقط', "Search by the surah's name or number only"),
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 11, color: AppColors.mutedText),
+            ),
           ]),
         ),
         Expanded(

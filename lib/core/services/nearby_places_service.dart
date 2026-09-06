@@ -33,11 +33,18 @@ class NearbyPlacesService {
     int radiusMeters = 5000,
     String fallbackName = 'Mosque',
   }) async {
-    final query = '[out:json][timeout:20];'
-        'node["amenity"="place_of_worship"]["religion"="muslim"]'
-        '(around:$radiusMeters,$latitude,$longitude);'
-        'out body 40;';
-    return _query(query, latitude, longitude, fallbackName);
+    final query = '[out:json][timeout:25];'
+        '('
+        'node["amenity"="place_of_worship"]["religion"="muslim"](around:$radiusMeters,$latitude,$longitude);'
+        'way["amenity"="place_of_worship"]["religion"="muslim"](around:$radiusMeters,$latitude,$longitude);'
+        'node["building"="mosque"](around:$radiusMeters,$latitude,$longitude);'
+        'way["building"="mosque"](around:$radiusMeters,$latitude,$longitude);'
+        'node["amenity"="place_of_worship"]["name"~"mosque|masjid|jami|جامع|مسجد",i](around:$radiusMeters,$latitude,$longitude);'
+        ');'
+        'out center 60;';
+    final results = await _query(query, latitude, longitude, fallbackName);
+    if (results.isNotEmpty || radiusMeters >= 20000) return results;
+    return findMosques(latitude: latitude, longitude: longitude, radiusMeters: 20000, fallbackName: fallbackName);
   }
 
   static Future<List<NearbyPlace>> findHalalRestaurants({
@@ -46,11 +53,16 @@ class NearbyPlacesService {
     int radiusMeters = 5000,
     String fallbackName = 'Halal Restaurant',
   }) async {
-    final query = '[out:json][timeout:20];'
-        'node["amenity"="restaurant"]["diet:halal"~"yes|only"]'
-        '(around:$radiusMeters,$latitude,$longitude);'
-        'out body 40;';
-    return _query(query, latitude, longitude, fallbackName);
+    final query = '[out:json][timeout:25];'
+        '('
+        'node["amenity"="restaurant"]["diet:halal"~"yes|only"](around:$radiusMeters,$latitude,$longitude);'
+        'way["amenity"="restaurant"]["diet:halal"~"yes|only"](around:$radiusMeters,$latitude,$longitude);'
+        'node["amenity"="restaurant"]["name"~"halal|حلال",i](around:$radiusMeters,$latitude,$longitude);'
+        ');'
+        'out center 60;';
+    final results = await _query(query, latitude, longitude, fallbackName);
+    if (results.isNotEmpty || radiusMeters >= 20000) return results;
+    return findHalalRestaurants(latitude: latitude, longitude: longitude, radiusMeters: 20000, fallbackName: fallbackName);
   }
 
   static Future<List<NearbyPlace>> _query(String overpassQuery, double lat, double lon, String fallbackName) async {
@@ -73,8 +85,9 @@ class NearbyPlacesService {
         final places = <NearbyPlace>[];
         for (final el in elements) {
           final map = el as Map<String, dynamic>;
-          final placeLat = (map['lat'] as num?)?.toDouble();
-          final placeLon = (map['lon'] as num?)?.toDouble();
+          final center = map['center'] as Map<String, dynamic>?;
+          final placeLat = (map['lat'] as num?)?.toDouble() ?? (center?['lat'] as num?)?.toDouble();
+          final placeLon = (map['lon'] as num?)?.toDouble() ?? (center?['lon'] as num?)?.toDouble();
           if (placeLat == null || placeLon == null) continue;
 
           final tags = map['tags'] as Map<String, dynamic>? ?? {};

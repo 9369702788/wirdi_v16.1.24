@@ -222,6 +222,7 @@ class _MushafViewScreenState extends State<MushafViewScreen> {
                     child: _MushafPageView(
                       page: page,
                       allSurahs: allSurahs,
+                      innerScrollEnabled: false,
                       onMultiTouch: (active) {
                         if (mounted && _multiTouchActive != active) setState(() => _multiTouchActive = active);
                       },
@@ -268,7 +269,8 @@ class _MushafPageView extends StatefulWidget {
   final MushafPage page;
   final List<SurahModel> allSurahs;
   final ValueChanged<bool>? onMultiTouch;
-  const _MushafPageView({required this.page, required this.allSurahs, this.onMultiTouch});
+  final bool innerScrollEnabled;
+  const _MushafPageView({required this.page, required this.allSurahs, this.onMultiTouch, this.innerScrollEnabled = true});
 
   @override
   State<_MushafPageView> createState() => _MushafPageViewState();
@@ -411,6 +413,7 @@ class _MushafPageViewState extends State<_MushafPageView> {
             ],
           ),
           child: SingleChildScrollView(
+            physics: widget.innerScrollEnabled ? null : const NeverScrollableScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -476,7 +479,12 @@ class _MushafPageViewState extends State<_MushafPageView> {
                 ),
                 textDirection: TextDirection.rtl,
                 textAlign: TextAlign.justify,
-                style: const TextStyle(fontFamily: 'AmiriQuran', fontSize: 22, height: 2.4, fontWeight: FontWeight.normal),
+                style: TextStyle(
+                  fontFamily: appSettings.quranFontFamily == 'default' ? 'AmiriQuran' : appSettings.quranFontFamily,
+                  fontSize: 22,
+                  height: 2.4,
+                  fontWeight: FontWeight.normal,
+                ),
               ),
               const SizedBox(height: 16),
             ],
