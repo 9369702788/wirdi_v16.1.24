@@ -1,9 +1,12 @@
 # Firebase Setup Guide for Wirdi
 
 ## Your Firebase Project
-- **Project ID:** wirdi-cd6c0
+- **Project ID:** wirdi-cb813
 - **Package name:** com.wirdi.wirdi
-- **Console:** https://console.firebase.google.com/project/wirdi-cd6c0
+- **Console:** https://console.firebase.google.com/project/wirdi-cb813
+
+> NOTE: an earlier project (`wirdi-cd6c0`) was retired during development.
+> `wirdi-cb813` is the single current, live production project.
 
 ---
 

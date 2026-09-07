@@ -49,7 +49,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.green.shade800,
           duration: const Duration(seconds: 6),
-          content: Text('Account created. Firebase UID: \${user.uid}\nEmail: \${user.email}\nA verification link was sent to your email -- please confirm it.'),
+          content: Text('Account created. Firebase UID: ${user.uid}\nEmail: ${user.email}\nA verification link was sent to your email -- please confirm it.'),
         ));
       }
 
@@ -61,7 +61,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Colors.orange.shade800,
-            content: Text('Signed up, but initial sync failed: \$syncError'),
+            content: Text('Signed up, but initial sync failed: $syncError'),
           ));
         }
       }
@@ -79,7 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.red.shade900,
           duration: const Duration(seconds: 6),
-          content: Text('REJECTED (FirebaseAuthException \${e.code}): \$msg'),
+          content: Text('REJECTED (FirebaseAuthException ${e.code}): $msg'),
         ));
       }
     } catch (e) {
@@ -91,7 +91,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.red.shade900,
           duration: const Duration(seconds: 8),
-          content: Text('UNEXPECTED ERROR (not a FirebaseAuthException): \$e'),
+          content: Text('UNEXPECTED ERROR (not a FirebaseAuthException): $e'),
         ));
       }
     } finally { if (mounted) setState(() => _loading = false); }

@@ -60,7 +60,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _loadDownloadedAudioSize();
     _loadMathhab();
     _loadRealAppVersion();
-    _previewPlayer.onPlayerComplete.listen((_) {
+    _previewPlayer.onPlayerComplete.listen( // AUDIT: Consider saving StreamSubscription for proper cleanup(_) {
       if (mounted) setState(() => _previewingAdhanId = null);
     });
   }
@@ -251,7 +251,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ListenableBuilder(
               listenable: AuthService.instance,
               builder: (context, _) {
-                final user = AuthService.instance.currentUser;
+                final user = (AuthService.instance.currentUser ?? (throw Exception('User not signed in')));
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12),
                   child: ListTile(

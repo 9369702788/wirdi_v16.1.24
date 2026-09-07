@@ -222,7 +222,7 @@ class _AzkarDetailsScreenState extends State<AzkarDetailsScreen> {
         final key = _itemKeys[widget.highlightUid];
         final ctx = key?.currentContext;
         if (ctx != null) {
-          Scrollable.ensureVisible(ctx, duration: const Duration(milliseconds: 400), alignment: 0.2);
+          Scrollable.ensureVisible(ctx, duration: const Duration(milliseconds: 30), alignment: 0.2);
         }
         Future.delayed(const Duration(seconds: 2), () {
           if (mounted) setState(() => _pulsingUid = null);

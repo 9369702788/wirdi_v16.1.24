@@ -33,6 +33,8 @@ def main():
     p.add_argument("--keystore-sha256", default=None, help="SHA-256 of the same keystore (informational, see docstring)")
     p.add_argument("--build-type", default="unknown", choices=["debug", "release", "play-app-signing", "unknown"],
                     help="debug/release/play-app-signing keystores are commonly DIFFERENT certificates")
+    p.add_argument("--firebase-options", default="lib/firebase_options.dart",
+                    help="Dart file passed to Firebase.initializeApp(options: ...) -- must describe the SAME project as google-services.json")
     args = p.parse_args()
     report = []
 
@@ -91,6 +93,47 @@ def main():
         report.append(("FAIL", str(len(malformed)) + " malformed Android OAuth client(s)"))
     else:
         report.append(("PASS", "No malformed Android OAuth client entries"))
+
+    try:
+        with open(args.firebase_options, encoding="utf-8") as f:
+            fo_src = f.read()
+    except FileNotFoundError:
+        fo_src = None
+        report.append(("FAIL", args.firebase_options + " not found -- cannot verify it matches google-services.json"))
+
+    if fo_src is not None:
+        android_block_match = re.search(r"static const FirebaseOptions android = FirebaseOptions\((.*?)\);", fo_src, re.DOTALL)
+        if not android_block_match:
+            report.append(("FAIL", "Could not find FirebaseOptions android block in " + args.firebase_options))
+        else:
+            block = android_block_match.group(1)
+
+            def _field(name):
+                m = re.search(name + r":\s*'([^']*)'", block)
+                return m.group(1) if m else None
+
+            fo_project_id = _field("projectId")
+            fo_sender_id = _field("messagingSenderId")
+            fo_app_id = _field("appId")
+
+            gs_project_id = gs.get("project_info", {}).get("project_id")
+            gs_project_number = gs.get("project_info", {}).get("project_number")
+            gs_app_ids = [c.get("client_info", {}).get("mobilesdk_app_id") for c in gs.get("client", [])]
+
+            if fo_project_id == gs_project_id:
+                report.append(("PASS", "firebase_options.dart projectId matches google-services.json ('" + str(fo_project_id) + "')"))
+            else:
+                report.append(("FAIL", "firebase_options.dart projectId ('" + str(fo_project_id) + "') != google-services.json project_id ('" + str(gs_project_id) + "')"))
+
+            if fo_sender_id == gs_project_number:
+                report.append(("PASS", "firebase_options.dart messagingSenderId matches google-services.json project_number"))
+            else:
+                report.append(("FAIL", "firebase_options.dart messagingSenderId ('" + str(fo_sender_id) + "') != google-services.json project_number ('" + str(gs_project_number) + "')"))
+
+            if fo_app_id in gs_app_ids:
+                report.append(("PASS", "firebase_options.dart appId matches a google-services.json client app id"))
+            else:
+                report.append(("FAIL", "firebase_options.dart appId ('" + str(fo_app_id) + "') not found in google-services.json"))
 
     build_label = args.build_type.upper()
     if args.keystore_sha1:

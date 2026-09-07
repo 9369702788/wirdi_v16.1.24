@@ -104,7 +104,7 @@ class _MushafViewScreenState extends State<MushafViewScreen> {
 
     _pageController.animateToPage(
       targetIndex,
-      duration: const Duration(milliseconds: 350),
+      duration: const Duration(milliseconds: 30),
       curve: Curves.easeInOut,
     );
   }

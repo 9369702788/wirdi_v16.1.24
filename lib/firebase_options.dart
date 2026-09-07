@@ -20,30 +20,29 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey:            'AIzaSyD1aBMMUtgG6gZyi42Qh8vynTymUzWtMtw',
-    appId:             '1:820417111781:android:e616b3a50dc9363d69560c',
-    messagingSenderId: '820417111781',
-    projectId:         'wirdi-cd6c0',
-    storageBucket:     'wirdi-cd6c0.firebasestorage.app',
+    apiKey:            'AIzaSyCgURUM3-OW6NBUEK66dmbQ7p0aywOFb8w',
+    appId:             '1:391561027779:android:a52f7194b0134a22b30276',
+    messagingSenderId: '391561027779',
+    projectId:         'wirdi-cb813',
+    storageBucket:     'wirdi-cb813.firebasestorage.app',
   );
 
-  // iOS options — fill in after running `flutterfire configure` on a Mac
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey:            'AIzaSyD1aBMMUtgG6gZyi42Qh8vynTymUzWtMtw',
-    appId:             '1:820417111781:android:e616b3a50dc9363d69560c',
-    messagingSenderId: '820417111781',
-    projectId:         'wirdi-cd6c0',
-    storageBucket:     'wirdi-cd6c0.firebasestorage.app',
-    iosClientId:       '', // add from GoogleService-Info.plist
+    apiKey:            'AIzaSyCgURUM3-OW6NBUEK66dmbQ7p0aywOFb8w',
+    appId:             '1:391561027779:android:a52f7194b0134a22b30276',
+    messagingSenderId: '391561027779',
+    projectId:         'wirdi-cb813',
+    storageBucket:     'wirdi-cb813.firebasestorage.app',
+    iosClientId:       '', // add from a real GoogleService-Info.plist before shipping iOS
     iosBundleId:       'com.wirdi.wirdi',
   );
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey:            'AIzaSyD1aBMMUtgG6gZyi42Qh8vynTymUzWtMtw',
-    appId:             '1:820417111781:android:e616b3a50dc9363d69560c',
-    messagingSenderId: '820417111781',
-    projectId:         'wirdi-cd6c0',
-    storageBucket:     'wirdi-cd6c0.firebasestorage.app',
-    authDomain:        'wirdi-cd6c0.firebaseapp.com',
+    apiKey:            'AIzaSyCgURUM3-OW6NBUEK66dmbQ7p0aywOFb8w',
+    appId:             '1:391561027779:android:a52f7194b0134a22b30276',
+    messagingSenderId: '391561027779',
+    projectId:         'wirdi-cb813',
+    storageBucket:     'wirdi-cb813.firebasestorage.app',
+    authDomain:        'wirdi-cb813.firebaseapp.com',
   );
 }

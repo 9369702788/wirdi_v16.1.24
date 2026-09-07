@@ -35,7 +35,7 @@ class _HadithCollectionScreenState extends State<HadithCollectionScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final ctx = _itemKeys[target]?.currentContext;
       if (ctx != null) {
-        Scrollable.ensureVisible(ctx, duration: const Duration(milliseconds: 400), alignment: 0.1, curve: Curves.easeInOut);
+        Scrollable.ensureVisible(ctx, duration: const Duration(milliseconds: 30), alignment: 0.1, curve: Curves.easeInOut);
       }
     });
   }
