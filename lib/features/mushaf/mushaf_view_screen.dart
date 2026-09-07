@@ -217,15 +217,13 @@ class _MushafViewScreenState extends State<MushafViewScreen> {
                 itemCount: pages.length,
                 itemBuilder: (context, index) {
                   final page = pages[index];
-                  return ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: MediaQuery.sizeOf(context).height * 0.92),
-                    child: _MushafPageView(
-                      page: page,
-                      allSurahs: allSurahs,
-                      onMultiTouch: (active) {
-                        if (mounted && _multiTouchActive != active) setState(() => _multiTouchActive = active);
-                      },
-                    ),
+                  return _MushafPageView(
+                    page: page,
+                    allSurahs: allSurahs,
+                    targetHeight: MediaQuery.sizeOf(context).height * 0.92,
+                    onMultiTouch: (active) {
+                      if (mounted && _multiTouchActive != active) setState(() => _multiTouchActive = active);
+                    },
                   );
                 },
               ),
@@ -268,7 +266,11 @@ class _MushafPageView extends StatefulWidget {
   final MushafPage page;
   final List<SurahModel> allSurahs;
   final ValueChanged<bool>? onMultiTouch;
-  const _MushafPageView({required this.page, required this.allSurahs, this.onMultiTouch});
+  // Explicit height for continuous-scroll mode -- see BUGFIX note in
+  // _MushafPageViewState.build() below for why this is required instead
+  // of relying on LayoutBuilder's constraints.maxHeight in that mode.
+  final double? targetHeight;
+  const _MushafPageView({required this.page, required this.allSurahs, this.onMultiTouch, this.targetHeight});
 
   @override
   State<_MushafPageView> createState() => _MushafPageViewState();
@@ -415,7 +417,19 @@ class _MushafPageViewState extends State<_MushafPageView> {
       child: LayoutBuilder(
       builder: (context, constraints) {
         final verticalMargin = 12.0 + 20.0 + MediaQuery.of(context).padding.bottom;
-        final minCardHeight = constraints.maxHeight - verticalMargin;
+        // BUGFIX: in continuous-scroll mode this widget lives inside a
+        // ListView.builder item slot, which gives LayoutBuilder an
+        // UNBOUNDED (infinite) constraints.maxHeight -- that produced an
+        // infinite minCardHeight below, which in turn handed
+        // BoxConstraints(minHeight: infinity) to the Container/
+        // SingleChildScrollView further down. A SingleChildScrollView
+        // REQUIRES a bounded height along its scroll axis to lay out at
+        // all; given infinity it fails to render -- the page went
+        // completely blank. widget.targetHeight (passed explicitly by
+        // the continuous-scroll caller) sidesteps this entirely by never
+        // depending on the ambient (unbounded) constraints in that mode.
+        final effectiveMaxHeight = widget.targetHeight ?? constraints.maxHeight;
+        final minCardHeight = effectiveMaxHeight - verticalMargin;
         // NEW: pinch-to-zoom on the Mushaf page. InteractiveViewer with
         // panEnabled: false deliberately does NOT claim single-finger
         // drag gestures -- those still reach the ancestor PageView
@@ -428,7 +442,16 @@ class _MushafPageViewState extends State<_MushafPageView> {
           child: Container(
           margin: EdgeInsets.fromLTRB(14, 12, 14, 20 + MediaQuery.of(context).padding.bottom),
           padding: const EdgeInsets.all(22),
-          constraints: BoxConstraints(minHeight: minCardHeight > 0 ? minCardHeight : 0),
+          constraints: BoxConstraints(
+            minHeight: minCardHeight > 0 ? minCardHeight : 0,
+            // BUGFIX (part 2): also cap maxHeight to the same value so the
+            // inner SingleChildScrollView gets a genuinely BOUNDED height
+            // to scroll within, in BOTH page-view and continuous-scroll
+            // modes -- a minHeight-only constraint left maxHeight at its
+            // default of infinity, which is invalid input for a vertical
+            // SingleChildScrollView's viewport.
+            maxHeight: minCardHeight > 0 ? minCardHeight : double.infinity,
+          ),
           decoration: BoxDecoration(
             color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(6),

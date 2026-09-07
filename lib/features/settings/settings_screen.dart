@@ -1200,8 +1200,14 @@ class _DailyReminderTile extends StatelessWidget {
             }
             final result = await DailyReminderScheduler.rescheduleAll(l10n);
             if (context.mounted) {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(result), duration: const Duration(seconds: 6)),
+                SnackBar(
+                  content: Text(result),
+                  duration: const Duration(seconds: 3),
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
               );
             }
           },

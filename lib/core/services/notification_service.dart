@@ -447,7 +447,25 @@ class NotificationService {
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList(_recurringIdsKey, scheduledIds);
-    return summary.isEmpty ? 'No reminders enabled' : summary.join('\n');
+
+    // UX FIX: this used to return summary.join('\n') verbatim -- every
+    // single reminder's own 'OK: <body> at HH:MM' line concatenated
+    // together and dumped into one 6-second SnackBar. With several
+    // reminders enabled that produced a wall of raw diagnostic text
+    // that visually swallowed the screen and overlapped the bottom nav
+    // bar -- useless noise for a normal user on the success path. The
+    // full per-reminder detail is still preserved (each attempt is
+    // already logged via AppLogger.error on failure above); only a
+    // short, human-readable summary is surfaced to the UI now, and
+    // actual failures are still called out explicitly since those ARE
+    // actionable/important for the user to see.
+    if (summary.isEmpty) return 'No reminders enabled';
+    final failures = summary.where((s) => s.startsWith('FAILED:')).toList();
+    final okCount = summary.length - failures.length;
+    if (failures.isEmpty) {
+      return okCount == 1 ? 'Reminder scheduled successfully' : '$okCount reminders scheduled successfully';
+    }
+    return '$okCount scheduled, ${failures.length} failed:\n' + failures.join('\n');
   }
 
   /// Replaces all currently-scheduled prayer reminders with
