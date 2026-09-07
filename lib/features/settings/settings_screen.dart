@@ -60,7 +60,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _loadDownloadedAudioSize();
     _loadMathhab();
     _loadRealAppVersion();
-    _previewPlayer.onPlayerComplete.listen( // AUDIT: Consider saving StreamSubscription for proper cleanup(_) {
+    _previewPlayer.onPlayerComplete.listen((_) { // AUDIT: Consider saving StreamSubscription for proper cleanup
       if (mounted) setState(() => _previewingAdhanId = null);
     });
   }
