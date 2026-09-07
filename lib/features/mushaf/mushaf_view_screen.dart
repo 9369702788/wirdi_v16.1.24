@@ -268,8 +268,7 @@ class _MushafPageView extends StatefulWidget {
   final MushafPage page;
   final List<SurahModel> allSurahs;
   final ValueChanged<bool>? onMultiTouch;
-  final bool innerScrollEnabled;
-  const _MushafPageView({required this.page, required this.allSurahs, this.onMultiTouch, this.innerScrollEnabled = true});
+  const _MushafPageView({required this.page, required this.allSurahs, this.onMultiTouch});
 
   @override
   State<_MushafPageView> createState() => _MushafPageViewState();
@@ -440,7 +439,6 @@ class _MushafPageViewState extends State<_MushafPageView> {
           ),
           child: SingleChildScrollView(
             controller: _innerScrollController,
-            physics: widget.innerScrollEnabled ? null : const NeverScrollableScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
