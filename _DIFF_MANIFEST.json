@@ -1,0 +1,14 @@
+{
+  "modified_files": [
+    "README.md",
+    "android/app/src/main/AndroidManifest.xml",
+    "lib/core/services/notification_service.dart",
+    "lib/core/services/prayer_service.dart",
+    "lib/features/settings/settings_screen.dart",
+    "patch_manifest.py"
+  ],
+  "files_to_delete_manually": [
+    "lib/core/services/boot_receiver.dart"
+  ],
+  "note": "Delete the listed files manually from your repo -- they are not included in this zip because they no longer exist in v239."
+}

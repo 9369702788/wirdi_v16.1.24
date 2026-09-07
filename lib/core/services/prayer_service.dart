@@ -416,17 +416,16 @@ class PrayerService {
     return DateTime(now.year, now.month, now.day, hour, minute);
   }
 
-  /// Invalidate cached prayer times (called on timezone/time change)
+  /// Invalidate cached prayer times.
+  /// NOTE: not yet wired to any automatic timezone/time-change trigger --
+  /// call this manually (e.g. on app resume) until a real native
+  /// TIMEZONE_CHANGED listener is implemented. See README known limitations.
   Future<void> invalidatePrayerCache() async {
-    debugPrint('[prayer_service] Invalidating cached prayer times...');
+    AppLogger.info('[prayer_service] Invalidating cached prayer times...');
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('cached_prayer_times');
     await prefs.remove('prayer_times_timestamp');
-    debugPrint('[prayer_service] Prayer cache invalidated');
+    AppLogger.info('[prayer_service] Prayer cache invalidated');
   }
 
-  /// AUDIT FIX (v235): Initialize timezone/time change listener.
-  void _initTimeChangeListener() {
-    debugPrint('[prayer_service] Time/timezone change listener initialized');
-  }
 }

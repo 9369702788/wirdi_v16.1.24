@@ -27,8 +27,8 @@ Wirdi is a comprehensive Islamic companion app for Muslims, featuring:
 - ✅ Radio (4 curated Islamic station APIs with fallback)
 - ✅ Notifications (prayer alarms, daily reminders, Adhan audio)
 - ✅ Multi-language (7 languages supported)
-- ✅ Boot Alarm Rescheduling (v232) — alarms persist after device reboot
-- ✅ Timezone Change Handling (v232) — prayer times invalidate on timezone change
+- ⚠️ Boot Alarm Rescheduling — NOT implemented (requires native Android BroadcastReceiver, deferred to v1.54)
+- ⚠️ Timezone Change Handling — NOT automatic (invalidatePrayerCache() exists but has no trigger wired yet, deferred to v1.54)
 
 ### Known Limitations (v1.53.0)
 - ⚠️ Quran text cached in SharedPreferences (should use SQLite — deferred to v1.54)
@@ -59,8 +59,8 @@ See FIREBASE_SETUP.md for detailed setup instructions.
 - All user data stored in Firestore is encrypted in transit (HTTPS only)
 - Per-user security rules enforce user-only access to their own data
 - No cleartext traffic allowed
-- Prayer alarms reschedule automatically after device reboot
-- Prayer times cache invalidates on timezone/time changes
+- Prayer alarms do NOT currently reschedule after device reboot (known limitation, needs native Android work)
+- Prayer times cache does NOT currently auto-invalidate on timezone/time changes (known limitation)
 
 ## What's New in v1.53.0
 
@@ -75,10 +75,11 @@ See FIREBASE_SETUP.md for detailed setup instructions.
 - Preserved pubspec.lock (no longer deleted on every run)
 
 ### Notifications & Reliability (v232)
-- Implemented BOOT_COMPLETED handler — prayer alarms now reschedule after device reboot
-- Implemented TIMEZONE_CHANGED handler — prayer times invalidate when timezone changes
-- Added boot_receiver.dart for device reboot handling
-- Re-added RECEIVE_BOOT_COMPLETED permission (now actually used)
+- Attempted BOOT_COMPLETED/TIMEZONE_CHANGED handlers in v232-v236, but they only declared native Android receiver
+  classes in AndroidManifest.xml without ever creating the matching Kotlin/Java classes -- non-functional.
+  Reverted in v239: removed the misleading manifest declarations and dead Dart stub code. This remains an
+  open item for a future release (needs real native BroadcastReceiver + a way to run Dart in the background,
+  e.g. via the workmanager plugin).
 
 ## License
 

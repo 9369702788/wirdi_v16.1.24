@@ -30,8 +30,6 @@ perms = [
     # NEW: required for the Camera Qibla (AR overlay) screen added in v192,
     # which uses CameraController/availableCameras() from the `camera` plugin.
     'android.permission.CAMERA',
-    # AUDIT FIX (v232): Required for BootReceiver to reschedule prayer alarms after device reboot
-    'android.permission.RECEIVE_BOOT_COMPLETED',
 ]
 perm_lines = '\n'.join(
     f'    <uses-permission android:name="{p}" />'

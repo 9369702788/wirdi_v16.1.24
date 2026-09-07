@@ -251,7 +251,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ListenableBuilder(
               listenable: AuthService.instance,
               builder: (context, _) {
-                final user = (AuthService.instance.currentUser ?? (throw Exception('User not signed in')));
+                final user = AuthService.instance.currentUser;
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12),
                   child: ListTile(
