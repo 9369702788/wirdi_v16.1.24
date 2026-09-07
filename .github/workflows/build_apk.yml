@@ -24,10 +24,23 @@ jobs:
           java-version: '17'
 
       - name: Set up Flutter
+        # DETERMINISM FIX (production hardening audit): "channel: stable"
+        # with no version pin means every CI run can silently pick up a
+        # DIFFERENT Flutter release (and therefore different bundled Dart
+        # SDK, different default Android compileSdk/targetSdk defaults,
+        # different plugin compatibility) than the run before it -- the
+        # exact opposite of a reproducible build. Pinning an explicit
+        # version makes every build use the identical toolchain until
+        # this line is deliberately changed.
+        # NOTE: pick the Flutter version you have most recently verified
+        # actually builds this app successfully, and update this pin
+        # deliberately (in its own commit) whenever you intentionally
+        # upgrade -- never let it drift silently.
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.35.5'
           channel: stable
-          cache: false
+          cache: true
 
       - name: Flutter doctor
         run: flutter doctor -v
@@ -176,12 +189,19 @@ jobs:
           mkdir -p android/app/src/main/res/values
           printf '%s\n' '<?xml version="1.0" encoding="utf-8"?>' '<resources>' '    <string name="app_name">Wirdi</string>' '</resources>' > android/app/src/main/res/values/strings.xml
 
-      - name: Clear Flutter Cache
-        run: flutter pub cache clean --force || true
-
-      - name: Remove Old Lock File
-        run: rm -f pubspec.lock
-
+      # DETERMINISM FIX (production hardening audit): this used to force-clear
+      # the pub cache AND delete pubspec.lock on every single run, which
+      # guarantees `flutter pub get` re-resolves every dependency's
+      # version from scratch against whatever is newest on pub.dev that
+      # day -- meaning two builds of the EXACT SAME commit, on different
+      # days, could legitimately end up with different transitive
+      # dependency versions. A committed pubspec.lock is the whole point
+      # of Dart/Flutter's dependency locking -- deleting it defeats it
+      # entirely. If pubspec.lock is not yet committed to this repo, run
+      # `flutter pub get` locally once, commit the resulting
+      # pubspec.lock, and keep it committed going forward (regenerate
+      # and re-commit it deliberately, in its own commit, when you
+      # intentionally want to update dependencies).
       - name: Install dependencies
         run: flutter pub get
 
