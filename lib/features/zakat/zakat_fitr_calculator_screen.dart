@@ -79,7 +79,7 @@ class _ZakatFitrCalculatorScreenState extends State<ZakatFitrCalculatorScreen> {
             ),
           ],
         ],
-      ),
+      )),
     );
   }
-})
+}
