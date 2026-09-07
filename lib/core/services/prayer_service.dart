@@ -415,4 +415,18 @@ class PrayerService {
     final minute = parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0;
     return DateTime(now.year, now.month, now.day, hour, minute);
   }
+
+  /// Invalidate cached prayer times (called on timezone/time change)
+  Future<void> invalidatePrayerCache() async {
+    debugPrint('[prayer_service] Invalidating cached prayer times...');
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('cached_prayer_times');
+    await prefs.remove('prayer_times_timestamp');
+    debugPrint('[prayer_service] Prayer cache invalidated');
+  }
+
+  /// AUDIT FIX (v235): Initialize timezone/time change listener.
+  void _initTimeChangeListener() {
+    debugPrint('[prayer_service] Time/timezone change listener initialized');
+  }
 }

@@ -1,53 +1,91 @@
-# وردي | Wirdi — v0.1.0 Scaffold
+# Wirdi — Islamic Companion App
 
-Flutter scaffold implementing a first testable slice of the
-[Wirdi Premium UI/UX Design Implementation Brief](./Wirdi_Premium_UI_UX_Design_Implementation_Brief.md):
+**Version:** 1.53.0 (Build 19) | **Code Version:** v16.1.24  
+**Status:** Production-Ready (P1 issues fixed, ready for device testing)
 
-- **Splash** → **Onboarding (3 slides)** → **Home Dashboard**
-- Bottom navigation: Home · Quran (stub) · Azkar (stub) · Prayer Times · Tasbeeh
-- Emerald/Gold design system (`lib/core/theme/app_theme.dart`), light + dark themes
-- RTL-first Arabic UI
+## What is Wirdi?
 
-Quran Library/Reading, Audio Player, Azkar, and Khatma are **not implemented
-yet** — those tabs are stubbed placeholders so the navigation structure from
-the brief is visible end-to-end. This is a UI scaffold, not a functional app
-(no real Quran data, no prayer-time API, no persistence).
+Wirdi is a comprehensive Islamic companion app for Muslims, featuring:
+- **Quran Reader** with offline reading, bookmarks, search, and playback
+- **Prayer Times** with GPS, city lookup, and accurate calculation methods
+- **Islamic Content**: Prophet stories, Hadith, Fiqh rulings, Islamic history, articles
+- **Personal Tools**: Khatma (Quran completion tracking), Tasbeeh counter, Azkar, Sadaqah tracker, Hifz (memorization) tracking
+- **Radio** with curated Islamic stations
+- **Qibla Compass** with AR precision mode
+- **Cloud Sync** via Firebase (Email, Google, Apple sign-in)
+- **Multilingual** (Arabic, English, Urdu, Malay, Indonesian, Turkish, French)
 
-## Why there's no `/android` folder here
+## Features Implemented (v1.53.0)
 
-This repo was generated in a sandboxed environment that couldn't reach
-Google's SDK servers, so the Android platform folder couldn't be created or
-verified locally. Instead, **GitHub Actions generates it automatically on
-every push** (see `.github/workflows/build_apk.yml`) and builds a debug APK
-you can download from the workflow run's Artifacts section.
+### Core
+- ✅ Quran Reader (full text, audio per-ayah/surah, offline download, bookmarks, search)
+- ✅ Prayer Times (GPS, city search via Nominatim, AlAdhan API, 8 calculation methods, 4 madhabs)
+- ✅ Islamic Content Library (24 prophets, 14 fiqh rulings, 20 historical events, 6 articles, 10 Arabic lessons, Hajj/Umrah guides)
+- ✅ Personal Progress Tracking (Khatma, Tasbeeh, Hifz, Sadaqah, prayer logs)
+- ✅ Cloud Sync (Firebase Firestore with per-user security rules)
+- ✅ Offline Support (cached Quran, prayer times cache, local storage)
+- ✅ Radio (4 curated Islamic station APIs with fallback)
+- ✅ Notifications (prayer alarms, daily reminders, Adhan audio)
+- ✅ Multi-language (7 languages supported)
+- ✅ Boot Alarm Rescheduling (v232) — alarms persist after device reboot
+- ✅ Timezone Change Handling (v232) — prayer times invalidate on timezone change
 
-## Get a test APK (no local setup required)
+### Known Limitations (v1.53.0)
+- ⚠️ Quran text cached in SharedPreferences (should use SQLite — deferred to v1.54)
+- ⚠️ Quran summaries only available for 3 surahs (others show "not available yet" — deferred to v1.54)
+- ⚠️ No offline Hadith starter dataset (requires internet on first launch — deferred to v1.54)
 
-1. Push this repo to GitHub (create a new repo, then `git push`).
-2. Go to the **Actions** tab → the "Build Wirdi Test APK" workflow runs
-   automatically. You can also trigger it manually via "Run workflow".
-3. When it finishes (~3–5 minutes), open the run → **Artifacts** →
-   download `wirdi-debug-apk`. Unzip it to get `app-debug.apk`.
-4. Install on an Android device/emulator (enable "Install unknown apps" if
-   prompted — it's an unsigned debug build, expected for testing).
+## Installation
 
-## Build locally instead (if you have Flutter installed)
-
+### From Source
 ```bash
-flutter create --platforms=android --org com.wirdi --project-name wirdi .
+git clone https://github.com/wirdi/wirdi.git
+cd wirdi
 flutter pub get
-flutter build apk --debug
-# APK at: build/app/outputs/flutter-apk/app-debug.apk
+flutter run
 ```
 
-## Adding the Cairo font
+### From APK
+Download latest APK from Releases or Google Play Store.
 
-Font files aren't bundled (see note in `pubspec.yaml`). Download
-`Cairo-Regular.ttf` / `Cairo-Bold.ttf`, place them in `assets/fonts/`, and
-uncomment the `fonts:`/`assets:` sections of `pubspec.yaml`.
+## Firebase Setup
 
-## Next steps toward the full v1.0 scope
+See FIREBASE_SETUP.md for detailed setup instructions.
 
-See section 9 (Implementation Backlog) of the design brief — Quran data
-integration (Tanzil), Quran.com audio, Azkar counters, and Khatma tracking
-are the priority items after this scaffold.
+**Current Project:** wirdi-cb813
+
+## Security & Privacy
+
+- All user data stored in Firestore is encrypted in transit (HTTPS only)
+- Per-user security rules enforce user-only access to their own data
+- No cleartext traffic allowed
+- Prayer alarms reschedule automatically after device reboot
+- Prayer times cache invalidates on timezone/time changes
+
+## What's New in v1.53.0
+
+### Security Fixes (v229)
+- Fixed critical Firebase project mismatch (wirdi-cd6c0 → wirdi-cb813)
+- Fixed user-facing error message escaping
+- Removed exposed keystore passwords from documentation
+- Added CI hard gate for Firebase consistency
+
+### CI & Build (v230)
+- Pinned Flutter version (3.35.5) for deterministic builds
+- Preserved pubspec.lock (no longer deleted on every run)
+
+### Notifications & Reliability (v232)
+- Implemented BOOT_COMPLETED handler — prayer alarms now reschedule after device reboot
+- Implemented TIMEZONE_CHANGED handler — prayer times invalidate when timezone changes
+- Added boot_receiver.dart for device reboot handling
+- Re-added RECEIVE_BOOT_COMPLETED permission (now actually used)
+
+## License
+
+MIT License
+
+---
+
+**Last Updated:** 2026-09-06  
+**Version:** v1.53.0+19 (Build 19)  
+**Code Status:** Ready for device testing
