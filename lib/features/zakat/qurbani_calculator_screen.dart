@@ -39,7 +39,7 @@ class _QurbaniCalculatorScreenState extends State<QurbaniCalculatorScreen> {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'الأضحية والعقيقة' : 'Qurbani & Aqiqah'), centerTitle: true),
-      body: ListView(
+      body: SafeArea(bottom: true, top: false, child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           Card(
@@ -125,7 +125,7 @@ class _QurbaniCalculatorScreenState extends State<QurbaniCalculatorScreen> {
             ),
           ],
         ],
-      ),
+      )),
     );
   }
 }

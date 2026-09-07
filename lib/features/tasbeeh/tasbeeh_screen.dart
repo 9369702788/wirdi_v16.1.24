@@ -225,7 +225,7 @@ class _TasbeehScreenState extends State<TasbeehScreen> {
           IconButton(onPressed: _reset, icon: const Icon(Icons.refresh), tooltip: l10n.tasbeehResetToday),
         ],
       ),
-      body: Column(
+      body: SafeArea(bottom: true, top: false, child: Column(
         children: [
           SizedBox(
             height: 56,
@@ -337,7 +337,7 @@ class _TasbeehScreenState extends State<TasbeehScreen> {
             child: Text(l10n.tasbeehTapHint, style: const TextStyle(color: AppColors.mutedText, fontSize: 12)),
           ),
         ],
-      ),
+      )),
     );
   }
 }

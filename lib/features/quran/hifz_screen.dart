@@ -145,7 +145,7 @@ class _HifzScreenState extends State<HifzScreen> {
                 ),
               ],
       ),
-      body: surah == null ? _buildSurahList() : _buildAyahList(surah),
+      body: SafeArea(bottom: true, top: false, child: surah == null ? _buildSurahList() : _buildAyahList(surah)),
     );
   }
 

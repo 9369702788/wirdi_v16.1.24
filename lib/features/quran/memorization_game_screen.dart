@@ -106,13 +106,13 @@ class _MemorizationGameScreenState extends State<MemorizationGameScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Center(child: Text('$_score / $_attempts', style: const TextStyle(fontWeight: FontWeight.bold))),
+            child: Center(child: Text('$_score / $_attempts', textDirection: TextDirection.ltr, style: const TextStyle(fontWeight: FontWeight.bold))),
           ),
         ],
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : Padding(
+          : SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -61,7 +61,7 @@ class _HadeethSearchScreenState extends State<HadeethSearchScreen> {
           IconButton(icon: const Icon(Icons.search), onPressed: _runSearch),
         ],
       ),
-      body: _searching
+      body: SafeArea(bottom: true, top: false, child: _searching
           ? const Center(child: CircularProgressIndicator())
           : !_searched
               ? Center(child: Text(_t(context, 'اكتب كلمة وابحث في مكتبة الأحاديث', 'Type a word to search the hadith library')))
@@ -85,7 +85,7 @@ class _HadeethSearchScreenState extends State<HadeethSearchScreen> {
                           ),
                         );
                       },
-                    ),
+                    )),
     );
   }
 }

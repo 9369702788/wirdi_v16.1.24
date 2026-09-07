@@ -99,11 +99,11 @@ class _HadithMemorizationScreenState extends State<HadithMemorizationScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Center(child: Text('$_score / $_attempts', style: const TextStyle(fontWeight: FontWeight.bold))),
+            child: Center(child: Text('$_score / $_attempts', textDirection: TextDirection.ltr, style: const TextStyle(fontWeight: FontWeight.bold))),
           ),
         ],
       ),
-      body: _loading
+      body: SafeArea(bottom: true, top: false, child: _loading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16),
@@ -172,7 +172,7 @@ class _HadithMemorizationScreenState extends State<HadithMemorizationScreen> {
                   ],
                 ],
               ),
-            ),
+            )),
     );
   }
 }

@@ -217,12 +217,11 @@ class _MushafViewScreenState extends State<MushafViewScreen> {
                 itemCount: pages.length,
                 itemBuilder: (context, index) {
                   final page = pages[index];
-                  return SizedBox(
-                    height: MediaQuery.sizeOf(context).height * 0.92,
+                  return ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: MediaQuery.sizeOf(context).height * 0.92),
                     child: _MushafPageView(
                       page: page,
                       allSurahs: allSurahs,
-                      innerScrollEnabled: false,
                       onMultiTouch: (active) {
                         if (mounted && _multiTouchActive != active) setState(() => _multiTouchActive = active);
                       },
@@ -278,6 +277,7 @@ class _MushafPageView extends StatefulWidget {
 
 class _MushafPageViewState extends State<_MushafPageView> {
   final List<TapGestureRecognizer> _recognizers = [];
+  final ScrollController _innerScrollController = ScrollController();
 
   // Raw pointer count, tracked via Listener (fires before gesture-arena
   // resolution -- see the BUGFIX note on _multiTouchActive above).
@@ -297,16 +297,42 @@ class _MushafPageViewState extends State<_MushafPageView> {
   void initState() {
     super.initState();
     quranAudio.addListener(_onAudioChanged);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToPlayingAyahIfNeeded());
   }
 
   void _onAudioChanged() {
     if (mounted) setState(() {});
+    _scrollToPlayingAyahIfNeeded();
+  }
+
+  void _scrollToPlayingAyahIfNeeded() {
+    final surah = quranAudio.currentSurahNumber;
+    final ayahNumber = quranAudio.playingAyah;
+    if (surah == null || ayahNumber == null) return;
+    if (!_innerScrollController.hasClients) return;
+
+    final ayahs = widget.page.ayahs;
+    final index = ayahs.indexWhere((a) => a.surahNumber == surah && a.ayahNumber == ayahNumber);
+    if (index == -1) return;
+    if (ayahs.length <= 1) return;
+
+    final maxExtent = _innerScrollController.position.maxScrollExtent;
+    if (maxExtent <= 0) return;
+
+    final fraction = (index / (ayahs.length - 1)).clamp(0.0, 1.0);
+    final target = (maxExtent * fraction).clamp(0.0, maxExtent);
+    _innerScrollController.animateTo(
+      target,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
   void dispose() {
     quranAudio.removeListener(_onAudioChanged);
     _disposeRecognizers();
+    _innerScrollController.dispose();
     super.dispose();
   }
 
@@ -413,6 +439,7 @@ class _MushafPageViewState extends State<_MushafPageView> {
             ],
           ),
           child: SingleChildScrollView(
+            controller: _innerScrollController,
             physics: widget.innerScrollEnabled ? null : const NeverScrollableScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -116,7 +116,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(onPressed: _addEntry, child: const Icon(Icons.add)),
-      body: _loading
+      body: SafeArea(bottom: true, top: false, child: _loading
           ? const Center(child: CircularProgressIndicator())
           : Column(children: [
               Container(
@@ -180,7 +180,7 @@ class _SadaqahScreenState extends State<SadaqahScreen> {
                         },
                       ),
               ),
-            ]),
+            ])),
     );
   }
 }

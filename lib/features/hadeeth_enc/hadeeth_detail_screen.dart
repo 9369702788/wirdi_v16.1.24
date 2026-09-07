@@ -89,7 +89,7 @@ class _HadeethDetailScreenState extends State<HadeethDetailScreen> {
           ),
         ],
       ),
-      body: FutureBuilder<HadeethDetailModel>(
+      body: SafeArea(bottom: true, top: false, child: FutureBuilder<HadeethDetailModel>(
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
@@ -143,7 +143,7 @@ class _HadeethDetailScreenState extends State<HadeethDetailScreen> {
             ],
           );
         },
-      ),
+      )),
     );
   }
 }

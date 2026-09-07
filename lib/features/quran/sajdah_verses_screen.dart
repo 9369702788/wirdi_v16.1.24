@@ -70,7 +70,7 @@ class _SajdahVersesScreenState extends State<SajdahVersesScreen> {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'آيات السجدة' : 'Sajdah Verses'), centerTitle: true),
-      body: ListView.builder(
+      body: SafeArea(bottom: true, top: false, child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: _sajdahVerses.length + 1,
         itemBuilder: (context, index) {
@@ -99,7 +99,7 @@ class _SajdahVersesScreenState extends State<SajdahVersesScreen> {
             ),
           );
         },
-      ),
+      )),
     );
   }
 }

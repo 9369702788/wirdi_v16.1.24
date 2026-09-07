@@ -59,7 +59,7 @@ class _HadeethHubScreenState extends State<HadeethHubScreen> {
           ),
         ],
       ),
-      body: RefreshIndicator(
+      body: SafeArea(bottom: true, top: false, child: RefreshIndicator(
         onRefresh: _refresh,
         child: FutureBuilder<List<HadeethCategoryModel>>(
           future: _future,
@@ -129,7 +129,7 @@ class _HadeethHubScreenState extends State<HadeethHubScreen> {
             );
           },
         ),
-      ),
+      )),
     );
   }
 }

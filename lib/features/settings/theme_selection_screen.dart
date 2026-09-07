@@ -40,7 +40,7 @@ class ThemeSelectionScreen extends StatelessWidget {
         final languageCode = Localizations.localeOf(context).languageCode;
         return Scaffold(
           appBar: AppBar(title: Text(_tp(context, _kThemePickerTitle))),
-          body: ListView(
+          body: SafeArea(bottom: true, top: false, child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
               Row(children: [
@@ -81,7 +81,7 @@ class ThemeSelectionScreen extends StatelessWidget {
                   ),
                 ),
             ],
-          ),
+          )),
         );
       },
     );

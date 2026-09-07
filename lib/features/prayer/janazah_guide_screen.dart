@@ -9,7 +9,7 @@ class JanazahGuideScreen extends StatelessWidget {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'دليل صلاة الجنازة' : 'Janazah Prayer Guide'), centerTitle: true),
-      body: ListView(
+      body: SafeArea(bottom: true, top: false, child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           Card(
@@ -81,7 +81,7 @@ class JanazahGuideScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      )),
     );
   }
 }

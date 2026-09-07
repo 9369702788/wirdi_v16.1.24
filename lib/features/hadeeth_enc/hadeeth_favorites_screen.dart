@@ -43,7 +43,7 @@ class _HadeethFavoritesScreenState extends State<HadeethFavoritesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(_t(context, 'الأحاديث المفضلة', 'Favorite hadith')), centerTitle: true),
-      body: _loading
+      body: SafeArea(bottom: true, top: false, child: _loading
           ? const Center(child: CircularProgressIndicator())
           : _favoriteIds.isEmpty
               ? Center(child: Text(_t(context, "لم تحفظ أي حديث بعد.", "You haven't saved any hadith yet.")))
@@ -70,7 +70,7 @@ class _HadeethFavoritesScreenState extends State<HadeethFavoritesScreen> {
                       );
                     },
                   ),
-                ),
+                )),
     );
   }
 }

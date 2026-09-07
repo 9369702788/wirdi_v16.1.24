@@ -9,7 +9,7 @@ class TravelPrayerGuideScreen extends StatelessWidget {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'دليل الجمع والقصر للمسافر' : "Travel Prayer Guide (Jam' & Qasr)"), centerTitle: true),
-      body: ListView(
+      body: SafeArea(bottom: true, top: false, child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           Card(
@@ -64,7 +64,7 @@ class TravelPrayerGuideScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      )),
     );
   }
 }

@@ -49,7 +49,7 @@ class _HifzRevisionScreenState extends State<HifzRevisionScreen> {
     final isAr = _isAr;
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'مراجعة الحفظ' : 'Hifz Revision'), centerTitle: true),
-      body: _loading
+      body: SafeArea(bottom: true, top: false, child: _loading
           ? const Center(child: CircularProgressIndicator())
           : (_due == null || _due!.isEmpty)
               ? Center(
@@ -95,7 +95,7 @@ class _HifzRevisionScreenState extends State<HifzRevisionScreen> {
                       );
                     },
                   ),
-                ),
+                )),
     );
   }
 }

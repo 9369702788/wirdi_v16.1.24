@@ -28,7 +28,7 @@ class _FatwaScreenState extends State<FatwaScreen> {
     final visible = _filterCategory == null ? _rulings : _rulings.where((r) => r.category == _filterCategory).toList();
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'الأحكام الفقهية العامة' : 'General Rulings'), centerTitle: true),
-      body: _loading
+      body: SafeArea(bottom: true, top: false, child: _loading
           ? const Center(child: CircularProgressIndicator())
           : Column(children: [
               Container(
@@ -76,7 +76,7 @@ class _FatwaScreenState extends State<FatwaScreen> {
                   },
                 ),
               ),
-            ]),
+            ])),
     );
   }
 }

@@ -131,7 +131,7 @@ class _MosqueFinderScreenState extends State<MosqueFinderScreen> with SingleTick
           IconButton(tooltip: l10n.commonRefreshTooltip, onPressed: _load, icon: const Icon(Icons.refresh)),
         ],
       ),
-      body: _loading
+      body: SafeArea(bottom: true, top: false, child: _loading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
               ? Center(
@@ -155,7 +155,7 @@ class _MosqueFinderScreenState extends State<MosqueFinderScreen> with SingleTick
                     _PlacesList(places: _mosques, emptyMessage: l10n.mosqueNoMosquesFound, favorites: _favorites, placeId: _placeId, onToggleFavorite: _toggleFavorite),
                     _PlacesList(places: _halalRestaurants, emptyMessage: l10n.mosqueNoHalalFound, favorites: _favorites, placeId: _placeId, onToggleFavorite: _toggleFavorite),
                   ],
-                ),
+                )),
     );
   }
 }

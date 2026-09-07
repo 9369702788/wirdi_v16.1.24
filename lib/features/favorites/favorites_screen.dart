@@ -49,13 +49,13 @@ class _FavoritesScreenState extends State<FavoritesScreen> with SingleTickerProv
           ],
         ),
       ),
-      body: TabBarView(
+      body: SafeArea(bottom: true, top: false, child: TabBarView(
         controller: _tabController,
         children: const [
           _FavoriteAyahsTab(),
           _FavoriteAzkarTab(),
         ],
-      ),
+      )),
     );
   }
 }

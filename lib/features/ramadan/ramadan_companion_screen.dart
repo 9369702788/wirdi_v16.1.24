@@ -68,7 +68,7 @@ class _RamadanCompanionScreenState extends State<RamadanCompanionScreen> {
     final prayedTaraweeh = await UserProgressService.isTaraweehToday();
     final now = DateTime.now();
     final hijri = HijriDate.fromGregorian(now);
-    int loggedCount = 0;
+    int loggedCount;
     if (hijri.isRamadan) {
       var cursor = now;
       var daysBack = 0;
@@ -80,6 +80,9 @@ class _RamadanCompanionScreenState extends State<RamadanCompanionScreen> {
       }
       final startOfMonth = now.subtract(Duration(days: daysBack - 1));
       loggedCount = await UserProgressService.fastingDaysInRange(startOfMonth, now);
+    } else {
+      final startOfGregorianMonth = DateTime(now.year, now.month, 1);
+      loggedCount = await UserProgressService.fastingDaysInRange(startOfGregorianMonth, now);
     }
     var taraweehCount = 0;
     if (hijri.isRamadan) {
@@ -242,16 +245,14 @@ class _RamadanCompanionScreenState extends State<RamadanCompanionScreen> {
                         ),
                       ),
                     ],
-                    if (isRamadan) ...[
-                      const SizedBox(height: 12),
-                      Card(
-                        child: ListTile(
-                          leading: Icon(Icons.calendar_month, color: AppColors.primaryEmerald),
-                          title: Text(l10n.ramadanDaysLoggedTitle),
-                          trailing: Text('$_ramadanDaysLogged', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                        ),
+                    const SizedBox(height: 12),
+                    Card(
+                      child: ListTile(
+                        leading: Icon(Icons.calendar_month, color: AppColors.primaryEmerald),
+                        title: Text(l10n.ramadanDaysLoggedTitle),
+                        trailing: Text('$_ramadanDaysLogged', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                       ),
-                    ],
+                    ),
                     if (isRamadan && hijri.day >= 21) ...[
                       const SizedBox(height: 12),
                       Container(

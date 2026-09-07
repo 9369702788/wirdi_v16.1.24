@@ -51,7 +51,7 @@ class _OtherCityPrayerTimesScreenState extends State<OtherCityPrayerTimesScreen>
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'مواقيت مدينة أخرى' : 'Prayer Times in Another City'), centerTitle: true),
-      body: Padding(
+      body: SafeArea(bottom: true, top: false, child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -98,7 +98,7 @@ class _OtherCityPrayerTimesScreenState extends State<OtherCityPrayerTimesScreen>
               ),
           ],
         ),
-      ),
+      )),
     );
   }
 }

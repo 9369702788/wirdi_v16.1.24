@@ -12,7 +12,7 @@ class IslamicEventsScreen extends StatelessWidget {
     final events = IslamicEventsService.events;
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'المناسبات الإسلامية' : 'Islamic Events'), centerTitle: true),
-      body: ListView(
+      body: SafeArea(bottom: true, top: false, child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           for (final e in events)
@@ -60,7 +60,7 @@ class IslamicEventsScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      )),
     );
   }
 }

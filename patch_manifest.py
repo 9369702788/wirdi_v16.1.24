@@ -36,10 +36,6 @@ perm_lines = '\n'.join(
     for p in perms if p not in text
 )
 if perm_lines:
-    # BUGFIX (v240): exact-string match silently failed once package=
-    # was added on its own line -- see comment history. Regex on the
-    # opening <manifest ...> tag works regardless of how many
-    # attributes/lines it spans.
     text = re.sub(
         r'(<manifest\b[^>]*>)',
         lambda m: m.group(1) + '\n' + perm_lines,

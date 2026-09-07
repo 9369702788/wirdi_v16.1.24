@@ -46,7 +46,7 @@ class _CustomAzkarScreenState extends State<CustomAzkarScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? '\u0623\u0630\u0643\u0627\u0631\u064a \u0627\u0644\u062e\u0627\u0635\u0629' : 'My Custom Azkar'), centerTitle: true),
       floatingActionButton: FloatingActionButton(onPressed: _addItem, child: const Icon(Icons.add)),
-      body: _loading
+      body: SafeArea(bottom: true, top: false, child: _loading
           ? const Center(child: CircularProgressIndicator())
           : _items.isEmpty
               ? Center(child: Text(isAr ? '\u0644\u0627 \u062a\u0648\u062c\u062f \u0623\u0630\u0643\u0627\u0631 \u0628\u0639\u062f. \u0627\u0636\u063a\u0637 + \u0644\u0625\u0636\u0627\u0641\u0629 \u0630\u0643\u0631\u0643 \u0627\u0644\u062e\u0627\u0635' : 'No custom azkar yet. Tap + to create your own', style: const TextStyle(color: AppColors.mutedText)))
@@ -86,7 +86,7 @@ class _CustomAzkarScreenState extends State<CustomAzkarScreen> {
                       ),
                     );
                   },
-                ),
+                )),
     );
   }
 }

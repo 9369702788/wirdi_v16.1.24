@@ -84,7 +84,7 @@ class _HadithCollectionScreenState extends State<HadithCollectionScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.hadithTitle), centerTitle: true),
-      body: FutureBuilder<List<HadithModel>>(
+      body: SafeArea(bottom: true, top: false, child: FutureBuilder<List<HadithModel>>(
         future: _future,
         builder: (context, snapshot) {
           if (_future == null || snapshot.connectionState != ConnectionState.done) {
@@ -255,7 +255,7 @@ class _HadithCollectionScreenState extends State<HadithCollectionScreen> {
             ],
           );
         },
-      ),
+      )),
     );
   }
 }

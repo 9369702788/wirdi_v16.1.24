@@ -290,7 +290,7 @@ class _DuaLibraryScreenState extends State<DuaLibraryScreen> {
         title: Text(isAr ? 'مكتبة الأدعية' : 'Dua Library'),
         centerTitle: true,
       ),
-      body: Column(
+      body: SafeArea(bottom: true, top: false, child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
@@ -406,7 +406,7 @@ class _DuaLibraryScreenState extends State<DuaLibraryScreen> {
                   ),
           ),
         ],
-      ),
+      )),
     );
   }
 }

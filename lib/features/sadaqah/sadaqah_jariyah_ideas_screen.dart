@@ -9,7 +9,7 @@ class SadaqahJariyahIdeasScreen extends StatelessWidget {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'أفكار صدقة جارية' : 'Sadaqah Jariyah Ideas'), centerTitle: true),
-      body: ListView(
+      body: SafeArea(bottom: true, top: false, child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           Card(
@@ -132,7 +132,7 @@ class SadaqahJariyahIdeasScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      )),
     );
   }
 }

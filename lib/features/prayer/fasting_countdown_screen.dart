@@ -120,7 +120,7 @@ class _FastingCountdownScreenState extends State<FastingCountdownScreen> {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'عداد الإفطار والسحور' : 'Iftar & Suhoor Countdown'), centerTitle: true),
-      body: _loading
+      body: SafeArea(bottom: true, top: false, child: _loading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
               ? Center(child: Padding(padding: const EdgeInsets.all(24), child: Text(_error!, textAlign: TextAlign.center)))
@@ -131,7 +131,7 @@ class _FastingCountdownScreenState extends State<FastingCountdownScreen> {
                     const SizedBox(height: 16),
                     _countdownCard(title: isAr ? 'نهاية وقت السحور (الفجر)' : 'End of Suhoor (Fajr)', target: _suhoorTarget(), isAr: isAr),
                   ],
-                ),
+                )),
     );
   }
 }

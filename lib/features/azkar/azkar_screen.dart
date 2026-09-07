@@ -77,7 +77,7 @@ class _AzkarScreenState extends State<AzkarScreen> with SingleTickerProviderStat
           ),
         ],
       ),
-      body: FutureBuilder<List<AzkarCategoryModel>>(
+      body: SafeArea(bottom: true, top: false, child: FutureBuilder<List<AzkarCategoryModel>>(
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
@@ -104,7 +104,7 @@ class _AzkarScreenState extends State<AzkarScreen> with SingleTickerProviderStat
             ],
           );
         },
-      ),
+      )),
     );
   }
 
@@ -299,7 +299,7 @@ class _AzkarDetailsScreenState extends State<AzkarDetailsScreen> {
           ),
         ],
       ),
-      body: Column(
+      body: SafeArea(bottom: true, top: false, child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
@@ -389,7 +389,7 @@ class _AzkarDetailsScreenState extends State<AzkarDetailsScreen> {
                   ),
           ),
         ],
-      ),
+      )),
     );
   }
 }
@@ -403,7 +403,7 @@ class _AzkarFavoritesScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(l10n.azkarFavoritesTitle), centerTitle: true),
-      body: FutureBuilder<Set<String>>(
+      body: SafeArea(bottom: true, top: false, child: FutureBuilder<Set<String>>(
         future: UserProgressService.favoriteAzkar(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
@@ -438,7 +438,7 @@ class _AzkarFavoritesScreen extends StatelessWidget {
             },
           );
         },
-      ),
+      )),
     );
   }
 }

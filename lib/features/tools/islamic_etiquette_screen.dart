@@ -84,7 +84,7 @@ class IslamicEtiquetteScreen extends StatelessWidget {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'آداب إسلامية عامة' : 'Islamic Etiquette (Adab)'), centerTitle: true),
-      body: ListView(
+      body: SafeArea(bottom: true, top: false, child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           for (final topic in _topics)
@@ -119,7 +119,7 @@ class IslamicEtiquetteScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      )),
     );
   }
 }

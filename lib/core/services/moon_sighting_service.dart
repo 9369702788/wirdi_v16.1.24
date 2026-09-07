@@ -6,7 +6,19 @@ class MoonSightingInfo {
   final String visibility;
   final String location;
   final String description;
-  const MoonSightingInfo({required this.date, required this.hijriMonth, required this.visibility, required this.location, required this.description});
+  final double illumination;
+  final double ageDays;
+  const MoonSightingInfo({
+    required this.date,
+    required this.hijriMonth,
+    required this.visibility,
+    required this.location,
+    required this.description,
+    required this.illumination,
+    required this.ageDays,
+  });
+
+  bool get isWaxing => ageDays < 14.765294430500001;
 }
 
 class MoonSightingService {
@@ -26,6 +38,9 @@ class MoonSightingService {
       description: arabic
           ? 'عمر القمر: ${age.toStringAsFixed(1)} يوم -- $phase (${(illumination * 100).round()}% إضاءة). هذا تقدير فلكي محسوب، وليس إعلانًا رسميًا من لجنة رؤية الهلال.'
           : 'Moon age: ${age.toStringAsFixed(1)} days -- $phase (${(illumination * 100).round()}% illuminated). This is a calculated estimate, not a moon-sighting committee announcement.',
+    
+      illumination: illumination,
+      ageDays: age,
     );
   }
 }

@@ -72,7 +72,7 @@ class _QadaTrackerScreenState extends State<QadaTrackerScreen> {
     final total = _counts.values.fold<int>(0, (a, b) => a + b);
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'قضاء الصلوات الفائتة' : 'Missed Prayers (Qada)'), centerTitle: true),
-      body: _loading
+      body: SafeArea(bottom: true, top: false, child: _loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
               padding: const EdgeInsets.all(16),
@@ -113,7 +113,7 @@ class _QadaTrackerScreenState extends State<QadaTrackerScreen> {
                   style: const TextStyle(fontSize: 12, color: AppColors.mutedText),
                 ),
               ],
-            ),
+            )),
     );
   }
 }

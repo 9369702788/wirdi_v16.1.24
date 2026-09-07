@@ -72,8 +72,14 @@ class NearbyPlacesService {
     for (final endpoint in _endpoints) {
       try {
         final response = await http
-            .post(Uri.parse(endpoint), body: {'data': overpassQuery})
-            .timeout(const Duration(seconds: 25));
+            .post(
+              Uri.parse(endpoint),
+              headers: {
+                'User-Agent': 'Wirdi-IslamicApp/1.0 (contact: support@wirdi.app)',
+              },
+              body: {'data': overpassQuery},
+            )
+            .timeout(const Duration(seconds: 30));
 
         if (response.statusCode != 200) {
           throw Exception('Overpass HTTP ${response.statusCode} from $endpoint');

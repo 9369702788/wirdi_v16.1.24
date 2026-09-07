@@ -170,7 +170,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.bookmarksTitle), centerTitle: true),
-      body: _loading
+      body: SafeArea(bottom: true, top: false, child: _loading
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
@@ -294,7 +294,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
                         ),
                 ),
               ],
-            ),
+            )),
     );
   }
 }

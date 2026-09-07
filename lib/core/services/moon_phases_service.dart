@@ -4,7 +4,10 @@ class MoonPhase {
   final String phase;
   final String date;
   final double illumination;
-  const MoonPhase({required this.phase, required this.date, required this.illumination});
+  final double ageDays;
+  const MoonPhase({required this.phase, required this.date, required this.illumination, required this.ageDays});
+
+  bool get isWaxing => ageDays < 14.765294430500001;
 }
 
 class MoonPhasesService {
@@ -18,6 +21,7 @@ class MoonPhasesService {
         phase: MoonCalculator.phaseName(age, arabic: arabic),
         date: '$year-${month.toString().padLeft(2, '0')}-${d.toString().padLeft(2, '0')}',
         illumination: MoonCalculator.illuminationFraction(age),
+        ageDays: age,
       ));
     }
     return result;

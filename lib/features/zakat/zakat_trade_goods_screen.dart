@@ -31,7 +31,7 @@ class _ZakatTradeGoodsScreenState extends State<ZakatTradeGoodsScreen> {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'زكاة عروض التجارة' : 'Zakat on Trade Goods'), centerTitle: true),
-      body: ListView(padding: const EdgeInsets.all(16), children: [
+      body: SafeArea(bottom: true, top: false, child: ListView(padding: const EdgeInsets.all(16), children: [
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(color: AppColors.primaryEmerald.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12)),
@@ -77,7 +77,7 @@ class _ZakatTradeGoodsScreenState extends State<ZakatTradeGoodsScreen> {
             ),
           ),
         ],
-      ]),
+      ])),
     );
   }
 }

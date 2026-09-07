@@ -113,7 +113,7 @@ class _RecitationMistakeLogScreenState extends State<RecitationMistakeLogScreen>
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'سجل أخطاء التلاوة' : 'Recitation Mistake Log'), centerTitle: true),
       floatingActionButton: FloatingActionButton(onPressed: _add, child: const Icon(Icons.add)),
-      body: _loading
+      body: SafeArea(bottom: true, top: false, child: _loading
           ? const Center(child: CircularProgressIndicator())
           : _mistakes.isEmpty
               ? Center(
@@ -153,7 +153,7 @@ class _RecitationMistakeLogScreenState extends State<RecitationMistakeLogScreen>
                       ),
                     );
                   },
-                ),
+                )),
     );
   }
 }

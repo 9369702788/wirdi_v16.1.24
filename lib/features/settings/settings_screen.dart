@@ -483,7 +483,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         for (final key in AppSettings.remindablePrayerKeys) {
                           await appSettings.setPrayerReminderEnabledFor(key, value);
                         }
-                        unawaited(NotificationService.requestPermission());
+                        if (value) {
+                          await NotificationService.requestPermission();
+                        }
                         unawaited(_rescheduleAllPrayerReminders());
                       },
                     ),

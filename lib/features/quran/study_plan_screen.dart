@@ -63,7 +63,7 @@ class _StudyPlanScreenState extends State<StudyPlanScreen> {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'خطة الحفظ' : 'Study Plan'), centerTitle: true),
-      body: _loading
+      body: SafeArea(bottom: true, top: false, child: _loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
               padding: const EdgeInsets.all(16),
@@ -123,7 +123,7 @@ class _StudyPlanScreenState extends State<StudyPlanScreen> {
                   ),
                 ],
               ],
-            ),
+            )),
     );
   }
 }

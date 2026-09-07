@@ -78,6 +78,9 @@ class NotificationService {
   static const _adhanChannelId = 'wirdi_prayer_adhan_v2';
   static const _adhanChannelName = 'Adhan';
   static const _adhanChannelDescription = 'Full Adhan audio at prayer time';
+  static const _beepChannelId = 'wirdi_prayer_beep_v1';
+  static const _beepChannelName = 'Prayer alert (sound)';
+  static const _beepChannelDescription = 'A short alert tone at prayer time (not the full Adhan)';
   /// FIX: this channel ID was the ONE channel in this file that never
   /// got the same "_v2" rotation the prayer-reminder and Adhan channels
   /// already received (see their own comments above). Android
@@ -142,12 +145,18 @@ class NotificationService {
     const initSettings = InitializationSettings(android: androidInit, iOS: iosInit, macOS: iosInit);
 
     try {
-      await _plugin.initialize(initSettings);
+      final ok = await _plugin.initialize(initSettings);
+      _initialized = ok ?? true;
+      if (!_initialized) {
+        AppLogger.error('Notification plugin initialize() returned false -- will retry next call');
+      }
     } catch (e, st) {
-      AppLogger.error('Notification plugin initialization failed', error: e, stackTrace: st);
+      AppLogger.error('Notification plugin initialization failed -- will retry next call', error: e, stackTrace: st);
+      _initialized = false;
     }
-    _initialized = true;
   }
+
+  static bool get isInitialized => _initialized;
 
   /// No need to resolve the device's IANA timezone name (that required
   /// the flutter_timezone plugin, which pulled in a native Kotlin Gradle
@@ -321,7 +330,7 @@ class NotificationService {
         details,
         androidScheduleMode: AndroidScheduleMode.alarmClock,
       );
-      return null;
+      return isInitialized ? null : 'Scheduled, but plugin initialize() previously failed -- results may be unreliable.';
     } catch (e) {
       return e.toString();
     }
@@ -486,10 +495,26 @@ class NotificationService {
     for (final n in notifications) {
       if (n.fireAt.isBefore(now)) continue; // never schedule something already in the past
 
+      final String channelId;
+      final String channelName;
+      final String channelDescription;
+      if (n.useAdhanSound) {
+        channelId = _adhanChannelId;
+        channelName = _adhanChannelName;
+        channelDescription = _adhanChannelDescription;
+      } else if (n.silent) {
+        channelId = _reminderChannelId;
+        channelName = _reminderChannelName;
+        channelDescription = _reminderChannelDescription;
+      } else {
+        channelId = _beepChannelId;
+        channelName = _beepChannelName;
+        channelDescription = _beepChannelDescription;
+      }
       final androidDetails = AndroidNotificationDetails(
-        n.useAdhanSound ? _adhanChannelId : _reminderChannelId,
-        n.useAdhanSound ? _adhanChannelName : _reminderChannelName,
-        channelDescription: n.useAdhanSound ? _adhanChannelDescription : _reminderChannelDescription,
+        channelId,
+        channelName,
+        channelDescription: channelDescription,
         importance: n.silent ? Importance.low : Importance.high,
         priority: n.silent ? Priority.low : Priority.high,
         playSound: !n.silent,

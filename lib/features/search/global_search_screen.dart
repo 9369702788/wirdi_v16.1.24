@@ -167,7 +167,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? '\u0628\u062d\u062b \u0634\u0627\u0645\u0644' : 'Global Search'), centerTitle: true),
-      body: Column(
+      body: SafeArea(bottom: true, top: false, child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
@@ -259,7 +259,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
               ),
             ),
         ],
-      ),
+      )),
     );
   }
 }

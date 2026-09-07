@@ -132,7 +132,7 @@ class _MyDuasScreenState extends State<MyDuasScreen> {
         backgroundColor: AppColors.primaryEmerald,
         child: const Icon(Icons.add, color: Colors.white),
       ),
-      body: _loading
+      body: SafeArea(bottom: true, top: false, child: _loading
           ? const Center(child: CircularProgressIndicator())
           : _duas.isEmpty
               ? Center(
@@ -188,7 +188,7 @@ class _MyDuasScreenState extends State<MyDuasScreen> {
                       ),
                     );
                   },
-                ),
+                )),
     );
   }
 }

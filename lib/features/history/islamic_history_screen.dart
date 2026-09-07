@@ -12,7 +12,7 @@ class IslamicHistoryScreen extends StatelessWidget {
     final events = IslamicHistoryService.getTimelineEvents();
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'التاريخ الإسلامي' : 'Islamic History'), centerTitle: true),
-      body: ListView.separated(
+      body: SafeArea(bottom: true, top: false, child: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: events.length,
         separatorBuilder: (_, __) => const Divider(height: 24),
@@ -28,7 +28,7 @@ class IslamicHistoryScreen extends StatelessWidget {
             isThreeLine: true,
           );
         },
-      ),
+      )),
     );
   }
 }

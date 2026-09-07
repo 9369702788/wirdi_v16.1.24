@@ -116,7 +116,7 @@ class _CongregationTrackerScreenState extends State<CongregationTrackerScreen> {
     final todayCount = _today.values.where((v) => v).length;
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'صلاة الجماعة' : 'Congregation Prayer'), centerTitle: true),
-      body: _loading
+      body: SafeArea(bottom: true, top: false, child: _loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
               padding: const EdgeInsets.all(16),
@@ -155,7 +155,7 @@ class _CongregationTrackerScreenState extends State<CongregationTrackerScreen> {
                       ),
                     )),
               ],
-            ),
+            )),
     );
   }
 }

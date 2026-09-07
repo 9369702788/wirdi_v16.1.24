@@ -36,7 +36,7 @@ class _SahabaQuizScreenState extends State<SahabaQuizScreen> {
 
   void _choose(int index) { setState(() { _selected = index; _attempts += 1; if (index == _current.correctIndex) _score += 1; }); }
 
-  void _next() { setState(() { _current = _bank[_random.nextInt(_bank.length)]; _selected = null; }); }
+  void _next() {\n    setState(() {\n      if (_bank.length > 1) {\n        _Q next;\n        do { next = _bank[_random.nextInt(_bank.length)]; } while (identical(next, _current));\n        _current = next;\n      } else {\n        _current = _bank[_random.nextInt(_bank.length)];\n      }\n      _selected = null;\n    });\n  }
 
   @override
   Widget build(BuildContext context) {

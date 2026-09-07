@@ -62,7 +62,7 @@ class _MonthlyPrayerCalendarScreenState extends State<MonthlyPrayerCalendarScree
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'جدول الشهر لمواقيت الصلاة' : 'Monthly Prayer Times Table'), centerTitle: true),
-      body: _loading
+      body: SafeArea(bottom: true, top: false, child: _loading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
               ? Center(child: Padding(padding: const EdgeInsets.all(24), child: Text(_error!, textAlign: TextAlign.center)))
@@ -93,7 +93,7 @@ class _MonthlyPrayerCalendarScreenState extends State<MonthlyPrayerCalendarScree
                           );
                         }).toList(),
                   ),
-                ),
+                )),
     );
   }
 }

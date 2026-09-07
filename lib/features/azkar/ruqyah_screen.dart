@@ -24,7 +24,7 @@ class RuqyahScreen extends StatelessWidget {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'الرقية الشرعية' : 'Ruqyah (Spiritual Healing)'), centerTitle: true),
-      body: ListView.builder(
+      body: SafeArea(bottom: true, top: false, child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: _ruqyahItems.length + 1,
         itemBuilder: (context, index) {
@@ -56,7 +56,7 @@ class RuqyahScreen extends StatelessWidget {
             ),
           );
         },
-      ),
+      )),
     );
   }
 }

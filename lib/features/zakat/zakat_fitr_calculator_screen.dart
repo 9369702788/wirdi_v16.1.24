@@ -32,7 +32,7 @@ class _ZakatFitrCalculatorScreenState extends State<ZakatFitrCalculatorScreen> {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'حاسبة زكاة الفطر' : 'Zakat al-Fitr Calculator'), centerTitle: true),
-      body: ListView(
+      body: SafeArea(bottom: true, top: false, child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           Container(
@@ -82,4 +82,4 @@ class _ZakatFitrCalculatorScreenState extends State<ZakatFitrCalculatorScreen> {
       ),
     );
   }
-}
+})

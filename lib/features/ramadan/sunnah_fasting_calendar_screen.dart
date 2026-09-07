@@ -38,7 +38,7 @@ class SunnahFastingCalendarScreen extends StatelessWidget {
     final days = _upcomingDays(isAr);
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'تقويم الصيام المستحب' : 'Sunnah Fasting Calendar'), centerTitle: true),
-      body: ListView.builder(
+      body: SafeArea(bottom: true, top: false, child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: days.length + 1,
         itemBuilder: (context, index) {
@@ -71,7 +71,7 @@ class SunnahFastingCalendarScreen extends StatelessWidget {
             ),
           );
         },
-      ),
+      )),
     );
   }
 }

@@ -72,7 +72,7 @@ class _MuhasabahJournalScreenState extends State<MuhasabahJournalScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'محاسبة النفس' : 'Self-Accountability Journal'), centerTitle: true),
       floatingActionButton: FloatingActionButton(onPressed: _add, child: const Icon(Icons.add)),
-      body: _loading
+      body: SafeArea(bottom: true, top: false, child: _loading
           ? const Center(child: CircularProgressIndicator())
           : _entries.isEmpty
               ? Center(child: Padding(padding: const EdgeInsets.all(24), child: Text(isAr ? 'ابدأ عادة محاسبة النفس يوميًا.' : 'Start a daily habit of self-reflection.', textAlign: TextAlign.center, style: const TextStyle(color: AppColors.mutedText))))
@@ -104,7 +104,7 @@ class _MuhasabahJournalScreenState extends State<MuhasabahJournalScreen> {
                       ),
                     );
                   },
-                ),
+                )),
     );
   }
 }

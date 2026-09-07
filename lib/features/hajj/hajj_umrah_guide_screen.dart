@@ -69,13 +69,13 @@ class _HajjUmrahGuideScreenState extends State<HajjUmrahGuideScreen> with Single
           ],
         ),
       ),
-      body: TabBarView(
+      body: SafeArea(bottom: true, top: false, child: TabBarView(
         controller: _tabController,
         children: [
           _StepsList(steps: umrahSteps, isAr: isAr),
           _StepsList(steps: hajjSteps, isAr: isAr),
         ],
-      ),
+      )),
     );
   }
 }

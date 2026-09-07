@@ -34,11 +34,11 @@ class _PrayerChartScreenState extends State<PrayerChartScreen> {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'رسم مواقيت الصلاة' : 'Prayer Times Chart'), centerTitle: true),
-      body: _loading
+      body: SafeArea(bottom: true, top: false, child: _loading
           ? const Center(child: CircularProgressIndicator())
           : (_error != null || _result == null)
               ? Center(child: Padding(padding: const EdgeInsets.all(24), child: Text(_error ?? '', textAlign: TextAlign.center)))
-              : _buildChart(_result!),
+              : _buildChart(_result!)),
     );
   }
 

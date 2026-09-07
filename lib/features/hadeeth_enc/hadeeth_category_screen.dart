@@ -46,7 +46,7 @@ class _HadeethCategoryScreenState extends State<HadeethCategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.category.title), centerTitle: true),
-      body: RefreshIndicator(
+      body: SafeArea(bottom: true, top: false, child: RefreshIndicator(
         onRefresh: _refresh,
         child: FutureBuilder<List<HadeethSummaryModel>>(
           future: _future,
@@ -99,7 +99,7 @@ class _HadeethCategoryScreenState extends State<HadeethCategoryScreen> {
             );
           },
         ),
-      ),
+      )),
     );
   }
 }

@@ -9,7 +9,7 @@ class ArticlesScreen extends StatelessWidget {
     final articles = ArticlesService.articles;
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'مقالات إسلامية' : 'Islamic Articles'), centerTitle: true),
-      body: ListView.separated(
+      body: SafeArea(bottom: true, top: false, child: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: articles.length,
         separatorBuilder: (_, __) => const SizedBox(height: 12),
@@ -31,7 +31,7 @@ class ArticlesScreen extends StatelessWidget {
             ),
           );
         },
-      ),
+      )),
     );
   }
 }

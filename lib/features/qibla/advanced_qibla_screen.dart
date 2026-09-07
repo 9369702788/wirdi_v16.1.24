@@ -102,7 +102,7 @@ class _AdvancedQiblaScreenState extends State<AdvancedQiblaScreen> {
           ),
         ],
       ),
-      body: _buildBody(l10n),
+      body: SafeArea(bottom: true, top: false, child: _buildBody(l10n)),
     );
   }
 

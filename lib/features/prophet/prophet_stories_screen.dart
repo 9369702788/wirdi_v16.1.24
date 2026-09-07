@@ -196,7 +196,7 @@ class ProphetStoriesScreen extends StatelessWidget {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Scaffold(
       appBar: AppBar(title: Text(isAr ? 'قصص الأنبياء' : 'Stories of the Prophets'), centerTitle: true),
-      body: ListView(
+      body: SafeArea(bottom: true, top: false, child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           for (final story in _stories)
@@ -231,7 +231,7 @@ class ProphetStoriesScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      )),
     );
   }
 }
