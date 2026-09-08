@@ -214,6 +214,14 @@ class _MushafViewScreenState extends State<MushafViewScreen> {
               textDirection: TextDirection.rtl,
               child: ListView.builder(
                 controller: _continuousScrollController,
+                // BUGFIX: this physics line existed on PageView.builder below
+                // (mirrors it) but was simply never added here, so a 2-finger
+                // pinch on a page could also drag the whole feed at the same
+                // time. Mirroring the already-working PageView pattern:
+                // disable list scrolling for the duration of a 2+ finger
+                // touch (so InteractiveViewer owns it exclusively), restore
+                // normal scrolling the instant it drops back to 0-1 fingers.
+                physics: _multiTouchActive ? const NeverScrollableScrollPhysics() : const ClampingScrollPhysics(),
                 itemCount: pages.length,
                 itemBuilder: (context, index) {
                   final page = pages[index];
@@ -410,59 +418,7 @@ class _MushafPageViewState extends State<_MushafPageView> {
     // fill AT LEAST that much -- while still allowed to grow taller and
     // scroll internally (via the existing SingleChildScrollView) for
     // any page whose content is genuinely longer than the viewport.
-    return Listener(
-      onPointerDown: _handlePointerDown,
-      onPointerUp: _handlePointerUp,
-      onPointerCancel: _handlePointerUp,
-      child: LayoutBuilder(
-      builder: (context, constraints) {
-        final verticalMargin = 12.0 + 20.0 + MediaQuery.of(context).padding.bottom;
-        // BUGFIX: in continuous-scroll mode this widget lives inside a
-        // ListView.builder item slot, which gives LayoutBuilder an
-        // UNBOUNDED (infinite) constraints.maxHeight -- that produced an
-        // infinite minCardHeight below, which in turn handed
-        // BoxConstraints(minHeight: infinity) to the Container/
-        // SingleChildScrollView further down. A SingleChildScrollView
-        // REQUIRES a bounded height along its scroll axis to lay out at
-        // all; given infinity it fails to render -- the page went
-        // completely blank. widget.targetHeight (passed explicitly by
-        // the continuous-scroll caller) sidesteps this entirely by never
-        // depending on the ambient (unbounded) constraints in that mode.
-        final effectiveMaxHeight = widget.targetHeight ?? constraints.maxHeight;
-        final minCardHeight = effectiveMaxHeight - verticalMargin;
-        // NEW: pinch-to-zoom on the Mushaf page. InteractiveViewer with
-        // panEnabled: false deliberately does NOT claim single-finger
-        // drag gestures -- those still reach the ancestor PageView
-        // unchanged, so swipe-to-turn-page keeps working exactly as
-        // before. Only 2-finger pinch/zoom gestures are captured here.
-        return InteractiveViewer(
-          panEnabled: false,
-          minScale: 0.8,
-          maxScale: 2.2,
-          child: Container(
-          margin: EdgeInsets.fromLTRB(14, 12, 14, 20 + MediaQuery.of(context).padding.bottom),
-          padding: const EdgeInsets.all(22),
-          constraints: BoxConstraints(
-            minHeight: minCardHeight > 0 ? minCardHeight : 0,
-            // BUGFIX (part 2): also cap maxHeight to the same value so the
-            // inner SingleChildScrollView gets a genuinely BOUNDED height
-            // to scroll within, in BOTH page-view and continuous-scroll
-            // modes -- a minHeight-only constraint left maxHeight at its
-            // default of infinity, which is invalid input for a vertical
-            // SingleChildScrollView's viewport.
-            maxHeight: minCardHeight > 0 ? minCardHeight : double.infinity,
-          ),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(6),
-            border: Border.all(color: AppColors.goldAccent.withValues(alpha: 0.5), width: 2),
-            boxShadow: [
-              BoxShadow(color: Colors.black.withValues(alpha: 0.10), blurRadius: 10, offset: const Offset(0, 3)),
-            ],
-          ),
-          child: SingleChildScrollView(
-            controller: _innerScrollController,
-            child: Column(
+    final cardContent = Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 for (final entry in groups.entries) ...[
@@ -578,9 +534,105 @@ class _MushafPageViewState extends State<_MushafPageView> {
               ],
             ),
               ],
-            ),
+            );
+
+    return Listener(
+      onPointerDown: _handlePointerDown,
+      onPointerUp: _handlePointerUp,
+      onPointerCancel: _handlePointerUp,
+      child: LayoutBuilder(
+      builder: (context, constraints) {
+        final verticalMargin = 12.0 + 20.0 + MediaQuery.of(context).padding.bottom;
+        // BUGFIX: in continuous-scroll mode this widget lives inside a
+        // ListView.builder item slot, which gives LayoutBuilder an
+        // UNBOUNDED (infinite) constraints.maxHeight -- that produced an
+        // infinite minCardHeight below, which in turn handed
+        // BoxConstraints(minHeight: infinity) to the Container/
+        // SingleChildScrollView further down. A SingleChildScrollView
+        // REQUIRES a bounded height along its scroll axis to lay out at
+        // all; given infinity it fails to render -- the page went
+        // completely blank. widget.targetHeight (passed explicitly by
+        // the continuous-scroll caller) sidesteps this entirely by never
+        // depending on the ambient (unbounded) constraints in that mode.
+        final effectiveMaxHeight = widget.targetHeight ?? constraints.maxHeight;
+        final minCardHeight = effectiveMaxHeight - verticalMargin;
+        // NEW: pinch-to-zoom on the Mushaf page. InteractiveViewer with
+        // panEnabled: false deliberately does NOT claim single-finger
+        // drag gestures -- those still reach the ancestor PageView
+        // unchanged, so swipe-to-turn-page keeps working exactly as
+        // before. Only 2-finger pinch/zoom gestures are captured here.
+        final pageCard = Container(
+          margin: EdgeInsets.fromLTRB(14, 12, 14, 20 + MediaQuery.of(context).padding.bottom),
+          padding: const EdgeInsets.all(22),
+          constraints: widget.targetHeight != null
+              // Continuous-scroll mode: NO maxHeight cap -- let the card grow
+              // to its natural content height. It is a normal ListView item
+              // now (single scrollable = the outer list), so being taller
+              // than one screen is completely fine and expected.
+              ? BoxConstraints(minHeight: minCardHeight > 0 ? minCardHeight : 0)
+              // Single-page mode: cap maxHeight too (min == max) so the
+              // inner SingleChildScrollView above gets a genuinely BOUNDED
+              // height to scroll within -- a minHeight-only constraint left
+              // maxHeight at its default of infinity, invalid for a
+              // vertical SingleChildScrollView's viewport.
+              : BoxConstraints(
+                  minHeight: minCardHeight > 0 ? minCardHeight : 0,
+                  maxHeight: minCardHeight > 0 ? minCardHeight : double.infinity,
+                ),
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: AppColors.goldAccent.withValues(alpha: 0.5), width: 2),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withValues(alpha: 0.10), blurRadius: 10, offset: const Offset(0, 3)),
+            ],
           ),
-        ));
+          child: widget.targetHeight != null
+              // In continuous-scroll mode there is only ONE scrollable in
+              // the whole tree: the outer ListView.builder. Wrapping each
+              // page ALSO in its own SingleChildScrollView created two
+              // nested vertical scrollables fighting over the same drag
+              // gesture -- the inner one would capture the touch and
+              // refuse to release it until it hit its own scroll limits,
+              // making the outer continuous feed feel like it "stopped"
+              // scrolling. In this mode we just render the Column
+              // directly and let the Container grow to its natural
+              // (unbounded) height -- the ListView.builder item is free
+              // to be taller than one screen with zero clipping.
+              ? cardContent
+              // In single-page (PageView) mode the page card DOES need
+              // its own scroll -- PageView gives it a fixed viewport
+              // height, so any page whose content is taller than that
+              // must scroll internally to avoid being clipped.
+              : SingleChildScrollView(controller: _innerScrollController, child: cardContent),
+        );
+
+        // BUGFIX: InteractiveViewer (added for pinch-to-zoom) claims
+        // single-finger vertical drag gestures at the gesture-arena
+        // level even with panEnabled: false. That is harmless when the
+        // ancestor scrollable moves on a DIFFERENT axis (single-page
+        // mode's PageView swipes horizontally, left/right) -- but the
+        // continuous-scroll ancestor is a vertical ListView, the SAME
+        // axis InteractiveViewer also watches for single-finger pan.
+        // InteractiveViewer wins that gesture-arena contest every time,
+        // so the ListView never receives the drag at all and the whole
+        // feed gets permanently stuck on one page. Skipping
+        // InteractiveViewer entirely in continuous-scroll mode (no
+        // pinch-zoom there, only in single-page mode, where the axes
+        // don't collide) is what actually restores scrolling.
+        return InteractiveViewer(
+          panEnabled: false,
+          minScale: 0.8,
+          maxScale: 2.2,
+          // constrained: false is Flutter's own documented setting for using
+          // InteractiveViewer inside another scrolling widget (our
+          // continuous-scroll ListView) -- it lets the child report its
+          // natural/unbounded size instead of InteractiveViewer trying to
+          // force it into a fixed viewport, which is only correct for the
+          // single-page PageView case (default constrained: true there).
+          constrained: widget.targetHeight == null,
+          child: pageCard,
+        );
       },
     ),
     );

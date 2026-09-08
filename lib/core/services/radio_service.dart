@@ -12,7 +12,20 @@ import 'playback_coordinator.dart';
 enum RadioState { stopped, loading, playing, error }
 
 /// Which source is currently serving the station list.
-enum RadioSource { embedded, mp3quran, radioBrowser, dataRosy, uthumany, fallback }
+enum RadioSource {
+  embedded,
+  mp3quran,
+  radioBrowser,
+  dataRosy,
+  uthumany,
+  // BUGFIX: a successful merge of one or more LIVE sources was being
+  // reported as RadioSource.fallback -- the exact same value used when
+  // ALL live sources failed and the embedded offline list was kept.
+  // That made it impossible to tell (from this enum alone) whether the
+  // user was seeing the rich merged catalog or the small offline one.
+  combined,
+  fallback,
+}
 
 class RadioService extends ChangeNotifier {
   RadioService._();
@@ -121,7 +134,7 @@ class RadioService extends ChangeNotifier {
 
     if (combined.isNotEmpty) {
       _liveStations = combined.values.toList();
-      _activeSource = RadioSource.fallback;
+      _activeSource = RadioSource.combined;
       _sourceLabel = _liveStations.length.toString() + ' stations from ' + succeededSources.join(' + ');
       debugPrint('[Radio] Combined ' + _liveStations.length.toString() + ' stations from: ' + succeededSources.join(', '));
     } else {
@@ -146,18 +159,42 @@ class RadioService extends ChangeNotifier {
         .toList();
   }
 
+  /// BROADENED (was 'quran' only): Radio-Browser is a community-maintained
+  /// directory that already does its OWN server-side health checking
+  /// (hidebroken=true strips out streams it has detected as dead) --
+  /// that makes it the one source here we can safely broaden without
+  /// fabricating anything, since every result it returns is at least
+  /// nominally live-checked by Radio-Browser itself, not guessed by us.
+  /// Querying only the single tag 'quran' misses many real, working
+  /// stations tagged under closely related terms instead (an Arabic
+  /// broadcaster might be tagged 'islam' or 'islamic', a Quran-focused
+  /// French/Spanish-language station 'coran'/'coran' etc, a recitation-
+  /// only station 'tilawah'/'quran radio'). Querying each tag and
+  /// merging -- deduplicated by stationuuid, same pattern _doRefresh()
+  /// already uses across whole SOURCES -- multiplies the real, verified
+  /// catalog size using only the existing trusted mechanism.
+  static const _radioBrowserTags = ['quran', 'islam', 'islamic', 'coran', 'tilawah', 'quran radio'];
+
   Future<List<RadioStation>> _fetchRadioBrowser() async {
-    final resp = await http.get(
-      Uri.parse('https://de1.api.radio-browser.info/json/stations/bytag/quran?limit=100&hidebroken=true'),
-      headers: {'User-Agent': 'WirdiApp/1.52 (Islamic companion app)'},
-    ).timeout(const Duration(seconds: 10));
-    if (resp.statusCode != 200) return const [];
-    final List<dynamic> data = jsonDecode(resp.body);
-    return data
-        .whereType<Map<String, dynamic>>()
-        .map(RadioStation.fromRadioBrowser)
-        .where((s) => s.streamUrl.isNotEmpty)
-        .toList();
+    final merged = <String, RadioStation>{};
+    for (final tag in _radioBrowserTags) {
+      try {
+        final resp = await http.get(
+          Uri.parse('https://de1.api.radio-browser.info/json/stations/bytag/${Uri.encodeComponent(tag)}?limit=100&hidebroken=true'),
+          headers: {'User-Agent': 'WirdiApp/1.52 (Islamic companion app)'},
+        ).timeout(const Duration(seconds: 10));
+        if (resp.statusCode != 200) continue;
+        final List<dynamic> data = jsonDecode(resp.body);
+        for (final j in data.whereType<Map<String, dynamic>>()) {
+          final station = RadioStation.fromRadioBrowser(j);
+          if (station.streamUrl.isEmpty) continue;
+          merged[station.stationUuid ?? station.streamUrl] = station;
+        }
+      } catch (e) {
+        debugPrint('[Radio] Radio-Browser tag \'' + tag + '\' error: ' + e.toString());
+      }
+    }
+    return merged.values.toList();
   }
 
   Future<List<RadioStation>> _fetchDataRosy() async {
