@@ -635,8 +635,8 @@
   "hadithRemoveFromFavoritesLabel": "Hapus dari favorit",
   "hadithCopyTooltip": "Salin hadis",
   "hadithTranslationNote": "Ditampilkan dalam bahasa Arab dan Inggris — terjemahan bahasa Jerman belum tersedia untuk koleksi ini",
-  "toolHadithTitle": "Empat Puluh Hadis an-Nawawi",
-  "toolHadithSubtitle": "40 (42) hadis yang dikumpulkan oleh Imam an-Nawawi",
+  "toolHadithTitle": "Hadis Nabi",
+  "toolHadithSubtitle": "Empat Puluh Hadis an-Nawawi dan Ensiklopedia Hadis",
   "@hadithNumberLabel": {
     "placeholders": {
       "number": {

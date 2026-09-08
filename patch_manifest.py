@@ -5,18 +5,10 @@ path = Path('android/app/src/main/AndroidManifest.xml')
 text = path.read_text()
 
 # All permissions needed by Wirdi
-# AUDIT (production readiness): RECEIVE_BOOT_COMPLETED was declared but
-# never actually used -- no BroadcastReceiver listens for
-# android.intent.action.BOOT_COMPLETED anywhere in this codebase, and
-# notification_service.dart's own doc comment explicitly documents that
-# reminders are only rescheduled on the next successful prayer-times
-# fetch (app open / refresh), NOT after a reboot. An unused dangerous-
-# adjacent permission is exactly what Google Play's permission review
-# flags and what a privacy-conscious user would question -- removed
-# rather than left in "just in case". If real boot-survival scheduling
-# is implemented later, re-add this permission alongside the actual
-# BroadcastReceiver that uses it.
+# RE-ADDED (was removed earlier as "declared but unused"): now genuinely
+# used -- see the ScheduledNotificationBootReceiver registration below.
 perms = [
+    'android.permission.RECEIVE_BOOT_COMPLETED',
     'android.permission.INTERNET',
     'android.permission.ACCESS_NETWORK_STATE',
     'android.permission.ACCESS_FINE_LOCATION',
@@ -36,11 +28,9 @@ perm_lines = '\n'.join(
     for p in perms if p not in text
 )
 if perm_lines:
-    text = re.sub(
-        r'(<manifest\b[^>]*>)',
-        lambda m: m.group(1) + '\n' + perm_lines,
-        text,
-        count=1,
+    text = text.replace(
+        '<manifest xmlns:android="http://schemas.android.com/apk/res/android">',
+        '<manifest xmlns:android="http://schemas.android.com/apk/res/android">\n' + perm_lines,
     )
 
 # Add usesCleartextTraffic and networkSecurityConfig to <application>
@@ -95,6 +85,28 @@ if '<queries>' not in text:
 
 # Register the home-screen widget provider (was previously missing entirely --
 # the widget could never appear to the user without this receiver declaration).
+# Register flutter_local_notifications' own boot-persistence receivers --
+# ScheduledNotificationReceiver fires each scheduled notification at its
+# target time; ScheduledNotificationBootReceiver re-reads whatever was
+# persisted to disk and re-schedules everything after BOOT_COMPLETED /
+# MY_PACKAGE_REPLACED / QUICKBOOT_POWERON. Both classes ship inside the
+# plugin's own AAR -- no custom native Kotlin/Java code required.
+if 'ScheduledNotificationBootReceiver' not in text:
+    boot_receiver_block = (
+        '\n    <receiver android:exported="false"\n'
+        '        android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />\n'
+        '    <receiver android:exported="false"\n'
+        '        android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">\n'
+        '        <intent-filter>\n'
+        '            <action android:name="android.intent.action.BOOT_COMPLETED"/>\n'
+        '            <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>\n'
+        '            <action android:name="android.intent.action.QUICKBOOT_POWERON" />\n'
+        '            <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>\n'
+        '        </intent-filter>\n'
+        '    </receiver>\n'
+    )
+    text = re.sub(r'(</application>)', boot_receiver_block + r'\1', text, count=1)
+
 if 'WirdiWidgetProvider' not in text:
     widget_block = (
         '\n    <receiver android:name="com.wirdi.wirdi.WirdiWidgetProvider"\n'

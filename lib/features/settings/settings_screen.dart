@@ -22,6 +22,7 @@ import 'package:intl/intl.dart' hide TextDirection;
 
 import '../../core/data/adhan_option.dart';
 import '../../core/services/audio_download_service.dart';
+import '../../core/services/adhan_audio_cache.dart';
 import '../../core/services/azkar_repository.dart';
 import '../../core/services/notification_service.dart';
 import '../../core/services/daily_reminder_scheduler.dart';
@@ -704,6 +705,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               onChanged: (id) async {
                                 if (id == null) return;
                                 await appSettings.setAdhanId(id);
+                                // AUDIT FIX: pre-download the newly-selected
+                                // reciter's Adhan audio now, in the background,
+                                // so it's already cached locally by the time a
+                                // real Adhan notification needs to play it
+                                // (Android notification sounds can't stream a
+                                // remote URL -- they need a local file).
+                                unawaited(AdhanAudioCache.ensureDownloaded(id));
                                 unawaited(_rescheduleAllPrayerReminders());
                               },
                             ),
@@ -714,6 +722,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                             onTap: () async {
                               await appSettings.setAdhanId(option.id);
+                              unawaited(AdhanAudioCache.ensureDownloaded(option.id));
                               unawaited(_rescheduleAllPrayerReminders());
                             },
                           ),

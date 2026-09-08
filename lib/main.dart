@@ -103,8 +103,10 @@ void main() {
     // Without this granted, no notification can ever show, including
     // the Radio/Quran playback one, no matter how correctly everything
     // else is wired.
-    unawaited(NotificationService.requestPermission());
-    unawaited(IslamicOccasionsService.scheduleReminders());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(NotificationService.requestPermission());
+      unawaited(IslamicOccasionsService.scheduleReminders());
+    });
 
     await appSettings.load();
     await RadioService.instance.init();

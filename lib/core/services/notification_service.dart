@@ -4,6 +4,8 @@ import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
 import 'app_logger.dart';
+import 'adhan_audio_cache.dart';
+import 'settings_service.dart';
 
 /// A single reminder to schedule, already fully localized by the caller
 /// (this service has no BuildContext / AppLocalizations access, by
@@ -182,6 +184,17 @@ class NotificationService {
   /// isn't fatal — [scheduleAll] falls back to inexact scheduling, which
   /// still delivers the reminder, just with looser timing (usually still
   /// within a minute or two).
+  /// AUDIT (production readiness): this used to fire-and-forget both the
+  /// notification and exact-alarm permission requests without ever
+  /// checking their actual outcome afterward -- the caller had no way to
+  /// know if the user actually granted them or silently denied/ignored
+  /// the system dialogs (a very real scenario: many OEM settings screens
+  /// show POST_NOTIFICATIONS and the exact-alarm toggle as SEPARATE,
+  /// easy-to-miss switches). Now queries the real, current state after
+  /// requesting and logs it -- also exposed via the two standalone
+  /// diagnostic getters below (areNotificationsEnabled /
+  /// canScheduleExactAlarms) for a future diagnostics screen or for
+  /// checking status WITHOUT re-showing the request dialog.
   static Future<bool> requestPermission() async {
     await initialize();
 
@@ -198,6 +211,16 @@ class NotificationService {
       } catch (e, st) {
         AppLogger.error('Exact alarm permission request failed', error: e, stackTrace: st);
       }
+      try {
+        final notifsEnabled = await androidImpl.areNotificationsEnabled() ?? granted;
+        final canExactAlarm = await androidImpl.canScheduleExactNotifications() ?? false;
+        AppLogger.error(
+          'Notification permission check -- notifications enabled: $notifsEnabled, exact alarms allowed: $canExactAlarm',
+        );
+        granted = notifsEnabled;
+      } catch (e, st) {
+        AppLogger.error('Could not verify actual permission state', error: e, stackTrace: st);
+      }
       return granted;
     }
 
@@ -212,6 +235,34 @@ class NotificationService {
     }
 
     return true;
+  }
+
+  /// Read-only check: is the notification permission currently granted?
+  /// Does NOT show any system dialog -- safe to call anytime (e.g. for a
+  /// diagnostics screen) without side effects.
+  static Future<bool> areNotificationsEnabled() async {
+    final androidImpl = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    if (androidImpl == null) return true; // no Android-specific check available (iOS/other)
+    try {
+      return await androidImpl.areNotificationsEnabled() ?? false;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Read-only check: is exact-alarm scheduling currently allowed? On
+  /// Android 12+ this can be revoked by the user (or never granted) even
+  /// while regular notifications work fine -- this is the single most
+  /// common reason a SCHEDULED prayer/reminder silently never fires while
+  /// an immediate test notification works perfectly.
+  static Future<bool> canScheduleExactAlarms() async {
+    final androidImpl = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    if (androidImpl == null) return true;
+    try {
+      return await androidImpl.canScheduleExactNotifications() ?? false;
+    } catch (_) {
+      return false;
+    }
   }
 
   /// Cancels only the reminders this service previously scheduled
@@ -509,6 +560,8 @@ class NotificationService {
 
     final now = DateTime.now();
     final scheduledIds = <String>[];
+    final selectedAdhanId = appSettings.adhanId;
+    final localAdhanPath = await AdhanAudioCache.localPathFor(selectedAdhanId);
 
     for (final n in notifications) {
       if (n.fireAt.isBefore(now)) continue; // never schedule something already in the past
@@ -538,7 +591,9 @@ class NotificationService {
         playSound: !n.silent,
         enableVibration: !n.silent,
         sound: (!n.silent && n.useAdhanSound)
-            ? const RawResourceAndroidNotificationSound('adhan_sound')
+            ? (localAdhanPath != null
+                ? UriAndroidNotificationSound(localAdhanPath)
+                : const RawResourceAndroidNotificationSound('adhan_sound'))
             : null,
         audioAttributesUsage: AudioAttributesUsage.notification,
       );

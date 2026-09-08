@@ -16,14 +16,22 @@ class PrayerNotificationScheduler {
     return days * 30 + prayerIndex * 3 + kind;
   }
 
-  static Future<void> rescheduleFromResult(BuildContext context, PrayerTimesResult result) async {
+  static Future<void> _queue = Future.value();
+
+  static Future<void> rescheduleFromResult(BuildContext context, PrayerTimesResult result) {
+    final l10n = AppLocalizations.of(context);
+    final future = _queue.then((_) => _rescheduleFromResultLocked(l10n, result));
+    _queue = future.catchError((_) {});
+    return future;
+  }
+
+  static Future<void> _rescheduleFromResultLocked(AppLocalizations l10n, PrayerTimesResult result) async {
     if (!appSettings.prayerReminderEnabled) {
       await NotificationService.cancelAllScheduled();
       await NotificationService.cancelOngoingNextPrayer();
       return;
     }
 
-    final l10n = AppLocalizations.of(context);
     final minutesBefore = appSettings.prayerReminderMinutesBefore;
     final notifications = <ScheduledPrayerNotification>[];
 

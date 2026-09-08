@@ -635,8 +635,8 @@
   "hadithRemoveFromFavoritesLabel": "Retirer des favoris",
   "hadithCopyTooltip": "Copier le hadith",
   "hadithTranslationNote": "Affiche en arabe et en anglais -- aucune traduction allemande n'est encore disponible pour cette collection",
-  "toolHadithTitle": "Quarante Hadiths d'an-Nawawi",
-  "toolHadithSubtitle": "Les 40 (42) hadiths compiles par l'imam an-Nawawi",
+  "toolHadithTitle": "Hadiths Prophetiques",
+  "toolHadithSubtitle": "Les Quarante Hadiths d'an-Nawawi et l'Encyclopedie des Hadiths",
   "@hadithNumberLabel": {
     "placeholders": {
       "number": {
