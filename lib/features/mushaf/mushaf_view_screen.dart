@@ -620,17 +620,31 @@ class _MushafPageViewState extends State<_MushafPageView> {
         // InteractiveViewer entirely in continuous-scroll mode (no
         // pinch-zoom there, only in single-page mode, where the axes
         // don't collide) is what actually restores scrolling.
+        // BUGFIX (3rd attempt, now REVERTED to the safe choice): every
+        // way of nesting InteractiveViewer inside the continuous-scroll
+        // ListView.builder's unbounded-height item slot has broken
+        // something different each time -- first it fully froze the
+        // outer scroll, then (with constrained:false, trying to fix
+        // that) it went back to rendering a blank page, because
+        // InteractiveViewer's own viewport layout also needs a genuinely
+        // bounded size to work, same underlying class of bug as the
+        // SingleChildScrollView issue fixed earlier in this file.
+        // Conclusion: pinch-zoom and this specific continuous-scroll
+        // architecture (a plain ListView.builder of naturally-sized
+        // items) do not reliably coexist in Flutter without much more
+        // invasive, harder-to-verify custom gesture/layout work. Zoom
+        // stays available in single-page mode (still wrapped below,
+        // where PageView's bounded-per-page layout has never had this
+        // problem). In continuous mode we return the page directly --
+        // guaranteed correct, bounded, single-scrollable layout, at the
+        // cost of no pinch-zoom there.
+        if (widget.targetHeight != null) {
+          return pageCard;
+        }
         return InteractiveViewer(
           panEnabled: false,
           minScale: 0.8,
           maxScale: 2.2,
-          // constrained: false is Flutter's own documented setting for using
-          // InteractiveViewer inside another scrolling widget (our
-          // continuous-scroll ListView) -- it lets the child report its
-          // natural/unbounded size instead of InteractiveViewer trying to
-          // force it into a fixed viewport, which is only correct for the
-          // single-page PageView case (default constrained: true there).
-          constrained: widget.targetHeight == null,
           child: pageCard,
         );
       },

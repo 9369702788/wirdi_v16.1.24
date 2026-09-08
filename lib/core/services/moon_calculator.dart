@@ -18,6 +18,21 @@ class MoonCalculator {
     return (1 - math.cos(radians)) / 2;
   }
 
+  /// AI-generated, photorealistic (NASA/telescope-style) images -- not
+  /// copyrighted third-party photos -- one per canonical phase. Boundaries
+  /// deliberately mirror phaseName() exactly so the image and the text
+  /// label shown next to it always agree.
+  static String phaseImageAsset(double ageDays) {
+    if (ageDays < 1.0 || ageDays >= synodicMonthDays - 1.0) return 'assets/images/moon_phases/new_moon.webp';
+    if (ageDays < 6.4) return 'assets/images/moon_phases/waxing_crescent.webp';
+    if (ageDays < 8.4) return 'assets/images/moon_phases/first_quarter.webp';
+    if (ageDays < 13.8) return 'assets/images/moon_phases/waxing_gibbous.webp';
+    if (ageDays < 15.8) return 'assets/images/moon_phases/full_moon.webp';
+    if (ageDays < 21.2) return 'assets/images/moon_phases/waning_gibbous.webp';
+    if (ageDays < 23.2) return 'assets/images/moon_phases/last_quarter.webp';
+    return 'assets/images/moon_phases/waning_crescent.webp';
+  }
+
   static String phaseName(double ageDays, {bool arabic = false}) {
     if (ageDays < 1.0 || ageDays >= synodicMonthDays - 1.0) return arabic ? 'محاق' : 'New Moon';
     if (ageDays < 6.4) return arabic ? 'هلال متزايد' : 'Waxing Crescent';

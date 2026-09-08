@@ -10,6 +10,7 @@ import '../../core/services/app_logger.dart';
 import '../../core/services/prayer_display.dart';
 import '../../core/services/prayer_notification_scheduler.dart';
 import '../../core/services/prayer_service.dart';
+import '../../core/services/moon_calculator.dart';
 import '../../core/services/settings_service.dart';
 import '../../core/services/user_progress_service.dart';
 import '../../core/theme/app_theme.dart';
@@ -339,6 +340,10 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
     }
 
     final result = _result!;
+    final isAr = l10n.localeName == 'ar';
+    final moonAge = MoonCalculator.moonAgeDays(DateTime.now());
+    final moonPhaseName = MoonCalculator.phaseName(moonAge, arabic: isAr);
+    final moonImageAsset = MoonCalculator.phaseImageAsset(moonAge);
 
     return Scaffold(
       appBar: AppBar(
@@ -490,6 +495,23 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
                 Text(_countdown, style: TextStyle(color: AppColors.goldAccent, fontSize: 24, fontWeight: FontWeight.w700, letterSpacing: 1.5)),
                 const SizedBox(height: 6),
                 Text(l10n.prayerTimeRemaining, style: const TextStyle(color: Colors.white70)),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ClipOval(
+                      child: Image.asset(
+                        moonImageAsset,
+                        width: 26,
+                        height: 26,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.circle, size: 26, color: Colors.white54),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(moonPhaseName, style: const TextStyle(color: Colors.white70, fontSize: 13)),
+                  ],
+                ),
                 if (_weather != null || _sunTimes != null) ...[
                   const SizedBox(height: 18),
                   Container(height: 1, color: Colors.white24),

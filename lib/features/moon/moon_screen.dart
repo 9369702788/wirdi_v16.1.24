@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../../core/services/moon_calculator.dart';
 import '../../core/services/moon_phases_service.dart';
 import '../../core/services/moon_sighting_service.dart';
 import '../../core/theme/app_theme.dart';
@@ -40,8 +41,8 @@ class _MoonScreenState extends State<MoonScreen> {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final sighting = _sighting;
     return Scaffold(
-      appBar: AppBar(title: Text(isAr ? 'القمر وأطواره' : 'Moon Phases'), centerTitle: true),
-      body: SafeArea(bottom: true, top: false, child: _loading
+      appBar: AppBar(title: Text(isAr ? 'القمر وأطواره' : 'Moon Phase'), centerTitle: true),
+      body: _loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
               padding: const EdgeInsets.all(16),
@@ -55,13 +56,22 @@ class _MoonScreenState extends State<MoonScreen> {
                     const SizedBox(height: 10),
                     if (sighting != null)
                       SizedBox(
-                        width: 64,
-                        height: 64,
-                        child: MoonPhaseIcon(illumination: sighting.illumination, isWaxing: sighting.isWaxing),
+                        width: 96,
+                        height: 96,
+                        child: MoonPhaseIcon(ageDays: sighting.ageDays, illumination: sighting.illumination, isWaxing: sighting.isWaxing),
                       ),
                     const SizedBox(height: 10),
                     Text(sighting?.description ?? '', textAlign: TextAlign.center, style: const TextStyle(color: Colors.white, fontSize: 15)),
                   ]),
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(color: AppColors.goldAccent.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(14)),
+                  child: Text(
+                    isAr ? 'ملاحظة: ده تقدير فلكي حسابي فقط، مش إعلان رسمي من لجنة رؤية الهلال.' : 'Note: this is a calculated astronomical estimate only, not an official moon-sighting committee announcement.',
+                    style: const TextStyle(fontSize: 12),
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Text(isAr ? 'أطوار القمر هذا الشهر' : 'Moon Phases This Month', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
@@ -71,31 +81,43 @@ class _MoonScreenState extends State<MoonScreen> {
                     ListTile(
                       contentPadding: EdgeInsets.zero,
                       leading: SizedBox(
-                        width: 36,
-                        height: 36,
-                        child: MoonPhaseIcon(illumination: p.illumination, isWaxing: p.isWaxing),
+                        width: 44,
+                        height: 44,
+                        child: MoonPhaseIcon(ageDays: p.ageDays, illumination: p.illumination, isWaxing: p.isWaxing),
                       ),
                       title: Text(p.date),
                       subtitle: Text('${p.phase} -- ${(p.illumination * 100).round()}%'),
                     ),
               ],
-            )),
+            ),
     );
   }
 }
 
-
+/// Shows a real, photorealistic (AI-generated, telescope/NASA-style --
+/// not a copyrighted third-party photo) image for the given moon phase,
+/// selected by [ageDays] via MoonCalculator.phaseImageAsset() (same
+/// boundaries as the text phase name, so they always agree). Falls back
+/// to the previous procedurally-drawn icon if the image asset is ever
+/// missing or fails to decode, so this can never render blank.
 class MoonPhaseIcon extends StatelessWidget {
+  final double ageDays;
   final double illumination;
   final bool isWaxing;
-  const MoonPhaseIcon({super.key, required this.illumination, required this.isWaxing});
+  const MoonPhaseIcon({super.key, required this.ageDays, required this.illumination, required this.isWaxing});
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: _MoonPhasePainter(
-        illumination: illumination.clamp(0.0, 1.0),
-        isWaxing: isWaxing,
+    return ClipOval(
+      child: Image.asset(
+        MoonCalculator.phaseImageAsset(ageDays),
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => CustomPaint(
+          painter: _MoonPhasePainter(
+            illumination: illumination.clamp(0.0, 1.0),
+            isWaxing: isWaxing,
+          ),
+        ),
       ),
     );
   }

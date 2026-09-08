@@ -1,29 +1,20 @@
-WIRDI v243 -- adds a 5th (bonus, best-effort) radio source
+WIRDI -- cumulative diff: everything that changed since Wirdi_v243.zip
 ================================================================================
+Apply this on top of your current v243 build (v244 through v248 merged and
+de-duplicated into one clean package):
 
-Builds on top of v242 -- apply AFTER v242, do not skip it.
+lib/features/mushaf/mushaf_view_screen.dart        (v244) continuous-scroll stability fix: pinch-zoom removed from that mode only, kept in single-page mode
+lib/features/home/home_dashboard_screen.dart       (v245+v248 MERGED) hadith text no longer truncated + tap goes to the correct hadith + moon phase image/name added to next-prayer card
+lib/features/hadith/hadith_collection_screen.dart  (v245) fixed lazy-list scroll-to-target bug
+lib/core/services/mathhab_service.dart             (v246) default Mathhab Hanafi -> Shafi'i (fixes Asr ~1hr late)
+lib/features/settings/settings_screen.dart         (v246) matching Mathhab default + carries forward 2 earlier fixes (permission race condition, floating SnackBar)
+lib/core/services/moon_calculator.dart             (v247) added phaseImageAsset()
+lib/features/moon/moon_screen.dart                 (v247) uses real moon images now
+pubspec.yaml                                       (v247) registers assets/images/moon_phases/
+assets/images/moon_phases/*.webp (8 files)         (v247) the actual moon phase images
+lib/features/prayer/prayer_times_screen.dart       (v248) moon phase image/name added to next-prayer card
 
-Files in this package:
-1) lib/core/models/radio_station.dart
-   - New factory: RadioStation.fromQuranStationsJsFields()
-
-2) lib/core/services/radio_service.dart
-   - New _fetchQuranStationsJs(): fetches + regex-parses a public GitHub
-     Gist ("QuranStations.js") as a 5th station source
-   - Wired into the EXISTING merge pipeline in _doRefresh() with the same
-     try/catch safety net as the other 4 sources -- if this gist ever
-     goes offline or changes format, nothing else in the app is affected
-
-IMPORTANT HONESTY NOTE:
-- "qrRadio" (the other GitHub project you found) was investigated and is
-  NOT a separate data source -- it's a UI built on top of mp3quran.net /
-  the Uthumany API, BOTH of which Wirdi already fetches from directly.
-  Adding it would have been pure duplication, so it was intentionally
-  skipped.
-- "QuranStations.js" is hosted as one person's GitHub Gist, not a
-  maintained repository/package. It's included as a bonus 5th source
-  precisely BECAUSE the existing merge pipeline already treats every
-  source as optional/best-effort -- but it is inherently less reliable
-  long-term than the other 4 (official APIs/repos). If it stops working
-  someday, tell Sigma and it can simply be removed with a one-line edit
-  (nothing else depends on it).
+IMPORTANT: home_dashboard_screen.dart was touched in BOTH v245 and v248.
+This package contains the properly MERGED final version with both sets of
+changes -- do not use the home_dashboard_screen.dart from v245 or v248
+individually, use only the one in THIS package.

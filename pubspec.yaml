@@ -67,3 +67,4 @@ flutter:
         - asset: assets/fonts/Quran/me_quran_volt_newmet.ttf
   assets:
     - assets/fonts/
+    - assets/images/moon_phases/

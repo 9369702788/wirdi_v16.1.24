@@ -49,7 +49,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   DateTime? _quranCachedAt;
   DateTime? _azkarCachedAt;
   int _downloadedAudioBytes = 0;
-  String _selectedMathhab = 'Hanafi';
+  String _selectedMathhab = 'Shafi\'i'; // matches MathhabService's default; _loadMathhab() overwrites this from storage anyway
   String? _realAppVersion;
 
   @override

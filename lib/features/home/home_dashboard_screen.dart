@@ -12,6 +12,7 @@ import '../../core/data/daily_quotes.dart';
 import '../../core/models/prayer_models.dart';
 import '../../core/models/progress_models.dart';
 import '../../core/services/hijri_date.dart';
+import '../../core/services/moon_calculator.dart';
 import '../../core/services/prayer_display.dart';
 import '../../core/services/weather_service.dart';
 import '../../core/services/sunrise_sunset_calculator.dart';
@@ -256,6 +257,9 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
     final l10n = AppLocalizations.of(context);
     final languageCode = Localizations.localeOf(context).languageCode;
     final wirdProgress = _wirdTarget == 0 ? 0.0 : (_pagesToday / _wirdTarget).clamp(0.0, 1.0);
+    final moonAge = MoonCalculator.moonAgeDays(DateTime.now());
+    final moonPhaseName = MoonCalculator.phaseName(moonAge, arabic: languageCode == 'ar');
+    final moonImageAsset = MoonCalculator.phaseImageAsset(moonAge);
 
     return Scaffold(
       appBar: AppBar(
@@ -455,6 +459,22 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                       Text(prayerDisplayName(l10n, _prayer!.next.name), style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w700)),
                       const SizedBox(height: 4),
                       Text(l10n.homeInLabel(_countdown), style: TextStyle(color: AppColors.goldAccent, fontSize: 16)),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          ClipOval(
+                            child: Image.asset(
+                              moonImageAsset,
+                              width: 22,
+                              height: 22,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => const Icon(Icons.circle, size: 22, color: Colors.white54),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(moonPhaseName, style: const TextStyle(color: Colors.white70, fontSize: 13)),
+                        ],
+                      ),
                       if (_prayer!.isFromCache)
                         Padding(
                           padding: const EdgeInsets.only(top: 6),
@@ -584,6 +604,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                 icon: Icons.auto_stories_outlined,
                 title: '${l10n.homeHadithOfTheDay}${_hadithStreak > 1 ? '  \u{1F525} ${l10n.insightsDaysCount(_hadithStreak)}' : ''}',
                 subtitle: _hadithOfToday!.translatedText.isNotEmpty ? _hadithOfToday!.translatedText : _hadithOfToday!.arabicText,
+                subtitleMaxLines: 4,
                 trailing: IconButton(
                   tooltip: l10n.homeShareHadith,
                   icon: const Icon(Icons.share_outlined, color: AppColors.mutedText),
@@ -651,6 +672,7 @@ class _DashboardCard extends StatelessWidget {
   final String subtitle;
   final Widget trailing;
   final VoidCallback? onTap;
+  final int subtitleMaxLines;
 
   const _DashboardCard({
     required this.icon,
@@ -658,6 +680,7 @@ class _DashboardCard extends StatelessWidget {
     required this.subtitle,
     required this.trailing,
     required this.onTap,
+    this.subtitleMaxLines = 2,
   });
 
   @override
@@ -688,7 +711,7 @@ class _DashboardCard extends StatelessWidget {
                   children: [
                     Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
                     const SizedBox(height: 3),
-                    Text(subtitle, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.mutedText, fontSize: 14)),
+                    Text(subtitle, maxLines: subtitleMaxLines, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.mutedText, fontSize: 14)),
                   ],
                 ),
               ),

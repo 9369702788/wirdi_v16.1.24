@@ -21,28 +21,48 @@ class HadithCollectionScreen extends StatefulWidget {
 class _HadithCollectionScreenState extends State<HadithCollectionScreen> {
   Future<List<HadithModel>>? _future;
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   Set<String> _favorites = {};
   String? _loadedForLanguageCode;
   final Map<int, GlobalKey> _itemKeys = {};
   bool _didScrollToInitial = false;
+  int _scrollToInitialAttempts = 0;
 
   GlobalKey _keyFor(int number) => _itemKeys.putIfAbsent(number, () => GlobalKey());
 
   void _maybeScrollToInitial() {
     final target = widget.initialHadithNumber;
     if (target == null || _didScrollToInitial) return;
-    _didScrollToInitial = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final ctx = _itemKeys[target]?.currentContext;
-      if (ctx != null) {
-        Scrollable.ensureVisible(ctx, duration: const Duration(milliseconds: 30), alignment: 0.1, curve: Curves.easeInOut);
-      }
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _tryScrollToInitial(target));
+  }
+
+  void _tryScrollToInitial(int target) {
+    if (_didScrollToInitial || !mounted) return;
+    final ctx = _itemKeys[target]?.currentContext;
+    if (ctx != null) {
+      _didScrollToInitial = true;
+      Scrollable.ensureVisible(ctx, duration: const Duration(milliseconds: 300), alignment: 0.1, curve: Curves.easeInOut);
+      return;
+    }
+    _scrollToInitialAttempts++;
+    if (_scrollToInitialAttempts > 80 || !_scrollController.hasClients) {
+      _didScrollToInitial = true;
+      return;
+    }
+    final maxExtent = _scrollController.position.maxScrollExtent;
+    final next = (_scrollController.offset + 700).clamp(0.0, maxExtent);
+    _scrollController.jumpTo(next);
+    if (next >= maxExtent) {
+      _didScrollToInitial = true;
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) => _tryScrollToInitial(target));
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -84,7 +104,7 @@ class _HadithCollectionScreenState extends State<HadithCollectionScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.hadithTitle), centerTitle: true),
-      body: SafeArea(bottom: true, top: false, child: FutureBuilder<List<HadithModel>>(
+      body: FutureBuilder<List<HadithModel>>(
         future: _future,
         builder: (context, snapshot) {
           if (_future == null || snapshot.connectionState != ConnectionState.done) {
@@ -171,6 +191,7 @@ class _HadithCollectionScreenState extends State<HadithCollectionScreen> {
                 child: filtered.isEmpty
                     ? Center(child: Text(l10n.hadithNoResults))
                     : ListView.builder(
+                        controller: _scrollController,
                         padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
                         itemCount: filtered.length,
                         itemBuilder: (context, index) {
@@ -255,7 +276,7 @@ class _HadithCollectionScreenState extends State<HadithCollectionScreen> {
             ],
           );
         },
-      )),
+      ),
     );
   }
 }
