@@ -118,6 +118,31 @@ class RadioStation {
     );
   }
 
+  /// QuranStations.js is a personal GitHub Gist (not a maintained
+  /// package/repo), and its content is plain JavaScript, not JSON --
+  /// unquoted object keys mean it can't be parsed with jsonDecode(). The
+  /// service fetches the raw text and extracts each station's fields via
+  /// regex (works whether keys are quoted or not) before calling this.
+  /// LOWER CONFIDENCE than the other sources: a single person's gist can
+  /// be edited or deleted at any time with no notice -- treated as a
+  /// bonus, best-effort source, never required for the app to work.
+  factory RadioStation.fromQuranStationsJsFields(Map<String, String?> j) {
+    final name = j['name'] ?? '';
+    final nameEn = j['name_en']?.isNotEmpty == true ? j['name_en']! : name;
+    final id = j['id']?.isNotEmpty == true ? j['id']! : name;
+    final categoryEn = (j['category_en'] ?? '').toLowerCase();
+    return RadioStation(
+      id: 'qsjs_$id',
+      nameAr: name,
+      nameEn: nameEn,
+      streamUrl: j['radio_url'] ?? '',
+      country: _guessCountry(name),
+      countryCode: _guessCountryCode(name),
+      category: categoryEn.contains('quran') || categoryEn.isEmpty ? 'quran' : _guessCategory(name),
+      isOfficial: name.contains('إذاعة'),
+    );
+  }
+
   static String _guessCategory(String n) {
     if (n.contains('محاضر') || n.contains('درس')) return 'lectures';
     if (n.contains('أناشيد') || n.contains('nasheed')) return 'nasheed';

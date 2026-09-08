@@ -1,33 +1,29 @@
-WIRDI v242 -- changes since the "Wirdi_Mushaf_And_Notification_Fixes_Combined.zip" baseline
+WIRDI v243 -- adds a 5th (bonus, best-effort) radio source
 ================================================================================
 
-Files in THIS package (only files that changed -- apply on top of your
-current build, nothing else needs to change):
+Builds on top of v242 -- apply AFTER v242, do not skip it.
 
-1) lib/features/mushaf/mushaf_view_screen.dart
-   - Fixes blank page in continuous-scroll mode (unbounded height bug)
-   - Fixes continuous-scroll getting stuck / not scrolling between pages
-     (InteractiveViewer/ListView gesture conflict)
-   - Restores pinch-zoom (2+ fingers) working alongside continuous scroll
-   - This SUPERSEDES 3 earlier intermediate zips sent during debugging:
-     Wirdi_Mushaf_Scroll_Conflict_Fix.zip,
-     Wirdi_Mushaf_Continuous_Scroll_Real_Fix_v2.zip -- only USE this v242
-     package, ignore those two, they're obsolete intermediate steps.
+Files in this package:
+1) lib/core/models/radio_station.dart
+   - New factory: RadioStation.fromQuranStationsJsFields()
 
-2) lib/core/data/radio_stations.dart (NEW change, not in the baseline)
-   - Removed 19 fabricated-looking placeholder station URLs from the
-     offline fallback list (vanity slugs like 'kuwait-quran' that don't
-     match how radiojar.com/zeno.fm actually issue stream URLs)
+2) lib/core/services/radio_service.dart
+   - New _fetchQuranStationsJs(): fetches + regex-parses a public GitHub
+     Gist ("QuranStations.js") as a 5th station source
+   - Wired into the EXISTING merge pipeline in _doRefresh() with the same
+     try/catch safety net as the other 4 sources -- if this gist ever
+     goes offline or changes format, nothing else in the app is affected
 
-3) lib/core/services/radio_service.dart (NEW change, not in the baseline)
-   - Broadened Radio-Browser search from 1 tag ('quran') to 6 tags
-     ('quran','islam','islamic','coran','tilawah','quran radio'),
-     merged + deduplicated
-   - Fixed a mislabeling bug: a successful multi-source merge was being
-     reported with the same enum value as "all sources failed"
-
-NOT included here (unchanged since your baseline, already applied):
-   - lib/core/services/notification_service.dart
-   - lib/features/settings/settings_screen.dart
-
-Going forward, patches will be numbered sequentially starting from v242.
+IMPORTANT HONESTY NOTE:
+- "qrRadio" (the other GitHub project you found) was investigated and is
+  NOT a separate data source -- it's a UI built on top of mp3quran.net /
+  the Uthumany API, BOTH of which Wirdi already fetches from directly.
+  Adding it would have been pure duplication, so it was intentionally
+  skipped.
+- "QuranStations.js" is hosted as one person's GitHub Gist, not a
+  maintained repository/package. It's included as a bonus 5th source
+  precisely BECAUSE the existing merge pipeline already treats every
+  source as optional/best-effort -- but it is inherently less reliable
+  long-term than the other 4 (official APIs/repos). If it stops working
+  someday, tell Sigma and it can simply be removed with a one-line edit
+  (nothing else depends on it).
