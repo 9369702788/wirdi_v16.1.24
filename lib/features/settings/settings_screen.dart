@@ -25,6 +25,7 @@ import '../../core/services/audio_download_service.dart';
 import '../../core/services/adhan_audio_cache.dart';
 import '../../core/services/azkar_repository.dart';
 import '../../core/services/notification_service.dart';
+import 'notification_diagnostics_screen.dart';
 import '../../core/services/daily_reminder_scheduler.dart';
 import '../../core/services/quran_repository.dart';
 import '../../core/services/settings_service.dart';
@@ -777,6 +778,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               const SizedBox(height: 8),
+              Card(
+                child: ListTile(
+                  leading: const Icon(Icons.health_and_safety_outlined, color: AppColors.primaryEmerald),
+                  title: Text(Localizations.localeOf(context).languageCode == 'ar' ? 'تشخيص وإصلاح الإشعارات' : 'Notification Diagnostics & Repair'),
+                  subtitle: Text(Localizations.localeOf(context).languageCode == 'ar'
+                      ? 'اطمئن إن الإشعارات شغالة فعليًا، أو أصلحها بضغطة واحدة'
+                      : 'Check permissions, verify what is actually scheduled, or repair with one tap'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationDiagnosticsScreen())),
+                ),
+              ),
+              const SizedBox(height: 12),
               Card(
                 child: ListTile(
                   leading: Icon(Icons.schedule_send_outlined, color: AppColors.primaryEmerald),
