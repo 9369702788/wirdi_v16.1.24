@@ -140,7 +140,7 @@ class _NotificationDiagnosticsScreenState extends State<NotificationDiagnosticsS
                           const Divider(height: 1),
                           ListTile(
                             contentPadding: EdgeInsets.zero,
-                            leading: const Icon(Icons.notifications_active_outlined, color: AppColors.goldAccent),
+                            leading: Icon(Icons.notifications_active_outlined, color: AppColors.goldAccent),
                             title: Text(_t(context, 'مثال لإشعار مجدول', 'A scheduled notification')),
                             subtitle: Text(_nextTitle!),
                           ),

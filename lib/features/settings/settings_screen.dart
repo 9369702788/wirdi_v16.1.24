@@ -780,7 +780,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 8),
               Card(
                 child: ListTile(
-                  leading: const Icon(Icons.health_and_safety_outlined, color: AppColors.primaryEmerald),
+                  leading: Icon(Icons.health_and_safety_outlined, color: AppColors.primaryEmerald),
                   title: Text(Localizations.localeOf(context).languageCode == 'ar' ? 'تشخيص وإصلاح الإشعارات' : 'Notification Diagnostics & Repair'),
                   subtitle: Text(Localizations.localeOf(context).languageCode == 'ar'
                       ? 'اطمئن إن الإشعارات شغالة فعليًا، أو أصلحها بضغطة واحدة'
