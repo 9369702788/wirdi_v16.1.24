@@ -344,6 +344,7 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
     final moonAge = MoonCalculator.moonAgeDays(DateTime.now());
     final moonPhaseName = MoonCalculator.phaseName(moonAge, arabic: isAr);
     final moonImageAsset = MoonCalculator.phaseImageAsset(moonAge);
+    final moonPhaseLabelPrefix = isAr ? 'طور القمر اليوم' : 'Today\'s moon phase';
 
     return Scaffold(
       appBar: AppBar(
@@ -502,14 +503,19 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
                     ClipOval(
                       child: Image.asset(
                         moonImageAsset,
-                        width: 26,
-                        height: 26,
+                        width: 52,
+                        height: 52,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.circle, size: 26, color: Colors.white54),
+                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.circle, size: 52, color: Colors.white54),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Text(moonPhaseName, style: const TextStyle(color: Colors.white70, fontSize: 13)),
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: Text(
+                        '$moonPhaseLabelPrefix: $moonPhaseName',
+                        style: const TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w600),
+                      ),
+                    ),
                   ],
                 ),
                 if (_weather != null || _sunTimes != null) ...[

@@ -1,24 +1,11 @@
-WIRDI v252 -- Notification Diagnostics & Repair screen
+WIRDI v253 -- bigger, clearer moon phase display in next-prayer cards
 ================================================================================
-Consolidates 3 suggestions from the latest review into ONE screen:
-- Live status: notification permission, exact-alarm permission, and a
-  GROUND-TRUTH count of what's actually scheduled with Android right now
-  (via the plugin's own pendingNotificationRequests() -- not just what
-  this app's SharedPreferences bookkeeping THINKS is scheduled).
-- One-tap "Repair Notifications" button: re-requests permissions, re-fetches
-  prayer times, reschedules everything (reusing the exact same code path
-  as normal operation, no separate logic), then re-verifies against
-  Android and reports exactly what happened in plain language.
-- The existing test buttons (immediate + scheduled) are kept, now grouped
-  together in the same screen instead of scattered lower down.
-
-NOT implemented from the same review (explicit decision, explained to
-Moustafa in chat): full SharedPreferences architecture refactor, removing
-every catch (_) {} across the whole codebase, and a full automated test
-suite -- all valuable long-term but large, separate undertakings not
-suited to bundle into this focused patch.
+- Home screen: moon image 22px -> 44px, label now explicitly says
+  "Today's moon phase: <phase>" (was just the phase name alone)
+- Prayer screen: moon image 26px -> 52px, same explicit label format
 
 Files:
-1) lib/core/services/notification_service.dart (adds pendingRequests(); includes all earlier v242/v249/v251 fixes)
-2) lib/features/settings/notification_diagnostics_screen.dart (NEW)
-3) lib/features/settings/settings_screen.dart (adds navigation entry point; includes all earlier fixes)
+1) lib/features/home/home_dashboard_screen.dart
+2) lib/features/prayer/prayer_times_screen.dart
+
+Apply on top of the full v251 consolidated package.

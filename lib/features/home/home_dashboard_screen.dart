@@ -260,6 +260,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
     final moonAge = MoonCalculator.moonAgeDays(DateTime.now());
     final moonPhaseName = MoonCalculator.phaseName(moonAge, arabic: languageCode == 'ar');
     final moonImageAsset = MoonCalculator.phaseImageAsset(moonAge);
+    final moonPhaseLabelPrefix = languageCode == 'ar' ? 'طور القمر اليوم' : 'Today\'s moon phase';
 
     return Scaffold(
       appBar: AppBar(
@@ -465,14 +466,19 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                           ClipOval(
                             child: Image.asset(
                               moonImageAsset,
-                              width: 22,
-                              height: 22,
+                              width: 44,
+                              height: 44,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) => const Icon(Icons.circle, size: 22, color: Colors.white54),
+                              errorBuilder: (context, error, stackTrace) => const Icon(Icons.circle, size: 44, color: Colors.white54),
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          Text(moonPhaseName, style: const TextStyle(color: Colors.white70, fontSize: 13)),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              '$moonPhaseLabelPrefix: $moonPhaseName',
+                              style: const TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w600),
+                            ),
+                          ),
                         ],
                       ),
                       if (_prayer!.isFromCache)
