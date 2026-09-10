@@ -79,6 +79,8 @@ class _RadioScreenState extends State<RadioScreen>
     final l = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Colors.white,
+        flexibleSpace: _MosaicBg(col: 0, row: 1, opacity: 0.45),
         title: _searching
             ? TextField(
                 controller: _searchController,
@@ -392,6 +394,38 @@ class _SourceBadge extends StatelessWidget {
           maxLines: 1, overflow: TextOverflow.ellipsis,
         )),
       ]),
+    );
+  }
+}
+
+
+class _MosaicBg extends StatelessWidget {
+  final int col; // 0-indexed, 0..4
+  final int row; // 0-indexed, 0..1
+  final double opacity;
+  const _MosaicBg({required this.col, required this.row, this.opacity = 0.4});
+
+  @override
+  Widget build(BuildContext context) {
+    const cols = 5;
+    const rows = 2;
+    final alignX = (2 * col / (cols - 1)) - 1;
+    final alignY = (2 * row / (rows - 1)) - 1;
+    return ClipRect(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Align(
+            alignment: Alignment(alignX, alignY),
+            child: FractionallySizedBox(
+              widthFactor: cols.toDouble(),
+              heightFactor: rows.toDouble(),
+              child: Image.asset('assets/images/wirdi_mosaic.png', fit: BoxFit.cover),
+            ),
+          ),
+          Container(color: Colors.black.withValues(alpha: opacity)),
+        ],
+      ),
     );
   }
 }
