@@ -87,6 +87,8 @@ class _QuranScreenState extends State<QuranScreen> with SingleTickerProviderStat
     final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Colors.white,
+        flexibleSpace: _MosaicBg(col: 3, row: 0, opacity: 0.4),
         title: Text(l10n.quranTitle),
         centerTitle: true,
         actions: [
@@ -1372,6 +1374,37 @@ class _DownloadButtonState extends State<_DownloadButton> {
       icon: Icon(
         _downloaded ? Icons.download_done : Icons.download_outlined,
         color: _downloaded ? AppColors.primaryEmerald : null,
+      ),
+    );
+  }
+}
+
+class _MosaicBg extends StatelessWidget {
+  final int col; // 0-indexed, 0..4
+  final int row; // 0-indexed, 0..1
+  final double opacity;
+  const _MosaicBg({required this.col, required this.row, this.opacity = 0.4});
+
+  @override
+  Widget build(BuildContext context) {
+    const cols = 5;
+    const rows = 2;
+    final alignX = (2 * col / (cols - 1)) - 1;
+    final alignY = (2 * row / (rows - 1)) - 1;
+    return ClipRect(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Align(
+            alignment: Alignment(alignX, alignY),
+            child: FractionallySizedBox(
+              widthFactor: cols.toDouble(),
+              heightFactor: rows.toDouble(),
+              child: Image.asset('assets/images/wirdi_mosaic.png', fit: BoxFit.cover),
+            ),
+          ),
+          Container(color: Colors.black.withValues(alpha: opacity)),
+        ],
       ),
     );
   }
