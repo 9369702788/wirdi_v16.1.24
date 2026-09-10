@@ -143,7 +143,12 @@ class _AccountScreenState extends State<AccountScreen> {
     final l = AppLocalizations.of(context);
     final user = AuthService.instance.currentUser;
     final lastSync = SyncService.instance.lastSyncAt;
-    return Scaffold(appBar: AppBar(title: Text(l.authAccount)),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l.authAccount),
+        foregroundColor: Colors.white,
+        flexibleSpace: _MosaicBg(col: 2, row: 0, opacity: 0.35),
+      ),
       body: ListView(padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + MediaQuery.of(context).padding.bottom), children: [
         if (user == null)
           // Previously this card still rendered with a blank email and a
@@ -242,6 +247,38 @@ class _AccountScreenState extends State<AccountScreen> {
         ),
         Card(child: ListTile(leading: const Icon(Icons.logout_rounded, color: Colors.red), title: Text(l.authSignOut, style: const TextStyle(color: Colors.red)), onTap: _signOut)),
       ]),
+    );
+  }
+}
+
+
+class _MosaicBg extends StatelessWidget {
+  final int col; // 0-indexed, 0..4
+  final int row; // 0-indexed, 0..1
+  final double opacity;
+  const _MosaicBg({required this.col, required this.row, this.opacity = 0.4});
+
+  @override
+  Widget build(BuildContext context) {
+    const cols = 5;
+    const rows = 2;
+    final alignX = (2 * col / (cols - 1)) - 1;
+    final alignY = (2 * row / (rows - 1)) - 1;
+    return ClipRect(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Align(
+            alignment: Alignment(alignX, alignY),
+            child: FractionallySizedBox(
+              widthFactor: cols.toDouble(),
+              heightFactor: rows.toDouble(),
+              child: Image.asset('assets/images/wirdi_mosaic.png', fit: BoxFit.cover),
+            ),
+          ),
+          Container(color: Colors.black.withValues(alpha: opacity)),
+        ],
+      ),
     );
   }
 }
