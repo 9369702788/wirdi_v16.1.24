@@ -9,13 +9,10 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.CAMERA" />
 
-    <!-- REQUIRED by the audio_service package for the Radio/Quran
-         "now playing" notification + lock-screen controls to actually
-         appear. Without these, AudioService.init() runs in the Dart
-         side without throwing, but Android never promotes the audio
-         session to a real foreground service, so no notification is
-         ever shown -- this was the missing piece causing the playback
-         notification to silently not appear for Radio and Quran. -->
+    <!-- Required by the audio_service package so the Radio and Quran
+         playback notification (lock screen and notification shade
+         controls) actually appears as a real Android foreground
+         service, instead of silently doing nothing. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
@@ -46,11 +43,9 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
-        <!-- REQUIRED by audio_service: the actual Android foreground
-             service that owns the persistent media notification and
-             lock-screen controls for Radio + Quran playback. This
-             service was completely missing from the manifest, which is
-             the root cause of the notification not showing up. -->
+        <!-- Required by audio_service: the Android foreground service
+             that owns the persistent media notification and lock
+             screen controls for Radio and Quran playback. -->
         <service
             android:name="com.ryanheise.audioservice.AudioService"
             android:foregroundServiceType="mediaPlayback"
@@ -61,8 +56,8 @@
             </intent-filter>
         </service>
 
-        <!-- REQUIRED by audio_service: routes hardware/lock-screen/
-             Bluetooth media buttons (play/pause/stop) back into the app. -->
+        <!-- Required by audio_service: routes hardware, lock screen,
+             and Bluetooth media buttons back into the app. -->
         <receiver
             android:name="com.ryanheise.audioservice.MediaButtonReceiver"
             android:exported="true"
