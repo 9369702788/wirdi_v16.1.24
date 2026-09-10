@@ -41,7 +41,12 @@ class _MoonScreenState extends State<MoonScreen> {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final sighting = _sighting;
     return Scaffold(
-      appBar: AppBar(title: Text(isAr ? 'القمر وأطواره' : 'Moon Phase'), centerTitle: true),
+      appBar: AppBar(
+        foregroundColor: Colors.white,
+        flexibleSpace: _MosaicBg(col: 1, row: 1, opacity: 0.5),
+        title: Text(isAr ? 'القمر وأطواره' : 'Moon Phase'),
+        centerTitle: true,
+      ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
@@ -177,4 +182,36 @@ class _MoonPhasePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _MoonPhasePainter oldDelegate) =>
       oldDelegate.illumination != illumination || oldDelegate.isWaxing != isWaxing;
+}
+
+
+class _MosaicBg extends StatelessWidget {
+  final int col; // 0-indexed, 0..4
+  final int row; // 0-indexed, 0..1
+  final double opacity;
+  const _MosaicBg({required this.col, required this.row, this.opacity = 0.4});
+
+  @override
+  Widget build(BuildContext context) {
+    const cols = 5;
+    const rows = 2;
+    final alignX = (2 * col / (cols - 1)) - 1;
+    final alignY = (2 * row / (rows - 1)) - 1;
+    return ClipRect(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Align(
+            alignment: Alignment(alignX, alignY),
+            child: FractionallySizedBox(
+              widthFactor: cols.toDouble(),
+              heightFactor: rows.toDouble(),
+              child: Image.asset('assets/images/wirdi_mosaic.png', fit: BoxFit.cover),
+            ),
+          ),
+          Container(color: Colors.black.withValues(alpha: opacity)),
+        ],
+      ),
+    );
+  }
 }
