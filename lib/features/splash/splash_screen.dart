@@ -42,15 +42,23 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.primaryEmerald, AppColors.darkBackground],
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          const _MosaicBg(col: 1, row: 0, opacity: 0.5),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.primaryEmerald.withValues(alpha: 0.35),
+                  AppColors.darkBackground.withValues(alpha: 0.55),
+                ],
+              ),
+            ),
           ),
-        ),
-        child: Center(
+          Center(
           child: FadeTransition(
             opacity: _fade,
             child: Column(
@@ -87,7 +95,39 @@ class _SplashScreenState extends State<SplashScreen>
               ],
             ),
           ),
-        ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MosaicBg extends StatelessWidget {
+  final int col; // 0-indexed, 0..4
+  final int row; // 0-indexed, 0..1
+  final double opacity;
+  const _MosaicBg({required this.col, required this.row, this.opacity = 0.4});
+
+  @override
+  Widget build(BuildContext context) {
+    const cols = 5;
+    const rows = 2;
+    final alignX = (2 * col / (cols - 1)) - 1;
+    final alignY = (2 * row / (rows - 1)) - 1;
+    return ClipRect(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Align(
+            alignment: Alignment(alignX, alignY),
+            child: FractionallySizedBox(
+              widthFactor: cols.toDouble(),
+              heightFactor: rows.toDouble(),
+              child: Image.asset('assets/images/wirdi_mosaic.png', fit: BoxFit.cover),
+            ),
+          ),
+          Container(color: Colors.black.withValues(alpha: opacity)),
+        ],
       ),
     );
   }
