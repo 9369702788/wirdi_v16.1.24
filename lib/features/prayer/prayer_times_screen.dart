@@ -344,10 +344,11 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
     final moonAge = MoonCalculator.moonAgeDays(DateTime.now());
     final moonPhaseName = MoonCalculator.phaseName(moonAge, arabic: isAr);
     final moonImageAsset = MoonCalculator.phaseImageAsset(moonAge);
-    final moonPhaseLabelPrefix = isAr ? 'طور القمر اليوم' : 'Today\'s moon phase';
 
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Colors.white,
+        flexibleSpace: _MosaicBg(col: 4, row: 0, opacity: 0.4),
         title: Text(l10n.prayerTimesTitle),
         centerTitle: true,
         actions: [
@@ -503,19 +504,14 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
                     ClipOval(
                       child: Image.asset(
                         moonImageAsset,
-                        width: 52,
-                        height: 52,
+                        width: 26,
+                        height: 26,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.circle, size: 52, color: Colors.white54),
+                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.circle, size: 26, color: Colors.white54),
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Flexible(
-                      child: Text(
-                        '$moonPhaseLabelPrefix: $moonPhaseName',
-                        style: const TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w600),
-                      ),
-                    ),
+                    const SizedBox(width: 8),
+                    Text(moonPhaseName, style: const TextStyle(color: Colors.white70, fontSize: 13)),
                   ],
                 ),
                 if (_weather != null || _sunTimes != null) ...[
@@ -584,6 +580,37 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 12, color: AppColors.mutedText),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MosaicBg extends StatelessWidget {
+  final int col; // 0-indexed, 0..4
+  final int row; // 0-indexed, 0..1
+  final double opacity;
+  const _MosaicBg({required this.col, required this.row, this.opacity = 0.4});
+
+  @override
+  Widget build(BuildContext context) {
+    const cols = 5;
+    const rows = 2;
+    final alignX = (2 * col / (cols - 1)) - 1;
+    final alignY = (2 * row / (rows - 1)) - 1;
+    return ClipRect(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Align(
+            alignment: Alignment(alignX, alignY),
+            child: FractionallySizedBox(
+              widthFactor: cols.toDouble(),
+              heightFactor: rows.toDouble(),
+              child: Image.asset('assets/images/wirdi_mosaic.png', fit: BoxFit.cover),
+            ),
+          ),
+          Container(color: Colors.black.withValues(alpha: opacity)),
         ],
       ),
     );
